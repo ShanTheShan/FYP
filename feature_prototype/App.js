@@ -13,9 +13,15 @@ import {
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import { useFocusEffect } from "@react-navigation/native";
+import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import * as Progress from "react-native-progress";
+import { CameraView, useCameraPermissions } from "expo-camera";
+
+import TimerScreen from "./timer";
+import RenderCamera from "./camera";
 
 //custom cell for project board page
 const HomescreenCell = (props) => (
@@ -67,6 +73,8 @@ function ProjectScreen({ route, navigation }) {
   const [taskList, setTasks] = useState([]);
   const [task, createTask] = useState("");
 
+  //hook to update image notes array
+
   const addItemToArray = () => {
     if (task.trim() === "") {
       return; // Do not add empty tasks
@@ -95,7 +103,6 @@ function ProjectScreen({ route, navigation }) {
 
     let increment = 1 / numberofTask;
     setProgressValue(progressValue + increment);
-    console.log(tasksLeft);
   };
 
   return (
@@ -106,6 +113,7 @@ function ProjectScreen({ route, navigation }) {
       </View>
       <TableView>
         <Section>
+          {/* tasks text */}
           {taskList.map((item, i) => {
             return (
               <Cell
@@ -118,13 +126,6 @@ function ProjectScreen({ route, navigation }) {
         </Section>
       </TableView>
       <View style={styles.projecTabTasks}>
-        <TouchableOpacity
-          style={styles.addTaskBtn}
-          onPress={() => navigation.navigate("Create Task")}
-        >
-          <Text style={{ color: "white", fontSize: 30 }}>+</Text>
-        </TouchableOpacity>
-
         <TextInput
           style={{ height: 40, width: 150, borderWidth: 1, marginTop: 20 }}
           placeholder="Enter Task"
@@ -135,48 +136,62 @@ function ProjectScreen({ route, navigation }) {
         <TouchableOpacity style={styles.submitButton} onPress={() => addItemToArray()}>
           <Text style={{ color: "white" }}> ENTER </Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
+          <Text style={{ fontSize: 30 }}>📷</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
 
-//page to create a task
-function TaskCreator({ navigation }) {
-  const [text, setText] = useState("");
+// navigation stack object
+const ProjectStack = createStackNavigator();
 
-  //runs 2 functions when OnPress
-  const handlePress = () => {
-    getInput(text);
-    navigation.navigate("Project_Details");
-  };
-
+//a stack for each bottom navigation
+function ProjectStackScreen() {
   return (
-    <View>
-      <TextInput
-        style={{ height: 40, borderWidth: 1, marginTop: 20 }}
-        placeholder="Enter Task"
-        onChangeText={(newText) => setText(newText)}
-        defaultValue={text}
+    <ProjectStack.Navigator>
+      <ProjectStack.Screen name="Projects Overview" component={HomeScreen} />
+      <ProjectStack.Screen name="Project_Details" component={ProjectScreen} />
+      //TODO pass image from camera page to project page to load
+      <ProjectStack.Screen
+        name="Camera"
+        component={RenderCamera}
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <TouchableOpacity
+              title="Back"
+              onPress={() => navigation.navigate("Project_Details", { item: imageURI })}
+            >
+              <Text>⬅️</Text>
+            </TouchableOpacity>
+          ),
+        })}
       />
-      {/* sends the user input to function getInput onPress*/}
-      <TouchableOpacity style={styles.submitButton} onPress={() => handlePress()}>
-        <Text style={{ color: "white" }}> ENTER </Text>
-      </TouchableOpacity>
-    </View>
+    </ProjectStack.Navigator>
   );
 }
 
-// navigation stack object
-const Stack = createStackNavigator();
+const TimerStack = createStackNavigator();
+
+function TimerStackScreen() {
+  return (
+    <TimerStack.Navigator>
+      <TimerStack.Screen name="TimerScreen" component={TimerScreen} />
+    </TimerStack.Navigator>
+  );
+}
+
+//bottom navigation object
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Projects Overview" component={HomeScreen} />
-        <Stack.Screen name="Project_Details" component={ProjectScreen} />
-        <Stack.Screen name="Create Task" component={TaskCreator} />
-      </Stack.Navigator>
+      <Tab.Navigator screenOptions={{ headerShown: false }}>
+        <Tab.Screen name="Project" component={ProjectStackScreen} />
+        <Tab.Screen name="Timer" component={TimerStackScreen} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
@@ -184,6 +199,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
   },
   projecTabProgress: {
     flex: 1,
