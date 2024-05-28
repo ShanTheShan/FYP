@@ -19,7 +19,7 @@ function TimerScreen() {
     const seconds = remainingTime % 60;
 
     return (
-      <Text>{`${hours}:${minutes < 10 ? "0" : ""}${minutes}:${
+      <Text style={{ fontSize: 30 }}>{`${hours}:${minutes < 10 ? "0" : ""}${minutes}:${
         seconds < 10 ? "0" : ""
       }${seconds}`}</Text>
     );

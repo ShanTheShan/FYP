@@ -5,7 +5,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 
 import * as ImagePicker from "expo-image-picker";
 
-function RenderCamera() {
+function RenderCamera({ navigation }) {
   //CAMERA
   const [facing, setFacing] = useState("back");
   const [permission, requestPermission] = useCameraPermissions();
@@ -34,12 +34,17 @@ function RenderCamera() {
   return (
     <View style={styles.container}>
       <CameraView style={styles.camera} facing={facing}>
+        <View>
+          <TouchableOpacity title="Back" onPress={() => navigation.navigate("Project_Details")}>
+            <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={takePhoto}>
-            <Text style={{ fontSize: 50 }}>🔘</Text>
+            <Text style={{ fontSize: 40 }}>🔘</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={openGallery}>
-            <Text style={{ fontSize: 50 }}>🎞</Text>
+            <Text style={{ fontSize: 40 }}>🎞</Text>
           </TouchableOpacity>
         </View>
       </CameraView>
@@ -59,7 +64,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     backgroundColor: "transparent",
-    margin: 64,
+    margin: 30,
   },
   button: {
     flex: 1,

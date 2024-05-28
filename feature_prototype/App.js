@@ -7,18 +7,18 @@ import {
   Image,
   Button,
   SafeAreaView,
-  ScrollView,
   Alert,
   TouchableOpacity,
+  Modal,
+  Pressable,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import { useFocusEffect } from "@react-navigation/native";
-import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import * as Progress from "react-native-progress";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import Carousel from "react-native-reanimated-carousel";
 
 import TimerScreen from "./timer";
 import RenderCamera from "./camera";
@@ -50,8 +50,56 @@ const ProjectCell = (props) => (
 );
 
 function HomeScreen({ navigation }) {
+  //tutorial state
+  const [modalVisible, setModalVisible] = useState(true);
+
   return (
     <SafeAreaView>
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="fade"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <Carousel
+              loop
+              width={200}
+              height={300}
+              autoPlay={false}
+              data={[...new Array(6).keys()]}
+              renderItem={({ index }) => (
+                <View
+                  style={{
+                    flex: 1,
+                    borderWidth: 1,
+                    justifyContent: "center",
+                    backgroundColor: "red",
+                  }}
+                >
+                  <Text style={{ textAlign: "center", fontSize: 30 }}>{index}</Text>
+                </View>
+              )}
+            />
+            <Text
+              style={{
+                flex: 1,
+              }}
+            >
+              This is a tutorial showing how the app works. This feature prototype houses the
+              initial functionality proposed in the preliminary report. The project management page,
+              and the focus tool (TIMER).
+            </Text>
+
+            <Pressable style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.textStyle}>OKAY</Text>
+            </Pressable>
+          </View>
+        </Modal>
+      </View>
       <TableView>
         <Section>
           <HomescreenCell action={() => navigation.navigate("Project_Details")} title="Project 1" />
@@ -153,20 +201,10 @@ function ProjectStackScreen() {
     <ProjectStack.Navigator>
       <ProjectStack.Screen name="Projects Overview" component={HomeScreen} />
       <ProjectStack.Screen name="Project_Details" component={ProjectScreen} />
-      //TODO pass image from camera page to project page to load
       <ProjectStack.Screen
         name="Camera"
         component={RenderCamera}
-        options={({ navigation }) => ({
-          headerLeft: () => (
-            <TouchableOpacity
-              title="Back"
-              onPress={() => navigation.navigate("Project_Details", { item: imageURI })}
-            >
-              <Text>⬅️</Text>
-            </TouchableOpacity>
-          ),
-        })}
+        options={{ headerShown: false }}
       />
     </ProjectStack.Navigator>
   );
@@ -177,7 +215,7 @@ const TimerStack = createStackNavigator();
 function TimerStackScreen() {
   return (
     <TimerStack.Navigator>
-      <TimerStack.Screen name="TimerScreen" component={TimerScreen} />
+      <TimerStack.Screen name="Focus Tool 52/17" component={TimerScreen} />
     </TimerStack.Navigator>
   );
 }
@@ -230,5 +268,16 @@ const styles = StyleSheet.create({
     margin: 15,
     height: 40,
     width: 80,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginBottom: 40,
   },
 });
