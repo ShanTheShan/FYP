@@ -22,6 +22,8 @@ import Carousel from "react-native-reanimated-carousel";
 
 import TimerScreen from "./timer";
 import RenderCamera from "./camera";
+import ProjectScreen from "./project";
+import TaskScreen from "./tasks";
 
 //custom cell for project board page
 const HomescreenCell = (props) => (
@@ -36,22 +38,16 @@ const HomescreenCell = (props) => (
   />
 );
 
-//custom cell for project tabs
-const ProjectCell = (props) => (
-  <Cell
-    onPress={props.action}
-    {...props}
-    cellContentView={
-      <View style={{ flexDirection: "row" }}>
-        <Text style={{ fontSize: 20 }}>{props.title}</Text>
-      </View>
-    }
-  />
-);
-
 function HomeScreen({ navigation }) {
   //tutorial state
   const [modalVisible, setModalVisible] = useState(true);
+
+  //array of images for tutorial
+  const tutorialImages = [
+    require("./assets/tutorial_overview.jpg"),
+    require("./assets/tutorial_visual.jpg"),
+    require("./assets/tutorial_timer.jpg"),
+  ];
 
   return (
     <SafeAreaView>
@@ -70,17 +66,16 @@ function HomeScreen({ navigation }) {
               width={200}
               height={300}
               autoPlay={false}
-              data={[...new Array(6).keys()]}
-              renderItem={({ index }) => (
+              data={tutorialImages}
+              renderItem={({ item }) => (
                 <View
                   style={{
                     flex: 1,
                     borderWidth: 1,
                     justifyContent: "center",
-                    backgroundColor: "red",
                   }}
                 >
-                  <Text style={{ textAlign: "center", fontSize: 30 }}>{index}</Text>
+                  <Image source={item} style={styles.image} />
                 </View>
               )}
             />
@@ -106,88 +101,6 @@ function HomeScreen({ navigation }) {
           <HomescreenCell action={() => navigation.navigate("Project_Details")} title="Project 2" />
         </Section>
       </TableView>
-    </SafeAreaView>
-  );
-}
-
-function ProjectScreen({ route, navigation }) {
-  //hook to change the val of progress bar
-  const [progressValue, setProgressValue] = useState(0);
-  //hook to get total task count, this just increments when tasks are added to array
-  const [tasksLeft, setTasksLeft] = useState(0);
-  const [numberofTask, setTaskCount] = useState(0);
-
-  //hook to update the tasklist array
-  const [taskList, setTasks] = useState([]);
-  const [task, createTask] = useState("");
-
-  //hook to update image notes array
-
-  const addItemToArray = () => {
-    if (task.trim() === "") {
-      return; // Do not add empty tasks
-    }
-    setTasks([
-      ...taskList,
-      {
-        id: taskList.length,
-        name: task,
-      },
-    ]);
-    // Clear the input field after adding a task
-    createTask("");
-
-    //update total number task everytime new task added
-    setTaskCount(numberofTask + 1);
-    setTasksLeft(numberofTask + 1);
-  };
-
-  //to delete the task when its pressed
-  const deleteItemInArray = (id) => {
-    setTasksLeft(numberofTask - 1);
-
-    setTasks([...taskList.filter((item) => item.id !== id)]);
-    //update progress bar based on the number of task left
-
-    let increment = 1 / numberofTask;
-    setProgressValue(progressValue + increment);
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.projecTabProgress}>
-        <Progress.Bar progress={progressValue} width={200} height={20} color={"green"} />
-        <Text style={{ fontSize: 30 }}>{Math.floor(progressValue * 100)}%</Text>
-      </View>
-      <TableView>
-        <Section>
-          {/* tasks text */}
-          {taskList.map((item, i) => {
-            return (
-              <Cell
-                key={item.id}
-                title={item.name}
-                onPress={() => deleteItemInArray(item.id)}
-              ></Cell>
-            );
-          })}
-        </Section>
-      </TableView>
-      <View style={styles.projecTabTasks}>
-        <TextInput
-          style={{ height: 40, width: 150, borderWidth: 1, marginTop: 20 }}
-          placeholder="Enter Task"
-          onChangeText={(newText) => createTask(newText)}
-          defaultValue={task}
-        />
-        {/* sends the user input to function addItemToArray onPress*/}
-        <TouchableOpacity style={styles.submitButton} onPress={() => addItemToArray()}>
-          <Text style={{ color: "white" }}> ENTER </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
-          <Text style={{ fontSize: 30 }}>📷</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
@@ -220,6 +133,16 @@ function TimerStackScreen() {
   );
 }
 
+const TaskStack = createStackNavigator();
+
+function TaskStackScreen() {
+  return (
+    <TaskStack.Navigator>
+      <TaskStack.Screen name="Tasks" component={TaskScreen} />
+    </TaskStack.Navigator>
+  );
+}
+
 //bottom navigation object
 const Tab = createBottomTabNavigator();
 
@@ -229,6 +152,7 @@ export default function App() {
       <Tab.Navigator screenOptions={{ headerShown: false }}>
         <Tab.Screen name="Project" component={ProjectStackScreen} />
         <Tab.Screen name="Timer" component={TimerStackScreen} />
+        <Tab.Screen name="Task" component={TaskStackScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
@@ -245,30 +169,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttons: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "red",
-  },
-  projecTabTasks: {
-    flex: 4,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  addTaskBtn: {
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "blue",
-  },
-  submitButton: {
-    backgroundColor: "blue",
-    padding: 10,
-    margin: 15,
-    height: 40,
-    width: 80,
-  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -279,5 +179,10 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
     marginBottom: 40,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
   },
 });
