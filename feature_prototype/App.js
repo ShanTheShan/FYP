@@ -1,29 +1,18 @@
 import { React, useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Image,
-  Button,
-  SafeAreaView,
-  Alert,
-  TouchableOpacity,
-  Modal,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View, Image, SafeAreaView, Modal, Pressable } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
-import { useFocusEffect } from "@react-navigation/native";
-import * as Progress from "react-native-progress";
 import Carousel from "react-native-reanimated-carousel";
 
-import TimerScreen from "./timer";
-import RenderCamera from "./camera";
-import ProjectScreen from "./project";
-import TaskScreen from "./tasks";
+import TimerScreen from "./screens/timer";
+import RenderCamera from "./screens/camera";
+import ProjectScreen from "./screens/project";
+import TaskScreen from "./screens/tasks";
+import ProjectTaskScreen from "./screens/projectTask";
+
+import { db } from "./database";
 
 //custom cell for project board page
 const HomescreenCell = (props) => (
@@ -48,6 +37,23 @@ function HomeScreen({ navigation }) {
     require("./assets/tutorial_visual.jpg"),
     require("./assets/tutorial_timer.jpg"),
   ];
+
+  //query created projects
+  //project names state
+  const [projects, storeProjects] = useState([]);
+  useEffect(() => {
+    const getAll = async () => {
+      try {
+        console.log("collect projects object");
+        const allRows = await db.getAllAsync("SELECT * FROM Projects");
+        storeProjects(allRows);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getAll();
+  }, []); //empty dependency array to run effect only once
 
   return (
     <SafeAreaView>
@@ -97,8 +103,23 @@ function HomeScreen({ navigation }) {
       </View>
       <TableView>
         <Section>
-          <HomescreenCell action={() => navigation.navigate("Project_Details")} title="Project 1" />
-          <HomescreenCell action={() => navigation.navigate("Project_Details")} title="Project 2" />
+          {/* <HomescreenCell
+                  action={() => navigation.navigate("Project_Details")}
+                  title="Project 1"
+                />
+                <HomescreenCell
+                  action={() => navigation.navigate("Project_Details")}
+                  title="Project 2"
+                /> */}
+          {projects.map((item) => {
+            return (
+              <HomescreenCell
+                action={() => navigation.navigate("Project_Details", { id: item.id })}
+                key={item.id}
+                title={item.projectName}
+              />
+            );
+          })}
         </Section>
       </TableView>
     </SafeAreaView>
@@ -119,6 +140,7 @@ function ProjectStackScreen() {
         component={RenderCamera}
         options={{ headerShown: false }}
       />
+      <ProjectStack.Screen name="Project_Task" component={ProjectTaskScreen} />
     </ProjectStack.Navigator>
   );
 }
