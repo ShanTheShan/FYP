@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { db } from "../database";
+import { db } from "../constants/database";
 
 function ProjectTaskScreen({ navigation, route }) {
   //the project id we a creating a task for

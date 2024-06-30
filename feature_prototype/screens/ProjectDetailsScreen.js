@@ -4,9 +4,9 @@ import { Cell, Section, TableView } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import { useIsFocused } from "@react-navigation/native";
 
-import { db } from "../database";
+import { db } from "../constants/database";
 
-function ProjectScreen({ navigation, route }) {
+export default function ProjectDetails({ navigation, route }) {
   //TODO redo the the task deletion and progress bar increment
   const isFocused = useIsFocused();
 
@@ -151,5 +151,3 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 });
-
-export default ProjectScreen;

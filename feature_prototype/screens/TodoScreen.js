@@ -4,7 +4,7 @@ import { Cell, Section, TableView } from "react-native-tableview-simple";
 import { Calendar } from "react-native-calendars";
 import moment from "moment";
 
-function TaskScreen() {
+export default function TodoScreen() {
   //states to determine date
   const today = moment().format("YYYY-MM-DD");
   const [dateSelected, setDateSelected] = useState(today);
@@ -31,5 +31,3 @@ function TaskScreen() {
     </SafeAreaView>
   );
 }
-
-export default TaskScreen;
