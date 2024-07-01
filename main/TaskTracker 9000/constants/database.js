@@ -18,11 +18,14 @@ const intiatelizeDatabase = () => {
           projectId INTEGER NOT NULL, 
           tasks TEXT NOT NULL, 
           subtasks TEXT, 
-          notes TEXT, 
+          notes TEXT,
+          image TEXT, 
           FOREIGN KEY (projectId) REFERENCES Projects (id));
 
           INSERT INTO Projects (projectName) VALUES ('Project 1');
           INSERT INTO Projects (projectName) VALUES ('Project 2');
+
+
 
 
           INSERT INTO ProjectDetails (projectId, tasks) 

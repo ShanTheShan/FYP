@@ -1,9 +1,22 @@
 import { React, useState, useEffect } from "react";
-import { StyleSheet, Text, View, Image, SafeAreaView, Modal, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  SafeAreaView,
+  Modal,
+  Pressable,
+  ScrollView,
+  TextInput,
+} from "react-native";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import Carousel from "react-native-reanimated-carousel";
 
+import { StatusBar } from "expo-status-bar";
+
 import { db } from "../constants/database";
+import { AddButton } from "../components/customButtons";
 
 //custom cell for project board page
 const HomescreenCell = (props) => (
@@ -19,8 +32,14 @@ const HomescreenCell = (props) => (
 );
 
 export default function HomeScreen({ navigation }) {
-  //tutorial state
+  //tutorial state modal
   const [modalVisible, setModalVisible] = useState(true);
+
+  //create a project state modal
+  const [createProjectModal, setCreateProjectModalVisible] = useState(false);
+
+  //text input state
+  const [input, setInput] = useState("");
 
   //array of images for tutorial
   const tutorialImages = [
@@ -35,7 +54,6 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const getAll = async () => {
       try {
-        console.log("collect projects object");
         const allRows = await db.getAllAsync("SELECT * FROM Projects");
         storeProjects(allRows);
       } catch (error) {
@@ -45,6 +63,8 @@ export default function HomeScreen({ navigation }) {
 
     getAll();
   }, []); //empty dependency array to run effect only once
+
+  const createProject = () => {};
 
   return (
     <SafeAreaView>
@@ -92,19 +112,75 @@ export default function HomeScreen({ navigation }) {
           </View>
         </Modal>
       </View>
-      <TableView>
-        <Section>
-          {projects.map((item) => {
-            return (
-              <HomescreenCell
-                action={() => navigation.navigate("Project_Details", { id: item.id })}
-                key={item.id}
-                title={item.projectName}
-              />
-            );
-          })}
-        </Section>
-      </TableView>
+      <ScrollView style={styles.scrollView}>
+        {createProjectModal ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={createProjectModal}
+            statusBarTranslucent={true}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                marginVertical: "50%",
+              }}
+            >
+              <View style={styles.createProjectModalView}>
+                <TextInput
+                  style={{
+                    height: 40,
+                    width: 150,
+                    borderWidth: 1,
+                    marginTop: 20,
+                    borderRadius: 10,
+                  }}
+                  placeholder="Enter project name..."
+                  onChangeText={(newText) => setInput(newText)}
+                  defaultValue={input}
+                />
+                <Pressable
+                  style={styles.button}
+                  onPress={() => {
+                    setCreateProjectModalVisible(false);
+                  }}
+                >
+                  <Text style={{ color: "white" }}>Create Project</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.buttonClose}
+                  onPress={() => {
+                    setCreateProjectModalVisible(false);
+                  }}
+                >
+                  <Text style={{ color: "white" }}>Cancel</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+        ) : (
+          <TableView>
+            <Section>
+              {projects.map((item) => {
+                return (
+                  <HomescreenCell
+                    action={() => navigation.navigate("Project_Details", { id: item.id })}
+                    key={item.id}
+                    title={item.projectName}
+                  />
+                );
+              })}
+            </Section>
+          </TableView>
+        )}
+      </ScrollView>
+      <AddButton
+        press={() => {
+          setCreateProjectModalVisible(true);
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -114,11 +190,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
-  projecTabProgress: {
+  safeArea: {
     flex: 1,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
+    height: "100%",
+  },
+  scrollView: {
+    height: "100%",
   },
   centeredView: {
     flex: 1,
@@ -129,11 +206,32 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
-    marginBottom: 40,
+    backgroundColor: "darkgreen",
+  },
+  buttonClose: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    backgroundColor: "darkred",
   },
   image: {
     width: "100%",
     height: "100%",
     resizeMode: "contain",
+  },
+
+  createProjectModalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

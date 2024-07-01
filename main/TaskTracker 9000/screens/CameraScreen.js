@@ -1,61 +1,170 @@
-import { React, useState, useEffect } from "react";
-import { Text, StyleSheet, View, Image, SafeAreaView, Alert, TouchableOpacity } from "react-native";
+import { React, useState, useEffect, useRef } from "react";
+import {
+  Text,
+  StyleSheet,
+  View,
+  SafeAreaView,
+  Alert,
+  TouchableOpacity,
+  ImageBackground,
+  Image,
+} from "react-native";
 
-import { CameraView, useCameraPermissions } from "expo-camera";
+import { CameraView, Camera } from "expo-camera";
+import { SmallButton } from "../components/customButtons";
 
 import * as ImagePicker from "expo-image-picker";
 
-function RenderCamera({ navigation }) {
-  //CAMERA
+function RenderCamera({ navigation, route }) {
+  //the project id we a creating a image for
+  const { id } = route.params;
+
+  //camera ref
+  let cameraRef = useRef();
+
+  //camera front back, persmissionmstate
   const [facing, setFacing] = useState("back");
-  const [permission, requestPermission] = useCameraPermissions();
+  const [permission, setPermission] = useState(false);
 
-  async function takePhoto() {
-    const options = { quality: 1, base64: true, fixOrientation: true, exif: true };
-    await this.camera.takePictureAsync(options).then((photo) => {
-      photo.exif.Orientation = 1;
-      console.log(photo);
-    });
-  }
+  //show capture image preview
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [picturePreview, setPreview] = useState(null);
 
-  //select image state
-  const [imagePath, setImagePath] = useState("");
+  useEffect(() => {
+    const getPermission = async () => {
+      try {
+        //set the permission granted by the user to state
+        await Camera.requestCameraPermissionsAsync().then((value) => {
+          setPermission(value.granted);
+        });
+      } catch (err) {
+        console.log("Try catch error:", err);
+      }
+    };
+    getPermission();
+  }, []);
 
-  async function openGallery() {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+  //switch front back camera
+  const switchCamera = () => {
+    if (facing === "back") {
+      setFacing("front");
+    } else {
+      setFacing("back");
+    }
+  };
+
+  //take a photo
+  const takePhoto = async () => {
+    const options = {
       quality: 1,
-    });
-    setImagePath(result.assets[0].uri);
-  }
+      exif: false,
+    };
+    try {
+      const photo = await cameraRef.current.takePictureAsync(options);
+      setPreviewVisible(true);
+      setPreview(photo);
+    } catch (err) {
+      console.log("Try catch error: ", err);
+    }
+  };
+
+  //retake photo after one was taken
+  const retakePhoto = () => {
+    setPreviewVisible(false);
+    setPreview(null);
+  };
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing}>
-        <View>
-          <TouchableOpacity title="Back" onPress={() => navigation.navigate("Project_Details")}>
-            <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
-          </TouchableOpacity>
+      {permission ? (
+        <View style={{ flex: 1, width: "100%" }}>
+          {previewVisible && picturePreview ? (
+            <CapturedImage
+              photo={picturePreview}
+              navigation={navigation}
+              retakePhoto={retakePhoto}
+            />
+          ) : (
+            <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+              <View>
+                <TouchableOpacity onPress={() => navigation.navigate("Project_Task", { id: id })}>
+                  <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={switchCamera}>
+                  <Text style={{ fontSize: 30 }}>🔁</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={takePhoto}>
+                  <Text style={{ fontSize: 40 }}>🔘</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={{ fontSize: 40 }}>🎞</Text>
+                </TouchableOpacity>
+              </View>
+            </CameraView>
+          )}
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={takePhoto}>
-            <Text style={{ fontSize: 40 }}>🔘</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={openGallery}>
-            <Text style={{ fontSize: 40 }}>🎞</Text>
-          </TouchableOpacity>
-        </View>
-      </CameraView>
+      ) : (
+        <SafeAreaView style={styles.safeArea}>
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Project_Task", { id: id })}>
+              <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
+            </TouchableOpacity>
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+              <Text>Camera permission denied. Allow camera permission in application Settings</Text>
+            </View>
+          </View>
+        </SafeAreaView>
+      )}
     </View>
   );
 }
 
+const CapturedImage = ({ photo, navigation, retakePhoto, id }) => {
+  return (
+    <View style={styles.container}>
+      <ImageBackground source={{ uri: photo && photo.uri }} style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <View>
+            <TouchableOpacity onPress={() => navigation.navigate("Project_Task")}>
+              <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <SmallButton
+              title={"Use Photo"}
+              color={"darkgreen"}
+              press={() => {
+                navigation.navigate("Project_Task", { id: id });
+              }}
+            />
+
+            <SmallButton title={"Retake Photo"} color={"darkgreen"} press={retakePhoto} />
+            <SmallButton
+              title={"dummy"}
+              color={"darkgreen"}
+              press={() => {
+                retakePhoto;
+              }}
+            />
+          </View>
+        </View>
+      </ImageBackground>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+  },
+  safeArea: {
+    flex: 1,
+    height: "100%",
   },
   camera: {
     flex: 1,
@@ -63,18 +172,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: "transparent",
+    justifyContent: "space-around",
+    alignItems: "flex-end",
     margin: 30,
-  },
-  button: {
-    flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
   },
 });
 

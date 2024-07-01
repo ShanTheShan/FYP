@@ -34,45 +34,6 @@ export default function ProjectDetails({ navigation, route }) {
 
   // //hook to change the val of progress bar
   const [progressValue, setProgressValue] = useState(0);
-  // //hook to get total task count, this just increments when tasks are added to array
-  // const [tasksLeft, setTasksLeft] = useState(0);
-  // const [numberofTask, setTaskCount] = useState(0);
-
-  // //hook to update the tasklist array
-  // const [taskList, setTasks] = useState([]);
-  // const [task, createTask] = useState("");
-
-  // //hook to update image notes array
-
-  // const addItemToArray = () => {
-  //   if (task.trim() === "") {
-  //     return; // Do not add empty tasks
-  //   }
-  //   setTasks([
-  //     ...taskList,
-  //     {
-  //       id: taskList.length,
-  //       name: task,
-  //     },
-  //   ]);
-  //   // Clear the input field after adding a task
-  //   createTask("");
-
-  //   //update total number task everytime new task added
-  //   setTaskCount(numberofTask + 1);
-  //   setTasksLeft(numberofTask + 1);
-  // };
-
-  // //to delete the task when its pressed
-  // const deleteItemInArray = (id) => {
-  //   setTasksLeft(numberofTask - 1);
-
-  //   setTasks([...taskList.filter((item) => item.id !== id)]);
-  //   //update progress bar based on the number of task left
-
-  //   let increment = 1 / numberofTask;
-  //   setProgressValue(progressValue + increment);
-  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -90,7 +51,7 @@ export default function ProjectDetails({ navigation, route }) {
       <View style={styles.projecTabTasks}>
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={() => navigation.navigate("Project_Task", { pid: id })}
+          onPress={() => navigation.navigate("Project_Task", { id: id })}
         >
           <Text style={{ color: "white" }}> Add Task </Text>
         </TouchableOpacity>

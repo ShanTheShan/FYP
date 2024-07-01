@@ -12,16 +12,17 @@ import {
 
 import { db } from "../constants/database";
 
-function ProjectTaskScreen({ navigation, route }) {
+export default function ProjectTaskScreen({ navigation, route }) {
   //the project id we a creating a task for
-  const { pid } = route.params;
+  const { id } = route.params;
 
+  //text input state
   const [task, createTask] = useState("");
 
   //SQLite query to insert task to project
   const insertTaskQuery = () => {
     try {
-      db.runSync("INSERT INTO ProjectDetails (projectId, tasks) VALUES (?,?)", [pid, task]);
+      db.runSync("INSERT INTO ProjectDetails (projectId, tasks) VALUES (?,?)", [id, task]);
       //empty the text input so we can type again
       createTask("");
     } catch (error) {
@@ -41,8 +42,11 @@ function ProjectTaskScreen({ navigation, route }) {
         <TouchableOpacity style={styles.submitButton} onPress={() => insertTaskQuery()}>
           <Text style={{ color: "white" }}> ENTER </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Camera", { pid: id })}>
           <Text style={{ fontSize: 30 }}>📷</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.submitButton} onPress={() => console.log(id)}>
+          <Text style={{ color: "white" }}> Check ID </Text>
         </TouchableOpacity>
       </SafeAreaView>
     </View>
@@ -63,5 +67,3 @@ const styles = StyleSheet.create({
     width: 80,
   },
 });
-
-export default ProjectTaskScreen;
