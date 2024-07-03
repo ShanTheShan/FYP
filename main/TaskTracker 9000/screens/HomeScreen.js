@@ -6,11 +6,13 @@ import {
   Image,
   SafeAreaView,
   Modal,
-  Pressable,
+  TouchableOpacity,
   ScrollView,
   TextInput,
+  Pressable,
 } from "react-native";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
+import * as Progress from "react-native-progress";
 import Carousel from "react-native-reanimated-carousel";
 
 import { StatusBar } from "expo-status-bar";
@@ -21,15 +23,29 @@ import { AddButton } from "../components/customButtons";
 import { themeContext } from "../context/themeContext";
 
 import useStatusBarStyle from "../hooks/statusBar";
+//import { TouchableOpacity } from "react-native-gesture-handler";
 
 //custom cell for project board page
 const HomescreenCell = (props) => (
   <Cell
     onPress={props.action}
+    backgroundColor={props.theme}
     {...props}
     cellContentView={
       <View>
-        <Text style={{ fontSize: 20 }}>{props.title}</Text>
+        <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
+          {props.title}
+        </Text>
+        <Progress.Bar
+          style={{ marginBottom: 5 }}
+          progress={0.5}
+          width={200}
+          borderColor="black"
+          borderWidth={1}
+          height={20}
+          color="green"
+          unfilledColor="#B9B9B9"
+        />
       </View>
     }
   />
@@ -61,6 +77,7 @@ export default function HomeScreen({ navigation }) {
   //query created projects
   //project names state
   const [projects, storeProjects] = useState([]);
+
   useEffect(() => {
     const getAll = async () => {
       try {
@@ -72,9 +89,16 @@ export default function HomeScreen({ navigation }) {
     };
 
     getAll();
-  }, []); //empty dependency array to run effect only once
+  }, [projects]);
 
-  const createProject = () => {};
+  const createNewProject = async (value) => {
+    try {
+      await db.runAsync("INSERT INTO Projects VALUES (?,?)", [null, value]);
+      setInput("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <SafeAreaView>
@@ -112,9 +136,7 @@ export default function HomeScreen({ navigation }) {
                 flex: 1,
               }}
             >
-              This is a tutorial showing how the app works. This feature prototype houses the
-              initial functionality proposed in the preliminary report. The project management page,
-              and the focus tool (TIMER).
+              Lorem Impsum.
             </Text>
 
             <Pressable style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
@@ -123,7 +145,7 @@ export default function HomeScreen({ navigation }) {
           </View>
         </Modal>
       </View>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={currentTheme === "dark" ? styles.scrollViewDark : styles.scrollViewLight}>
         {createProjectModal ? (
           <Modal
             animationType="slide"
@@ -136,38 +158,40 @@ export default function HomeScreen({ navigation }) {
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
-                marginVertical: "50%",
               }}
             >
-              <View style={styles.createProjectModalView}>
+              <View
+                style={
+                  currentTheme === "dark"
+                    ? styles.createProjectModalDarkView
+                    : styles.createProjectModalLightView
+                }
+              >
                 <TextInput
-                  style={{
-                    height: 40,
-                    width: 150,
-                    borderWidth: 1,
-                    marginTop: 20,
-                    borderRadius: 10,
-                  }}
+                  style={currentTheme === "dark" ? styles.textInputDark : styles.textInputLight}
                   placeholder="Enter project name..."
                   onChangeText={(newText) => setInput(newText)}
+                  placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
                   defaultValue={input}
                 />
-                <Pressable
+                <TouchableOpacity
                   style={styles.button}
                   onPress={() => {
                     setCreateProjectModalVisible(false);
+                    createNewProject(input);
                   }}
                 >
                   <Text style={{ color: "white" }}>Create Project</Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+
+                <TouchableOpacity
                   style={styles.buttonClose}
                   onPress={() => {
                     setCreateProjectModalVisible(false);
                   }}
                 >
                   <Text style={{ color: "white" }}>Cancel</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>
@@ -180,6 +204,8 @@ export default function HomeScreen({ navigation }) {
                     action={() => navigation.navigate("Project_Details", { id: item.id })}
                     key={item.id}
                     title={item.projectName}
+                    theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                    textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                   />
                 );
               })}
@@ -205,8 +231,13 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
   },
-  scrollView: {
+  scrollViewLight: {
     height: "100%",
+    backgroundColor: "#FFFFFF",
+  },
+  scrollViewDark: {
+    height: "100%",
+    backgroundColor: "#1C1C1C",
   },
   centeredView: {
     flex: 1,
@@ -216,12 +247,14 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 20,
     padding: 10,
+    marginTop: 20,
     elevation: 2,
     backgroundColor: "darkgreen",
   },
   buttonClose: {
     borderRadius: 20,
     padding: 10,
+    marginTop: 10,
     elevation: 2,
     backgroundColor: "darkred",
   },
@@ -230,19 +263,37 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "contain",
   },
-
-  createProjectModalView: {
+  createProjectModalDarkView: {
+    backgroundColor: "#1F1F1F",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    elevation: 10,
+  },
+  createProjectModalLightView: {
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    elevation: 10,
+  },
+  textInputDark: {
+    borderColor: "white",
+    color: "white",
+    height: 40,
+    width: 155,
+    borderWidth: 1,
+    marginTop: 20,
+    borderRadius: 10,
+    paddingLeft: 5,
+  },
+  textInputLight: {
+    borderColor: "black",
+    height: 40,
+    width: 155,
+    borderWidth: 1,
+    marginTop: 20,
+    borderRadius: 10,
+    paddingLeft: 5,
   },
 });

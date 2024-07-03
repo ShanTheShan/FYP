@@ -6,8 +6,9 @@ import { useIsFocused } from "@react-navigation/native";
 
 import { db } from "../constants/database";
 
+import { themeContext } from "../context/themeContext";
+
 export default function ProjectDetails({ navigation, route }) {
-  //TODO redo the the task deletion and progress bar increment
   const isFocused = useIsFocused();
 
   //inititae id that was passed from overview page
@@ -16,9 +17,14 @@ export default function ProjectDetails({ navigation, route }) {
   //array state to store project tasks
   const [projectDetails, uploadProjectDetails] = useState([]);
 
-  const getAllTasks = () => {
+  //hook to change the val of progress bar
+  const [progressValue, setProgressValue] = useState(0);
+
+  const getAllTasks = async () => {
     try {
-      const allRows = db.getAllSync("SELECT * FROM ProjectDetails WHERE projectId = ?", [id]);
+      const allRows = await db.getAllAsync("SELECT * FROM ProjectDetails WHERE projectId = ?", [
+        id,
+      ]);
       uploadProjectDetails(allRows);
     } catch (error) {
       console.log(error);
@@ -32,8 +38,14 @@ export default function ProjectDetails({ navigation, route }) {
     }
   }, [isFocused]);
 
-  // //hook to change the val of progress bar
-  const [progressValue, setProgressValue] = useState(0);
+  const handleTaskTouch = () => {
+    console.log("pressed");
+  };
+
+  const dummy = () => {
+    console.log(id);
+    console.log(projectDetails);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,7 +56,7 @@ export default function ProjectDetails({ navigation, route }) {
       <TableView>
         <Section>
           {projectDetails.map((item) => (
-            <Cell key={item.id} title={item.tasks} />
+            <Cell key={item.id} title={item.tasks} onPress={handleTaskTouch} />
           ))}
         </Section>
       </TableView>
@@ -54,6 +66,9 @@ export default function ProjectDetails({ navigation, route }) {
           onPress={() => navigation.navigate("Project_Task", { id: id })}
         >
           <Text style={{ color: "white" }}> Add Task </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.submitButton} onPress={dummy}>
+          <Text style={{ color: "white" }}> Adummy </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -13,7 +13,6 @@ import ProjectTaskScreen from "../screens/TaskCreationScreen";
 import NotesScreen from "../screens/NotesScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
-import { ThemeStateProvider } from "../context/themeContext";
 import useHeaderBackground from "../hooks/headerBackground";
 import useHeaderTitle from "../hooks/headerTitle";
 

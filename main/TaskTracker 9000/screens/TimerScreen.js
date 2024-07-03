@@ -1,10 +1,14 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
 import { StyleSheet, Text, View, Button, SafeAreaView, Alert } from "react-native";
 
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 
+import { themeContext } from "../context/themeContext";
+
 //timer page main screen
 function TimerScreen() {
+  const { currentTheme } = useContext(themeContext);
+
   //button state
   const [timerState, setState] = useState(false);
   //button duration
@@ -45,7 +49,7 @@ function TimerScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.timerScreen}>
+      <View style={currentTheme === "dark" ? styles.timerViewDark : styles.timerViewLight}>
         <View>
           <CountdownCircleTimer
             key={time}
@@ -72,11 +76,19 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
-  timerScreen: {
+  timerViewDark: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#1C1C1C",
+  },
+  timerViewLight: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
   },
 });
 

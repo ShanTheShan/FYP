@@ -12,6 +12,8 @@ import {
 
 import { db } from "../constants/database";
 
+import { themeContext } from "../context/themeContext";
+
 export default function ProjectTaskScreen({ navigation, route }) {
   //the project id we a creating a task for
   const { id } = route.params;
