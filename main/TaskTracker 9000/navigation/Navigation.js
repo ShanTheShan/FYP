@@ -1,8 +1,8 @@
-import { React } from "react";
+import { React, useContext, useEffect, useState } from "react";
 import { TouchableOpacity, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator, BottomTabBar } from "@react-navigation/bottom-tabs";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import HomeScreen from "../screens/HomeScreen";
 import TimerScreen from "../screens/TimerScreen";
@@ -13,17 +13,28 @@ import ProjectTaskScreen from "../screens/TaskCreationScreen";
 import NotesScreen from "../screens/NotesScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
+import { ThemeStateProvider } from "../context/themeContext";
+import useHeaderBackground from "../hooks/headerBackground";
+import useHeaderTitle from "../hooks/headerTitle";
+
 // navigation stack object
 const ProjectStack = createStackNavigator();
 
 //a stack for each bottom navigation
 function ProjectStackScreen({ navigation }) {
+  const headerBackground = useHeaderBackground();
+  const headerTitle = useHeaderTitle();
+
   return (
     <ProjectStack.Navigator>
       <ProjectStack.Screen
         name="Projects Overview"
         component={HomeScreen}
         options={{
+          headerTitleStyle: { color: headerTitle },
+          headerStyle: {
+            backgroundColor: headerBackground,
+          },
           headerRight: () => (
             <TouchableOpacity
               style={{ paddingRight: 15 }}
@@ -50,12 +61,19 @@ function ProjectStackScreen({ navigation }) {
 const TimerStack = createStackNavigator();
 
 function TimerStackScreen({ navigation }) {
+  const headerBackground = useHeaderBackground();
+  const headerTitle = useHeaderTitle();
+
   return (
     <TimerStack.Navigator>
       <TimerStack.Screen
         name="Focus Tool"
         component={TimerScreen}
         options={{
+          headerTitleStyle: { color: headerTitle },
+          headerStyle: {
+            backgroundColor: headerBackground,
+          },
           headerRight: () => (
             <TouchableOpacity
               style={{ paddingRight: 15 }}
@@ -75,12 +93,19 @@ function TimerStackScreen({ navigation }) {
 const TaskStack = createStackNavigator();
 
 function TaskStackScreen({ navigation }) {
+  const headerBackground = useHeaderBackground();
+  const headerTitle = useHeaderTitle();
+
   return (
     <TaskStack.Navigator>
       <TaskStack.Screen
         name="Todos"
         component={TodoScreen}
         options={{
+          headerTitleStyle: { color: headerTitle },
+          headerStyle: {
+            backgroundColor: headerBackground,
+          },
           headerRight: () => (
             <TouchableOpacity
               style={{ paddingRight: 15 }}
@@ -100,12 +125,19 @@ function TaskStackScreen({ navigation }) {
 const NotesStack = createStackNavigator();
 
 function NotesStackScreen({ navigation }) {
+  const headerBackground = useHeaderBackground();
+  const headerTitle = useHeaderTitle();
+
   return (
     <NotesStack.Navigator>
       <NotesStack.Screen
         name="My Notes"
         component={NotesScreen}
         options={{
+          headerTitleStyle: { color: headerTitle },
+          headerStyle: {
+            backgroundColor: headerBackground,
+          },
           headerRight: () => (
             <TouchableOpacity
               style={{ paddingRight: 15 }}
@@ -126,9 +158,18 @@ const Tab = createBottomTabNavigator();
 
 //hiding the settings tab, but still navigable
 export default function CustomNavigator() {
+  const headerBackground = useHeaderBackground();
+
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: headerBackground,
+          },
+        }}
+      >
         <Tab.Screen name="Project" component={ProjectStackScreen} />
         <Tab.Screen name="Timer" component={TimerStackScreen} />
         <Tab.Screen name="Notes" component={NotesStackScreen} />

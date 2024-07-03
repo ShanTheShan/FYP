@@ -7,7 +7,6 @@ import { useIsFocused } from "@react-navigation/native";
 import { db } from "../constants/database";
 
 export default function ProjectDetails({ navigation, route }) {
-  //TODO redo the the task deletion and progress bar increment
   const isFocused = useIsFocused();
 
   //inititae id that was passed from overview page

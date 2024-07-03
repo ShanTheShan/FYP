@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -18,6 +18,10 @@ import { StatusBar } from "expo-status-bar";
 import { db } from "../constants/database";
 import { AddButton } from "../components/customButtons";
 
+import { themeContext } from "../context/themeContext";
+
+import useStatusBarStyle from "../hooks/statusBar";
+
 //custom cell for project board page
 const HomescreenCell = (props) => (
   <Cell
@@ -32,6 +36,9 @@ const HomescreenCell = (props) => (
 );
 
 export default function HomeScreen({ navigation }) {
+  //global theme state
+  const { currentTheme } = useContext(themeContext);
+
   //tutorial state modal
   const [modalVisible, setModalVisible] = useState(true);
 
@@ -40,6 +47,9 @@ export default function HomeScreen({ navigation }) {
 
   //text input state
   const [input, setInput] = useState("");
+
+  //status bar theme
+  const [statusBarColor, statusBarTextColor] = useStatusBarStyle();
 
   //array of images for tutorial
   const tutorialImages = [
@@ -68,6 +78,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView>
+      <StatusBar backgroundColor={statusBarColor} style={statusBarTextColor} />
       <View style={styles.centeredView}>
         <Modal
           animationType="fade"
