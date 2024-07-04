@@ -14,6 +14,7 @@ import {
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import Carousel from "react-native-reanimated-carousel";
+import { useIsFocused } from "@react-navigation/native";
 
 import { StatusBar } from "expo-status-bar";
 
@@ -37,7 +38,7 @@ const HomescreenCell = (props) => (
         </Text>
         <Progress.Bar
           style={{ marginBottom: 5 }}
-          progress={0.5}
+          progress={props.progressValue}
           width={200}
           borderColor="black"
           borderWidth={1}
@@ -51,6 +52,9 @@ const HomescreenCell = (props) => (
 );
 
 export default function HomeScreen({ navigation }) {
+  //if screen is focused
+  const isFocused = useIsFocused();
+
   //global theme state
   const { currentTheme } = useContext(themeContext);
 
@@ -73,29 +77,39 @@ export default function HomeScreen({ navigation }) {
     require("../assets/tutorial_timer.jpg"),
   ];
 
-  //query created projects
   //project names state
   const [projects, storeProjects] = useState([]);
 
-  useEffect(() => {
-    const getAll = async () => {
-      try {
-        const allRows = await db.getAllAsync("SELECT * FROM Projects");
-        storeProjects(allRows);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const getAll = async () => {
+    try {
+      const allRows = await db.getAllAsync("SELECT * FROM Projects");
+      storeProjects(allRows);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  //run on mount
+  useEffect(() => {
     getAll();
-  }, [projects]);
+  }, []);
+
+  //run when a project is deleted, and we are back to home page
+  useEffect(() => {
+    if (isFocused) {
+      getAll();
+    }
+  }, [isFocused]);
 
   const createNewProject = async (value) => {
     try {
-      await db.runAsync("INSERT INTO Projects VALUES (?,?)", [null, value]);
+      await db.runAsync("INSERT INTO Projects (projectName,progress) VALUES (?,?)", [value, 0]);
+      //fetch the updated list of projects after insertion
+      await getAll();
       setInput("");
     } catch (error) {
       console.log(error);
+      s;
     }
   };
 
@@ -203,6 +217,7 @@ export default function HomeScreen({ navigation }) {
                     action={() => navigation.navigate("Project Details", { id: item.id })}
                     key={item.id}
                     title={item.projectName}
+                    progressValue={item.progress}
                     theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                     textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                   />

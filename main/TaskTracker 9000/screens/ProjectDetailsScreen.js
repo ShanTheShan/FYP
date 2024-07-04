@@ -32,17 +32,23 @@ export default function ProjectDetails({ navigation, route }) {
       const allRows = await db.getAllAsync("SELECT * FROM ProjectDetails WHERE projectId = ?", [
         id,
       ]);
-      const projName = await db.getFirstAsync("SELECT projectName FROM Projects WHERE id = ?", [
-        id,
-      ]);
+      // const projName = await db.getFirstAsync(
+      //   "SELECT projectName, progress FROM Projects WHERE id = ?",
+      //   [id]
+      // );
+      const projectNameAndProgress = await db.getFirstAsync(
+        "SELECT projectName, progress FROM Projects WHERE id = ?",
+        [id]
+      );
 
       setProjectDetails(allRows);
-      setProjectName(projName.projectName);
+      setProjectName(projectNameAndProgress.projectName);
+      setProgressValue(projectNameAndProgress.progress);
 
-      let lengthOfProject = allRows.length;
+      const lengthOfProject = allRows.length;
       setTaskCount(lengthOfProject);
     } catch (error) {
-      console.log(error);
+      console.log("getAllTasks() error: ", error);
     }
   };
 
@@ -74,14 +80,20 @@ export default function ProjectDetails({ navigation, route }) {
     }
   };
 
-  const updateProgressBar = () => {
+  const updateProgressBar = async () => {
     //upon deletion, update tasks left and counter
-    let currentTasks = numberOfTasks - counter;
+    const currentTasks = numberOfTasks - counter;
     setCounter(counter + 1);
 
     //upon deletion, update progress bar
-    let calculatePercent = 1 - currentTasks / numberOfTasks;
+    const calculatePercent = 1 - currentTasks / numberOfTasks;
     setProgressValue(calculatePercent);
+
+    try {
+      await db.runAsync("UPDATE Projects SET progress = ? WHERE id = ?", [calculatePercent, id]);
+    } catch (error) {
+      console.log("updateProgressBar() error: ", error);
+    }
   };
 
   const deleteProject = async (id, navigation) => {

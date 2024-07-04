@@ -9,13 +9,14 @@ const intiatelizeDatabase = () => {
     db.execSync(`
           CREATE TABLE IF NOT EXISTS Projects (
           id INTEGER PRIMARY KEY, 
-          projectName TEXT NOT NULL);
+          projectName TEXT NOT NULL,
+          progress INTEGER
+          );
 
           CREATE TABLE IF NOT EXISTS ProjectDetails (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           projectId INTEGER NOT NULL, 
-          progress INTEGER NOT NULL,
-          tasks TEXT NOT NULL, 
+          tasks TEXT, 
           subtasks TEXT, 
           notes TEXT,
           image TEXT, 
