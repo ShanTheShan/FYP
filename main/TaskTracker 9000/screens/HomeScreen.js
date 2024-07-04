@@ -23,7 +23,6 @@ import { AddButton } from "../components/customButtons";
 import { themeContext } from "../context/themeContext";
 
 import useStatusBarStyle from "../hooks/statusBar";
-//import { TouchableOpacity } from "react-native-gesture-handler";
 
 //custom cell for project board page
 const HomescreenCell = (props) => (
@@ -201,7 +200,7 @@ export default function HomeScreen({ navigation }) {
               {projects.map((item) => {
                 return (
                   <HomescreenCell
-                    action={() => navigation.navigate("Project_Details", { id: item.id })}
+                    action={() => navigation.navigate("Project Details", { id: item.id })}
                     key={item.id}
                     title={item.projectName}
                     theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}

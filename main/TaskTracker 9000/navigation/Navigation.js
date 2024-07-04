@@ -46,13 +46,33 @@ function ProjectStackScreen({ navigation }) {
           ),
         }}
       />
-      <ProjectStack.Screen name="Project_Details" component={ProjectDetails} />
+      <ProjectStack.Screen
+        name="Project Details"
+        component={ProjectDetails}
+        options={{
+          headerTintColor: headerTitle,
+          headerTitleStyle: { color: headerTitle },
+          headerStyle: {
+            backgroundColor: headerBackground,
+          },
+        }}
+      />
       <ProjectStack.Screen
         name="Camera"
         component={RenderCamera}
         options={{ headerShown: false }}
       />
-      <ProjectStack.Screen name="Project_Task" component={ProjectTaskScreen} />
+      <ProjectStack.Screen
+        name="Create Task"
+        component={ProjectTaskScreen}
+        options={{
+          headerTintColor: headerTitle,
+          headerTitleStyle: { color: headerTitle },
+          headerStyle: {
+            backgroundColor: headerBackground,
+          },
+        }}
+      />
     </ProjectStack.Navigator>
   );
 }

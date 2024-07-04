@@ -23,9 +23,9 @@ function TimerScreen() {
     const seconds = remainingTime % 60;
 
     return (
-      <Text style={{ fontSize: 30 }}>{`${hours}:${minutes < 10 ? "0" : ""}${minutes}:${
-        seconds < 10 ? "0" : ""
-      }${seconds}`}</Text>
+      <Text style={currentTheme === "dark" ? styles.digitsDark : styles.digitsLight}>{`${hours}:${
+        minutes < 10 ? "0" : ""
+      }${minutes}:${seconds < 10 ? "0" : ""}${seconds}`}</Text>
     );
   };
 
@@ -89,6 +89,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#FFFFFF",
+  },
+  digitsLight: {
+    fontSize: 30,
+    color: "black",
+  },
+  digitsDark: {
+    fontSize: 30,
+    color: "white",
   },
 });
 

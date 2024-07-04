@@ -9,7 +9,7 @@ const SmallButton = ({ title, color, press }) => {
   return <Button onPress={press} title={title} color={color} style={styles.small} />;
 };
 
-const AddButton = ({ press }) => {
+const AddButton = ({ press, heightOffset }) => {
   return (
     <TouchableOpacity onPress={press} style={styles.addButton}>
       <Text style={{ color: "white", fontSize: 30 }}>+</Text>
@@ -17,17 +17,37 @@ const AddButton = ({ press }) => {
   );
 };
 
+const DeleteButton = ({ press }) => {
+  return (
+    <TouchableOpacity onPress={press} style={styles.deleteButton}>
+      <Text style={{ color: "white", fontSize: 20 }}>🗑️</Text>
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
   addButton: {
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "darkgreen",
     borderRadius: 10,
     position: "absolute",
-    bottom: windowHeight - (windowHeight - 20),
+    bottom: windowHeight - (windowHeight - 100),
+    width: 50,
+    height: 50,
+    right: 20,
+  },
+  deleteButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "darkred",
+    borderRadius: 10,
+    position: "absolute",
+    bottom: windowHeight - (windowHeight - 30),
     width: 50,
     height: 50,
     right: 20,
   },
 });
 
-export { SmallButton, AddButton };
+export { SmallButton, AddButton, DeleteButton };
