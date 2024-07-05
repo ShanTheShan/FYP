@@ -9,26 +9,49 @@ import { db } from "../constants/database";
 import { themeContext } from "../context/themeContext";
 import { AddButton, DeleteButton } from "../components/customButtons";
 
-//custom cell for project board page
-const DetailsCell = (props) => (
-  <Cell
-    key={props.key}
-    onPress={props.action}
-    backgroundColor={props.theme}
-    titleTextColor={props.textColor}
-    {...props}
-    cellContentView={
-      <View>
-        <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
-          {props.tasks}
-        </Text>
-        <Text style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
-          {props.deadline}
-        </Text>
-      </View>
-    }
-  />
-);
+//custom cell for project details cell
+const DetailsCell = (props) => {
+  //delimit subtask using our custom delimiter
+  const reformedSubTaskData = props.subtasks.split("@#");
+  const deadlineSplitted = props.deadline.split("|");
+  let reformedDeadlineData = null;
+
+  if (deadlineSplitted[1] == " null") {
+    reformedDeadlineData = deadlineSplitted[0];
+  } else {
+    reformedDeadlineData = deadlineSplitted;
+  }
+
+  return (
+    <Cell
+      key={props.key}
+      onPress={props.action}
+      backgroundColor={props.theme}
+      titleTextColor={props.textColor}
+      {...props}
+      cellContentView={
+        <View>
+          <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
+            {props.tasks}
+          </Text>
+          {props.deadline != "null | null" ? (
+            <Text style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
+              {reformedDeadlineData}
+            </Text>
+          ) : null}
+
+          <View>
+            {reformedSubTaskData.map((item, i) => (
+              <Text key={i} style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
+                {item}
+              </Text>
+            ))}
+          </View>
+        </View>
+      }
+    />
+  );
+};
 
 export default function ProjectDetails({ navigation, route }) {
   //global theme state
@@ -43,6 +66,7 @@ export default function ProjectDetails({ navigation, route }) {
   const [projectDetails, setProjectDetails] = useState([]);
   //array state to store project tasks
   const [projectName, setProjectName] = useState([]);
+
   //for progress bar logic
   const [progressValue, setProgressValue] = useState(0);
   const [counter, setCounter] = useState(1);
@@ -77,6 +101,7 @@ export default function ProjectDetails({ navigation, route }) {
   }, [isFocused]);
 
   const handleTaskTouch = (task) => {
+    console.log(task);
     try {
       deleteTask(task);
       updateProgressBar();
@@ -104,6 +129,7 @@ export default function ProjectDetails({ navigation, route }) {
 
     //upon deletion, update progress bar
     const calculatePercent = 1 - currentTasks / numberOfTasks;
+    console.log(calculatePercent);
     setProgressValue(calculatePercent);
 
     try {
@@ -147,6 +173,7 @@ export default function ProjectDetails({ navigation, route }) {
                 key={item.id}
                 tasks={item.tasks}
                 deadline={item.deadline}
+                subtasks={item.subtasks}
                 textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                 backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                 onPress={() => {

@@ -7,6 +7,7 @@ import {
   TextInput,
   SafeAreaView,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -36,11 +37,16 @@ export default function ProjectTaskScreen({ navigation, route }) {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
+  //subtasks states
+  const [subTasksModal, setSubTasksModalVisible] = useState(false);
+  const [input, setInput] = useState("");
+  const [subTaskArray, setSubTaskArray] = useState([]);
+
   //SQLite query to insert task to project
   const insertTaskQuery = () => {
-    //the '@' symbol is used as a separator
+    //the '@#' symbol is used as a separator
     let deadlineValue = dateFormatted + " | " + timeFormatted;
-    let subtasksValue = null;
+    let subtasksValue = subTaskArray.join("@#");
     let reminderValue = null;
     let notesValue = null;
     let imageValue = null;
@@ -51,9 +57,18 @@ export default function ProjectTaskScreen({ navigation, route }) {
       );
       //empty the text input so we can type again
       createTask("");
+      //empty datetime, subtask, images and reminder, for new input
+      setTimeFormater(null);
+      setDateFormater(null);
+      setSubTaskArray([]);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  //this function is ran when enter sub task is pressed in sub task modal
+  const createSubTask = (value) => {
+    setSubTaskArray((oldArray) => [...oldArray, value]);
   };
 
   //https://www.npmjs.com/package/@react-native-community/datetimepicker#usage
@@ -188,7 +203,10 @@ export default function ProjectTaskScreen({ navigation, route }) {
               : taskCreationScreenStyles.bulletsLight
           }
         >
-          <TouchableOpacity style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={{ flexDirection: "row" }}
+            onPress={() => setSubTasksModalVisible(true)}
+          >
             <Image
               source={require("../assets/subtasks.png")}
               style={taskCreationScreenStyles.image}
@@ -203,6 +221,81 @@ export default function ProjectTaskScreen({ navigation, route }) {
               Sub Tasks
             </Text>
           </TouchableOpacity>
+          {subTaskArray.length != 0 ? (
+            <View style={taskCreationScreenStyles.subTaskView}>
+              {subTaskArray.map((item, i) => {
+                return (
+                  <Text
+                    key={i}
+                    style={
+                      currentTheme === "dark"
+                        ? taskCreationScreenStyles.subTaskDark
+                        : taskCreationScreenStyles.subTaskLight
+                    }
+                  >
+                    {item}
+                  </Text>
+                );
+              })}
+            </View>
+          ) : null}
+          {subTasksModal ? (
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={subTasksModal}
+              statusBarTranslucent={true}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0, 0, 0, 0.8)",
+                }}
+              >
+                <View
+                  style={
+                    currentTheme === "dark"
+                      ? taskCreationScreenStyles.subTasksModalDarkView
+                      : taskCreationScreenStyles.subTasksModalLightView
+                  }
+                >
+                  <TextInput
+                    style={
+                      currentTheme === "dark"
+                        ? taskCreationScreenStyles.subTasksTextInputDark
+                        : taskCreationScreenStyles.subTasksTextInputLight
+                    }
+                    placeholder="Enter sub task..."
+                    onChangeText={(newText) => setInput(newText)}
+                    placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
+                    defaultValue={input}
+                  />
+                  <TouchableOpacity
+                    style={taskCreationScreenStyles.buttonEnter}
+                    onPress={() => {
+                      setSubTasksModalVisible(false);
+                      createSubTask(input);
+                      setInput("");
+                    }}
+                  >
+                    <Text style={{ color: "white" }}>Create Sub Task</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={taskCreationScreenStyles.buttonClose}
+                    onPress={() => {
+                      setSubTasksModalVisible(false);
+                      setInput("");
+                    }}
+                  >
+                    <Text style={{ color: "white" }}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          ) : null}
         </View>
         <View
           style={

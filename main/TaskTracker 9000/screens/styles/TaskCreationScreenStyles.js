@@ -54,7 +54,7 @@ export const taskCreationScreenStyles = StyleSheet.create({
     alignItems: "center",
   },
   bulletsLight: {
-    flexDirection: "row",
+    flexDirection: "column",
     marginTop: 30,
     justifyContent: "center",
     alignItems: "center",
@@ -73,14 +73,13 @@ export const taskCreationScreenStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    //marginLeft: "5%",
   },
   dateDark: {
     fontSize: 16,
     color: "white",
   },
   dateLight: {
-    fontSize: 10,
+    fontSize: 16,
     color: "black",
   },
   timeDark: {
@@ -89,8 +88,9 @@ export const taskCreationScreenStyles = StyleSheet.create({
     paddingLeft: 10,
   },
   timeLight: {
-    fontSize: 10,
+    fontSize: 16,
     color: "black",
+    paddingLeft: 10,
   },
   timeTouchableDark: {
     backgroundColor: "lightgrey",
@@ -99,7 +99,13 @@ export const taskCreationScreenStyles = StyleSheet.create({
     padding: 3,
     marginLeft: 10,
   },
-  timeTouchableLight: {},
+  timeTouchableLight: {
+    backgroundColor: "darkgrey",
+    fontSize: 15,
+    borderRadius: 5,
+    padding: 3,
+    marginLeft: 10,
+  },
   submitButton: {
     backgroundColor: "green",
     padding: 10,
@@ -108,5 +114,67 @@ export const taskCreationScreenStyles = StyleSheet.create({
     width: 80,
     borderRadius: 10,
     marginBottom: "30%",
+  },
+
+  buttonEnter: {
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 20,
+    elevation: 2,
+    backgroundColor: "darkgreen",
+  },
+  buttonClose: {
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 10,
+    elevation: 2,
+    backgroundColor: "darkred",
+  },
+  subTasksModalDarkView: {
+    backgroundColor: "#1F1F1F",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    elevation: 10,
+  },
+  subTasksModalLightView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    elevation: 10,
+  },
+  subTasksTextInputDark: {
+    borderColor: "white",
+    color: "white",
+    height: 40,
+    width: 155,
+    borderWidth: 1,
+    marginTop: 20,
+    borderRadius: 10,
+    paddingLeft: 5,
+  },
+  subTasksTextInputLight: {
+    borderColor: "black",
+    height: 40,
+    width: 155,
+    borderWidth: 1,
+    marginTop: 20,
+    borderRadius: 10,
+    paddingLeft: 5,
+  },
+  subTaskView: {
+    flexDirection: "column",
+    marginTop: 5,
+  },
+  subTaskDark: {
+    paddingTop: 5,
+    fontSize: 15,
+    color: "white",
+  },
+  subTaskLight: {
+    paddingTop: 5,
+    fontSize: 15,
+    color: "black",
   },
 });

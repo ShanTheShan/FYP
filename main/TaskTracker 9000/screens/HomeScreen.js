@@ -14,6 +14,7 @@ import {
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import Carousel from "react-native-reanimated-carousel";
+
 import { useIsFocused } from "@react-navigation/native";
 
 import { StatusBar } from "expo-status-bar";
@@ -22,6 +23,7 @@ import { db } from "../constants/database";
 import { AddButton } from "../components/customButtons";
 
 import { themeContext } from "../context/themeContext";
+import { homeScreenStyles } from "./styles/HomeScreenStyles";
 
 import useStatusBarStyle from "../hooks/statusBar";
 
@@ -116,7 +118,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={statusBarColor} style={statusBarTextColor} />
-      <View style={styles.centeredView}>
+      <View style={homeScreenStyles.centeredView}>
         <Modal
           animationType="fade"
           transparent={false}
@@ -125,7 +127,7 @@ export default function HomeScreen({ navigation }) {
             setModalVisible(!modalVisible);
           }}
         >
-          <View style={styles.centeredView}>
+          <View style={homeScreenStyles.centeredView}>
             <Carousel
               loop
               width={200}
@@ -140,7 +142,7 @@ export default function HomeScreen({ navigation }) {
                     justifyContent: "center",
                   }}
                 >
-                  <Image source={item} style={styles.image} />
+                  <Image source={item} style={homeScreenStyles.image} />
                 </View>
               )}
             />
@@ -152,13 +154,22 @@ export default function HomeScreen({ navigation }) {
               Lorem Impsum.
             </Text>
 
-            <Pressable style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>OKAY</Text>
+            <Pressable
+              style={homeScreenStyles.button}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={homeScreenStyles.textStyle}>OKAY</Text>
             </Pressable>
           </View>
         </Modal>
       </View>
-      <ScrollView style={currentTheme === "dark" ? styles.scrollViewDark : styles.scrollViewLight}>
+      <ScrollView
+        style={
+          currentTheme === "dark"
+            ? homeScreenStyles.scrollViewDark
+            : homeScreenStyles.scrollViewLight
+        }
+      >
         {createProjectModal ? (
           <Modal
             animationType="slide"
@@ -176,31 +187,37 @@ export default function HomeScreen({ navigation }) {
               <View
                 style={
                   currentTheme === "dark"
-                    ? styles.createProjectModalDarkView
-                    : styles.createProjectModalLightView
+                    ? homeScreenStyles.createProjectModalDarkView
+                    : homeScreenStyles.createProjectModalLightView
                 }
               >
                 <TextInput
-                  style={currentTheme === "dark" ? styles.textInputDark : styles.textInputLight}
+                  style={
+                    currentTheme === "dark"
+                      ? homeScreenStyles.textInputDark
+                      : homeScreenStyles.textInputLight
+                  }
                   placeholder="Enter project name..."
                   onChangeText={(newText) => setInput(newText)}
                   placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
                   defaultValue={input}
                 />
                 <TouchableOpacity
-                  style={styles.button}
+                  style={homeScreenStyles.button}
                   onPress={() => {
                     setCreateProjectModalVisible(false);
                     createNewProject(input);
+                    setInput("");
                   }}
                 >
                   <Text style={{ color: "white" }}>Create Project</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.buttonClose}
+                  style={homeScreenStyles.buttonClose}
                   onPress={() => {
                     setCreateProjectModalVisible(false);
+                    setInput("");
                   }}
                 >
                   <Text style={{ color: "white" }}>Cancel</Text>
@@ -235,79 +252,3 @@ export default function HomeScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  safeArea: {
-    flex: 1,
-    height: "100%",
-  },
-  scrollViewLight: {
-    height: "100%",
-    backgroundColor: "#FFFFFF",
-  },
-  scrollViewDark: {
-    height: "100%",
-    backgroundColor: "#1C1C1C",
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 20,
-    elevation: 2,
-    backgroundColor: "darkgreen",
-  },
-  buttonClose: {
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 10,
-    elevation: 2,
-    backgroundColor: "darkred",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-  },
-  createProjectModalDarkView: {
-    backgroundColor: "#1F1F1F",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    elevation: 10,
-  },
-  createProjectModalLightView: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    elevation: 10,
-  },
-  textInputDark: {
-    borderColor: "white",
-    color: "white",
-    height: 40,
-    width: 155,
-    borderWidth: 1,
-    marginTop: 20,
-    borderRadius: 10,
-    paddingLeft: 5,
-  },
-  textInputLight: {
-    borderColor: "black",
-    height: 40,
-    width: 155,
-    borderWidth: 1,
-    marginTop: 20,
-    borderRadius: 10,
-    paddingLeft: 5,
-  },
-});
