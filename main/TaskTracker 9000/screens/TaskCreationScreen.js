@@ -6,14 +6,15 @@ import {
   Image,
   TextInput,
   SafeAreaView,
-  Alert,
   TouchableOpacity,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { db } from "../constants/database";
 
 import { themeContext } from "../context/themeContext";
 import { AddButton } from "../components/customButtons";
+import { taskCreationScreenStyles } from "./styles/TaskCreationScreenStyles";
 
 export default function ProjectTaskScreen({ navigation, route }) {
   //the project id we a creating a task for
@@ -25,10 +26,29 @@ export default function ProjectTaskScreen({ navigation, route }) {
   //text input state
   const [task, createTask] = useState("");
 
+  //date time states
+  const [date, setDate] = useState(new Date());
+  const [dateFormatted, setDateFormater] = useState(null);
+
+  const [time, setTime] = useState(new Date());
+  const [timeFormatted, setTimeFormater] = useState(null);
+
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+
   //SQLite query to insert task to project
   const insertTaskQuery = () => {
+    //the '@' symbol is used as a separator
+    let deadlineValue = dateFormatted + " | " + timeFormatted;
+    let subtasksValue = null;
+    let reminderValue = null;
+    let notesValue = null;
+    let imageValue = null;
     try {
-      db.runSync("INSERT INTO ProjectDetails (projectId, tasks) VALUES (?,?)", [id, task]);
+      db.runSync(
+        "INSERT INTO ProjectDetails (projectId, tasks,subtasks,deadline,reminder,notes,image) VALUES (?,?,?,?,?,?,?)",
+        [id, task, subtasksValue, deadlineValue, reminderValue, notesValue, imageValue]
+      );
       //empty the text input so we can type again
       createTask("");
     } catch (error) {
@@ -36,46 +56,196 @@ export default function ProjectTaskScreen({ navigation, route }) {
     }
   };
 
+  //https://www.npmjs.com/package/@react-native-community/datetimepicker#usage
+
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+    //convert to string date
+    const value = currentDate.toLocaleString("en-GB").split(",", 1)[0];
+    setDateFormater(value);
+  };
+
+  const onChangeTime = (event, selectedDate) => {
+    const currentTime = selectedDate;
+    setShow(false);
+    setTime(currentTime);
+    const value = currentTime.toTimeString().slice(0, 5);
+    setTimeFormater(value);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
+
   return (
-    <SafeAreaView style={currentTheme === "dark" ? styles.safeAreaDark : styles.safeAreaLight}>
-      <View style={currentTheme === "dark" ? styles.containerDark : styles.containerLight}>
+    <SafeAreaView
+      style={
+        currentTheme === "dark"
+          ? taskCreationScreenStyles.safeAreaDark
+          : taskCreationScreenStyles.safeAreaLight
+      }
+    >
+      <View
+        style={
+          currentTheme === "dark"
+            ? taskCreationScreenStyles.containerDark
+            : taskCreationScreenStyles.containerLight
+        }
+      >
         <TextInput
-          style={currentTheme === "dark" ? styles.textInputDark : styles.textInputLight}
+          style={
+            currentTheme === "dark"
+              ? taskCreationScreenStyles.textInputDark
+              : taskCreationScreenStyles.textInputLight
+          }
           placeholder="Enter Task"
           onChangeText={(newText) => createTask(newText)}
           defaultValue={task}
         />
-        <View style={currentTheme === "dark" ? styles.bulletsDark : styles.bulletsLight}>
-          <TouchableOpacity style={{ flexDirection: "row" }}>
-            <Image source={require("../assets/deadline.png")} style={styles.image} />
-            <Text style={currentTheme === "dark" ? styles.bulletTextDark : styles.bulletTextLight}>
+        <View
+          style={
+            currentTheme === "dark"
+              ? taskCreationScreenStyles.bulletsDark
+              : taskCreationScreenStyles.bulletsLight
+          }
+        >
+          <TouchableOpacity style={{ flexDirection: "row" }} onPress={showDatepicker}>
+            <Image
+              source={require("../assets/deadline.png")}
+              style={taskCreationScreenStyles.image}
+            />
+            <Text
+              style={
+                currentTheme === "dark"
+                  ? taskCreationScreenStyles.bulletTextDark
+                  : taskCreationScreenStyles.bulletTextLight
+              }
+            >
               Deadline
             </Text>
           </TouchableOpacity>
+          {dateFormatted != null ? (
+            <View style={taskCreationScreenStyles.dateTimeView}>
+              <Text
+                style={
+                  currentTheme === "dark"
+                    ? taskCreationScreenStyles.dateDark
+                    : taskCreationScreenStyles.dateLight
+                }
+              >
+                {dateFormatted}
+              </Text>
+              {timeFormatted != null ? (
+                <Text
+                  style={
+                    currentTheme === "dark"
+                      ? taskCreationScreenStyles.timeDark
+                      : taskCreationScreenStyles.timeLight
+                  }
+                >
+                  {timeFormatted}
+                </Text>
+              ) : (
+                <TouchableOpacity style={{ flexDirection: "row" }} onPress={showTimepicker}>
+                  <Text
+                    style={
+                      currentTheme === "dark"
+                        ? taskCreationScreenStyles.timeTouchableDark
+                        : taskCreationScreenStyles.timeTouchableLight
+                    }
+                  >
+                    TIME
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          ) : null}
+          {show ? (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              onChange={mode == "date" ? onChangeDate : onChangeTime}
+            />
+          ) : null}
         </View>
-        <View style={currentTheme === "dark" ? styles.bulletsDark : styles.bulletsLight}>
+        <View
+          style={
+            currentTheme === "dark"
+              ? taskCreationScreenStyles.bulletsDark
+              : taskCreationScreenStyles.bulletsLight
+          }
+        >
           <TouchableOpacity style={{ flexDirection: "row" }}>
-            <Image source={require("../assets/deadline.png")} style={styles.image} />
-            <Text style={currentTheme === "dark" ? styles.bulletTextDark : styles.bulletTextLight}>
+            <Image
+              source={require("../assets/subtasks.png")}
+              style={taskCreationScreenStyles.image}
+            />
+            <Text
+              style={
+                currentTheme === "dark"
+                  ? taskCreationScreenStyles.bulletTextDark
+                  : taskCreationScreenStyles.bulletTextLight
+              }
+            >
               Sub Tasks
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={currentTheme === "dark" ? styles.bulletsDark : styles.bulletsLight}>
+        <View
+          style={
+            currentTheme === "dark"
+              ? taskCreationScreenStyles.bulletsDark
+              : taskCreationScreenStyles.bulletsLight
+          }
+        >
           <TouchableOpacity
             onPress={() => navigation.navigate("Camera", { pid: id })}
             style={{ flexDirection: "row" }}
           >
-            <Image source={require("../assets/camera.png")} style={styles.image} />
-            <Text style={currentTheme === "dark" ? styles.bulletTextDark : styles.bulletTextLight}>
+            <Image
+              source={require("../assets/camera.png")}
+              style={taskCreationScreenStyles.image}
+            />
+            <Text
+              style={
+                currentTheme === "dark"
+                  ? taskCreationScreenStyles.bulletTextDark
+                  : taskCreationScreenStyles.bulletTextLight
+              }
+            >
               Add Image
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={currentTheme === "dark" ? styles.bulletsDark : styles.bulletsLight}>
+        <View
+          style={
+            currentTheme === "dark"
+              ? taskCreationScreenStyles.bulletsDark
+              : taskCreationScreenStyles.bulletsLight
+          }
+        >
           <TouchableOpacity style={{ flexDirection: "row" }}>
-            <Image source={require("../assets/deadline.png")} style={styles.image} />
-            <Text style={currentTheme === "dark" ? styles.bulletTextDark : styles.bulletTextLight}>
+            <Image source={require("../assets/bell.png")} style={taskCreationScreenStyles.image} />
+            <Text
+              style={
+                currentTheme === "dark"
+                  ? taskCreationScreenStyles.bulletTextDark
+                  : taskCreationScreenStyles.bulletTextLight
+              }
+            >
               Reminder
             </Text>
           </TouchableOpacity>
@@ -92,83 +262,3 @@ export default function ProjectTaskScreen({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeAreaDark: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: "#1C1C1C",
-  },
-  safeAreaLight: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: "#FFFFFF",
-  },
-  image: {
-    width: 30,
-    height: 30,
-  },
-  containerDark: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    marginLeft: "5%",
-    backgroundColor: "#1C1C1C",
-  },
-  containerLight: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    marginLeft: "5%",
-    backgroundColor: "#FFFFFF",
-  },
-
-  textInputDark: {
-    height: 50,
-    width: "90%",
-    borderWidth: 2,
-    marginTop: 20,
-    paddingLeft: 10,
-    backgroundColor: "lightgrey",
-  },
-  textInputLight: {
-    height: 40,
-    width: "90%",
-    borderWidth: 2,
-    marginTop: 20,
-    paddingLeft: 10,
-  },
-  bulletsDark: {
-    flexDirection: "row",
-    marginTop: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  bulletsLight: {
-    flexDirection: "row",
-    marginTop: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  bulletTextDark: {
-    fontSize: 20,
-    paddingLeft: 10,
-    color: "white",
-  },
-  bulletTextLight: {
-    fontSize: 20,
-    paddingLeft: 10,
-    color: "black",
-  },
-  submitButton: {
-    backgroundColor: "green",
-    padding: 10,
-    margin: 15,
-    height: 40,
-    width: 80,
-    borderRadius: 10,
-    marginBottom: "30%",
-  },
-});

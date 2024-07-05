@@ -9,6 +9,27 @@ import { db } from "../constants/database";
 import { themeContext } from "../context/themeContext";
 import { AddButton, DeleteButton } from "../components/customButtons";
 
+//custom cell for project board page
+const DetailsCell = (props) => (
+  <Cell
+    key={props.key}
+    onPress={props.action}
+    backgroundColor={props.theme}
+    titleTextColor={props.textColor}
+    {...props}
+    cellContentView={
+      <View>
+        <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
+          {props.tasks}
+        </Text>
+        <Text style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
+          {props.deadline}
+        </Text>
+      </View>
+    }
+  />
+);
+
 export default function ProjectDetails({ navigation, route }) {
   //global theme state
   const { currentTheme } = useContext(themeContext);
@@ -32,10 +53,6 @@ export default function ProjectDetails({ navigation, route }) {
       const allRows = await db.getAllAsync("SELECT * FROM ProjectDetails WHERE projectId = ?", [
         id,
       ]);
-      // const projName = await db.getFirstAsync(
-      //   "SELECT projectName, progress FROM Projects WHERE id = ?",
-      //   [id]
-      // );
       const projectNameAndProgress = await db.getFirstAsync(
         "SELECT projectName, progress FROM Projects WHERE id = ?",
         [id]
@@ -126,10 +143,11 @@ export default function ProjectDetails({ navigation, route }) {
         <TableView>
           <Section>
             {projectDetails.map((item) => (
-              <Cell
+              <DetailsCell
                 key={item.id}
-                title={item.tasks}
-                titleTextColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                tasks={item.tasks}
+                deadline={item.deadline}
+                textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                 backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                 onPress={() => {
                   handleTaskTouch(item.tasks);

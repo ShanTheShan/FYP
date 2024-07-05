@@ -87,7 +87,7 @@ function RenderCamera({ navigation, route }) {
           ) : (
             <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
               <View>
-                <TouchableOpacity onPress={() => navigation.navigate("Project_Task", { id: id })}>
+                <TouchableOpacity onPress={() => navigation.navigate("Create Task", { id: id })}>
                   <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
                 </TouchableOpacity>
               </View>
@@ -110,7 +110,7 @@ function RenderCamera({ navigation, route }) {
       ) : (
         <SafeAreaView style={styles.safeArea}>
           <View style={{ flex: 1 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Project_Task", { id: id })}>
+            <TouchableOpacity onPress={() => navigation.navigate("Create Task", { id: id })}>
               <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
             </TouchableOpacity>
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -129,7 +129,7 @@ const CapturedImage = ({ photo, navigation, retakePhoto, id }) => {
       <ImageBackground source={{ uri: photo && photo.uri }} style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <View>
-            <TouchableOpacity onPress={() => navigation.navigate("Project_Task")}>
+            <TouchableOpacity onPress={() => navigation.navigate("Create Task")}>
               <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
             </TouchableOpacity>
           </View>
@@ -139,18 +139,11 @@ const CapturedImage = ({ photo, navigation, retakePhoto, id }) => {
               title={"Use Photo"}
               color={"darkgreen"}
               press={() => {
-                navigation.navigate("Project_Task", { id: id });
+                navigation.navigate("Create Task", { id: id });
               }}
             />
 
             <SmallButton title={"Retake Photo"} color={"darkgreen"} press={retakePhoto} />
-            <SmallButton
-              title={"dummy"}
-              color={"darkgreen"}
-              press={() => {
-                retakePhoto;
-              }}
-            />
           </View>
         </View>
       </ImageBackground>

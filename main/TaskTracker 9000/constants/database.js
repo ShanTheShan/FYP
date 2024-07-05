@@ -17,7 +17,9 @@ const intiatelizeDatabase = () => {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           projectId INTEGER NOT NULL, 
           tasks TEXT, 
-          subtasks TEXT, 
+          subtasks TEXT,
+          deadline TEXT,
+          reminder TEXT, 
           notes TEXT,
           image TEXT, 
           FOREIGN KEY (projectId) REFERENCES Projects (id));
