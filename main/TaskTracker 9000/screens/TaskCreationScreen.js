@@ -1,25 +1,33 @@
 import { React, useState, useEffect, useContext } from "react";
 import {
   Text,
-  StyleSheet,
   View,
   Image,
+  ImageBackground,
   TextInput,
   SafeAreaView,
   TouchableOpacity,
   Modal,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { db } from "../constants/database";
+import { usePushNotifications } from "../constants/push";
 
 import { themeContext } from "../context/themeContext";
 import { AddButton } from "../components/customButtons";
 import { taskCreationScreenStyles } from "./styles/TaskCreationScreenStyles";
 
 export default function ProjectTaskScreen({ navigation, route }) {
+  //not sure if push notifications should go here, but i put here first
+  //const { expoPushToken, notification } = usePushNotifications();
+
+  //if screen is focused
+  const isFocused = useIsFocused();
+
   //the project id we a creating a task for
-  const { id } = route.params;
+  const { id, photoUri } = route.params;
 
   //global theme state
   const { currentTheme } = useContext(themeContext);
@@ -42,6 +50,12 @@ export default function ProjectTaskScreen({ navigation, route }) {
   const [input, setInput] = useState("");
   const [subTaskArray, setSubTaskArray] = useState([]);
 
+  //image state
+  const [imagePreview, setImagePreview] = useState(false);
+  useEffect(() => {
+    if (photoUri != null && isFocused == true) setImagePreview(true);
+  }, [isFocused]);
+
   //SQLite query to insert task to project
   const insertTaskQuery = () => {
     //the '@#' symbol is used as a separator
@@ -50,6 +64,10 @@ export default function ProjectTaskScreen({ navigation, route }) {
     let reminderValue = null;
     let notesValue = null;
     let imageValue = null;
+
+    //if we have an image, store it
+    if (photoUri != null || undefined) imageValue = photoUri.uri;
+
     try {
       db.runSync(
         "INSERT INTO ProjectDetails (projectId, tasks,subtasks,deadline,reminder,notes,image) VALUES (?,?,?,?,?,?,?)",
@@ -61,6 +79,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
       setTimeFormater(null);
       setDateFormater(null);
       setSubTaskArray([]);
+      setImagePreview(false);
     } catch (error) {
       console.log(error);
     }
@@ -305,7 +324,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
           }
         >
           <TouchableOpacity
-            onPress={() => navigation.navigate("Camera", { pid: id })}
+            onPress={() => navigation.navigate("Camera", { id: id })}
             style={{ flexDirection: "row" }}
           >
             <Image
@@ -322,6 +341,14 @@ export default function ProjectTaskScreen({ navigation, route }) {
               Add Image
             </Text>
           </TouchableOpacity>
+          {imagePreview != false ? (
+            <View style={taskCreationScreenStyles.imagePreviewView}>
+              <Image
+                source={{ uri: photoUri && photoUri.uri }}
+                style={taskCreationScreenStyles.imagePreview}
+              />
+            </View>
+          ) : null}
         </View>
         <View
           style={

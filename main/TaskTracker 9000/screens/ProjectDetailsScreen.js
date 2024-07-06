@@ -1,5 +1,13 @@
 import { React, useState, useEffect, useContext } from "react";
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  Text,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import { useIsFocused } from "@react-navigation/native";
@@ -22,9 +30,12 @@ const DetailsCell = (props) => {
     reformedDeadlineData = deadlineSplitted;
   }
 
+  const taskImage = props.customImage;
+
   return (
     <Cell
       key={props.key}
+      image={<Image style={{ height: 50, width: 50, borderRadius: 5 }} source={props.image} />}
       onPress={props.action}
       backgroundColor={props.theme}
       titleTextColor={props.textColor}
@@ -39,14 +50,24 @@ const DetailsCell = (props) => {
               {reformedDeadlineData}
             </Text>
           ) : null}
+          {reformedSubTaskData.length != 1 ? (
+            <View>
+              {reformedSubTaskData.map((item, i) => (
+                <Text
+                  key={i}
+                  style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}
+                >
+                  {item}
+                </Text>
+              ))}
+            </View>
+          ) : null}
 
-          <View>
-            {reformedSubTaskData.map((item, i) => (
-              <Text key={i} style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
-                {item}
-              </Text>
-            ))}
-          </View>
+          {taskImage != null || undefined ? (
+            <View>
+              <Image source={{ uri: taskImage }} style={styles.image} />
+            </View>
+          ) : null}
         </View>
       }
     />
@@ -129,7 +150,6 @@ export default function ProjectDetails({ navigation, route }) {
 
     //upon deletion, update progress bar
     const calculatePercent = 1 - currentTasks / numberOfTasks;
-    console.log(calculatePercent);
     setProgressValue(calculatePercent);
 
     try {
@@ -174,6 +194,7 @@ export default function ProjectDetails({ navigation, route }) {
                 tasks={item.tasks}
                 deadline={item.deadline}
                 subtasks={item.subtasks}
+                customImage={item.image}
                 textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                 backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                 onPress={() => {
@@ -276,5 +297,11 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
     marginBottom: 40,
+  },
+  image: {
+    margin: "5%",
+    width: 100,
+    height: 100,
+    borderRadius: 5,
   },
 });

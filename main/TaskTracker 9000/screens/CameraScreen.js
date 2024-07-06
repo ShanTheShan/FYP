@@ -4,10 +4,8 @@ import {
   StyleSheet,
   View,
   SafeAreaView,
-  Alert,
   TouchableOpacity,
   ImageBackground,
-  Image,
 } from "react-native";
 
 import { CameraView, Camera } from "expo-camera";
@@ -53,6 +51,22 @@ function RenderCamera({ navigation, route }) {
     }
   };
 
+  //open device gallery
+  const openGallery = async () => {
+    try {
+      let photo = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      setPreviewVisible(true);
+      setPreview(photo.assets[0]);
+    } catch (error) {
+      console.log("openGallery() error: ", error);
+    }
+  };
+
   //take a photo
   const takePhoto = async () => {
     const options = {
@@ -74,6 +88,15 @@ function RenderCamera({ navigation, route }) {
     setPreview(null);
   };
 
+  const savePhoto = () => {
+    try {
+      const photoUri = picturePreview;
+      navigation.navigate("Create Task", { id: id, photoUri: photoUri });
+    } catch (error) {
+      console.log("savePhoto() error: ", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {permission ? (
@@ -83,6 +106,7 @@ function RenderCamera({ navigation, route }) {
               photo={picturePreview}
               navigation={navigation}
               retakePhoto={retakePhoto}
+              savePhoto={savePhoto}
             />
           ) : (
             <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
@@ -100,7 +124,7 @@ function RenderCamera({ navigation, route }) {
                 <TouchableOpacity style={styles.button} onPress={takePhoto}>
                   <Text style={{ fontSize: 40 }}>🔘</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={openGallery}>
                   <Text style={{ fontSize: 40 }}>🎞</Text>
                 </TouchableOpacity>
               </View>
@@ -123,23 +147,17 @@ function RenderCamera({ navigation, route }) {
   );
 }
 
-const CapturedImage = ({ photo, navigation, retakePhoto, id }) => {
+const CapturedImage = ({ photo, navigation, retakePhoto, savePhoto, id }) => {
   return (
     <View style={styles.container}>
       <ImageBackground source={{ uri: photo && photo.uri }} style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
-          <View>
-            <TouchableOpacity onPress={() => navigation.navigate("Create Task")}>
-              <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
-            </TouchableOpacity>
-          </View>
-
           <View style={styles.buttonContainer}>
             <SmallButton
               title={"Use Photo"}
               color={"darkgreen"}
               press={() => {
-                navigation.navigate("Create Task", { id: id });
+                savePhoto(navigation, id);
               }}
             />
 

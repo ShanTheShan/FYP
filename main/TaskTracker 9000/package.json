@@ -28,7 +28,10 @@
     "react-native-reanimated": "^3.10.1",
     "react-native-reanimated-carousel": "^3.5.1",
     "react-native-tableview-simple": "^4.4.0",
-    "@react-native-community/datetimepicker": "8.0.1"
+    "@react-native-community/datetimepicker": "8.0.1",
+    "expo-notifications": "~0.28.9",
+    "expo-device": "~6.0.2",
+    "expo-constants": "~16.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

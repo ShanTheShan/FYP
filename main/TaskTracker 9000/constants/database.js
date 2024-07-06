@@ -2,11 +2,13 @@ import * as SQLite from "expo-sqlite";
 
 //intiatelize SQLite DB
 const db = SQLite.openDatabaseSync("userData");
-
+// DROP TABLE IF EXISTS Projects;
+// DROP TABLE IF EXISTS ProjectDetails;
 const intiatelizeDatabase = () => {
   try {
     //database persists across retasrt
     db.execSync(`
+
           CREATE TABLE IF NOT EXISTS Projects (
           id INTEGER PRIMARY KEY, 
           projectName TEXT NOT NULL,

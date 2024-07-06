@@ -15,6 +15,17 @@ export const taskCreationScreenStyles = StyleSheet.create({
     width: 30,
     height: 30,
   },
+  imagePreviewView: {
+    backgroundColor: "white",
+    borderRadius: 5,
+    marginLeft: "10%",
+    marginTop: "5%",
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+  },
   containerDark: {
     flex: 1,
     flexDirection: "column",
