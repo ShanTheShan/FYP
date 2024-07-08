@@ -3,11 +3,13 @@ import * as SQLite from "expo-sqlite";
 //intiatelize SQLite DB
 const db = SQLite.openDatabaseSync("userData");
 // DROP TABLE IF EXISTS Projects;
+// DROP TABLE IF EXISTS Notes;
 // DROP TABLE IF EXISTS ProjectDetails;
 const intiatelizeDatabase = () => {
   try {
     //database persists across retasrt
-    db.execSync(`
+    db.execSync(`   
+    
 
           CREATE TABLE IF NOT EXISTS Projects (
           id INTEGER PRIMARY KEY, 
@@ -25,7 +27,15 @@ const intiatelizeDatabase = () => {
           notes TEXT,
           image TEXT, 
           FOREIGN KEY (projectId) REFERENCES Projects (id));
+
+          CREATE TABLE IF NOT EXISTS Notes (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          note TEXT NOT NULL,
+          image TEXT
+          );
+          
           `);
+
     console.log("database.js has ran...");
   } catch (err) {
     console.log(err);

@@ -122,7 +122,6 @@ export default function ProjectDetails({ navigation, route }) {
   }, [isFocused]);
 
   const handleTaskTouch = (task) => {
-    console.log(task);
     try {
       deleteTask(task);
       updateProgressBar();

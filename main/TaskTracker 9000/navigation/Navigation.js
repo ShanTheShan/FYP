@@ -11,6 +11,7 @@ import ProjectDetails from "../screens/ProjectDetailsScreen";
 import TodoScreen from "../screens/TodoScreen";
 import ProjectTaskScreen from "../screens/TaskCreationScreen";
 import NotesScreen from "../screens/NotesScreen";
+import NoteCreationScreen from "../screens/NoteCreationScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
 import useHeaderBackground from "../hooks/headerBackground";
@@ -168,6 +169,22 @@ function NotesStackScreen({ navigation }) {
             </TouchableOpacity>
           ),
         }}
+      />
+      <NotesStack.Screen
+        name="Create Note"
+        component={NoteCreationScreen}
+        options={{
+          headerTintColor: headerTitle,
+          headerTitleStyle: { color: headerTitle },
+          headerStyle: {
+            backgroundColor: headerBackground,
+          },
+        }}
+      />
+      <NotesStack.Screen
+        name="Camera Note"
+        component={RenderCamera}
+        options={{ headerShown: false }}
       />
     </NotesStack.Navigator>
   );

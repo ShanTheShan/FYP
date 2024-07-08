@@ -14,8 +14,25 @@ import { SmallButton } from "../components/customButtons";
 import * as ImagePicker from "expo-image-picker";
 
 function RenderCamera({ navigation, route }) {
-  //the project id we a creating a image for
-  const { id } = route.params;
+  //the camera screen is being shared by both projects and notes stack screen, so we need to know which stack we are coming from, to handle the relevant component UI
+
+  let id = null;
+
+  let navState = navigation.getState();
+  navState = navState.routeNames;
+  navState = navState.join(",").replace(/,+/g, "/");
+  console.log(navState);
+
+  switch (navState) {
+    case "My Notes/Create Note/Camera Note":
+      ({ id } = "empty");
+      break;
+    case "Projects Overview/Project Details/Camera/Create Task":
+      //the project id we a creating a image for
+      ({ id } = route.params);
+    default:
+      break;
+  }
 
   //camera ref
   let cameraRef = useRef();
@@ -89,11 +106,13 @@ function RenderCamera({ navigation, route }) {
   };
 
   const savePhoto = () => {
-    try {
+    if (navState === "My Notes/Create Note/Camera Note") {
+      const photoUri = picturePreview;
+      navigation.navigate("Create Note", { id: id, photoUri: photoUri });
+    }
+    if (navState == "Projects Overview/Project Details/Camera/Create Task") {
       const photoUri = picturePreview;
       navigation.navigate("Create Task", { id: id, photoUri: photoUri });
-    } catch (error) {
-      console.log("savePhoto() error: ", error);
     }
   };
 
@@ -111,9 +130,15 @@ function RenderCamera({ navigation, route }) {
           ) : (
             <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
               <View>
-                <TouchableOpacity onPress={() => navigation.navigate("Create Task", { id: id })}>
-                  <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
-                </TouchableOpacity>
+                {navState === "My Notes/Create Note/Camera Note" ? (
+                  <TouchableOpacity onPress={() => navigation.navigate("Create Note", { id: id })}>
+                    <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity onPress={() => navigation.navigate("Create Task", { id: id })}>
+                    <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
+                  </TouchableOpacity>
+                )}
               </View>
 
               <View style={styles.buttonContainer}>
@@ -147,7 +172,7 @@ function RenderCamera({ navigation, route }) {
   );
 }
 
-const CapturedImage = ({ photo, navigation, retakePhoto, savePhoto, id }) => {
+const CapturedImage = ({ photo, navigation, retakePhoto, savePhoto, id, navState }) => {
   return (
     <View style={styles.container}>
       <ImageBackground source={{ uri: photo && photo.uri }} style={{ flex: 1 }}>
@@ -157,7 +182,7 @@ const CapturedImage = ({ photo, navigation, retakePhoto, savePhoto, id }) => {
               title={"Use Photo"}
               color={"darkgreen"}
               press={() => {
-                savePhoto(navigation, id);
+                savePhoto(navigation, id, navState);
               }}
             />
 

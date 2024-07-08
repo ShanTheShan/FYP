@@ -1,14 +1,5 @@
 import { React, useState, useEffect, useContext } from "react";
-import {
-  Text,
-  View,
-  Image,
-  ImageBackground,
-  TextInput,
-  SafeAreaView,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
+import { Text, View, Image, TextInput, SafeAreaView, TouchableOpacity, Modal } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
