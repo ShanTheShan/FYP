@@ -36,7 +36,8 @@ const intiatelizeDatabase = () => {
           CREATE TABLE IF NOT EXISTS Todos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           date TEXT,
-          todo TEXT
+          todo TEXT,
+          done TEXT
           );
           
           `);

@@ -57,6 +57,7 @@ export default function TodoScreen() {
   const handleDayPress = async (day) => {
     setDateSelected(day.dateString);
     await getAll(day.dateString);
+    console.log(todos);
   };
 
   const createNewTodo = async (value) => {
@@ -83,8 +84,17 @@ export default function TodoScreen() {
   };
 
   //handle todo completed style
-  const handleStrikeThrough = () => {
-    console.log("quick touch");
+  const handleStrikeThrough = async (value) => {
+    const strike = "yes";
+
+    try {
+      console.log(value);
+      await db.runAsync("UPDATE Todos SET done = ? WHERE todo =?", [strike, value]);
+
+      await getAll(dateSelected);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   //custom cell
@@ -100,19 +110,32 @@ export default function TodoScreen() {
               setToDelete(props.title);
             }}
             onPress={() => {
-              console.log("Short pressed");
+              handleStrikeThrough(props.title);
             }}
           >
-            <Text
-              style={{
-                fontSize: 20,
-                paddingBottom: 5,
-                color: props.textColor,
-                textDecorationLine: strikethrough ? "line-through" : "none",
-              }}
-            >
-              {props.title}
-            </Text>
+            {/* if todo is done, render strike through, else no strike through */}
+            {props.done === "yes" ? (
+              <Text
+                style={{
+                  fontSize: 20,
+                  paddingBottom: 5,
+                  color: props.textColor,
+                  textDecorationLine: "line-through",
+                }}
+              >
+                {props.title}
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  fontSize: 20,
+                  paddingBottom: 5,
+                  color: props.textColor,
+                }}
+              >
+                {props.title}
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       }
@@ -138,6 +161,7 @@ export default function TodoScreen() {
                 <TodoCell
                   key={item.id}
                   title={item.todo}
+                  done={item.done}
                   theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                   textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                 />
