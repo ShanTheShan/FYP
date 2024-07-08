@@ -5,12 +5,11 @@ const db = SQLite.openDatabaseSync("userData");
 // DROP TABLE IF EXISTS Projects;
 // DROP TABLE IF EXISTS Notes;
 // DROP TABLE IF EXISTS ProjectDetails;
+// DROP TABLE IF EXISTS Todos;
 const intiatelizeDatabase = () => {
   try {
     //database persists across retasrt
     db.execSync(`   
-    
-
           CREATE TABLE IF NOT EXISTS Projects (
           id INTEGER PRIMARY KEY, 
           projectName TEXT NOT NULL,
@@ -32,6 +31,12 @@ const intiatelizeDatabase = () => {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           note TEXT NOT NULL,
           image TEXT
+          );
+          
+          CREATE TABLE IF NOT EXISTS Todos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          date TEXT,
+          todo TEXT
           );
           
           `);
