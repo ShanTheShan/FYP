@@ -12,7 +12,7 @@ function TimerScreen() {
   //button state
   const [timerState, setState] = useState(false);
   //button duration
-  const [duration, setDuration] = useState(2);
+  const [duration, setDuration] = useState(3120);
   //button reset
   const [time, resetState] = useState(0);
 
@@ -32,7 +32,7 @@ function TimerScreen() {
   //calling two functions at once, when reset button press
   function resetHandler() {
     setState(false);
-    setDuration(2);
+    setDuration(3120);
     resetState((prevKey) => prevKey + 1);
   }
 
@@ -63,7 +63,6 @@ function TimerScreen() {
         </View>
         <View style={{ flexDirection: "row", padding: 10 }}>
           <Button color={"green"} title="START" onPress={() => setState(true)}></Button>
-          <Button title="STOP" onPress={() => setState(false)}></Button>
         </View>
         <Button color={"red"} title="RESET" onPress={() => resetHandler()}></Button>
       </View>

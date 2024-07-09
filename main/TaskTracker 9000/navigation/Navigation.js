@@ -1,6 +1,6 @@
-import { React, useContext, useEffect, useState } from "react";
+import { React, useContext } from "react";
 import { TouchableOpacity, Text } from "react-native";
-import { DarkTheme, NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -16,6 +16,12 @@ import SettingsScreen from "../screens/SettingsScreen";
 
 import useHeaderBackground from "../hooks/headerBackground";
 import useHeaderTitle from "../hooks/headerTitle";
+
+import { Entypo } from "@expo/vector-icons";
+import { Foundation } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+
+import { themeContext } from "../context/themeContext";
 
 // navigation stack object
 const ProjectStack = createStackNavigator();
@@ -195,7 +201,8 @@ const Tab = createBottomTabNavigator();
 //hiding the settings tab, but still navigable
 export default function CustomNavigator() {
   const headerBackground = useHeaderBackground();
-
+  //global theme state
+  const { currentTheme } = useContext(themeContext);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -204,12 +211,63 @@ export default function CustomNavigator() {
           tabBarStyle: {
             backgroundColor: headerBackground,
           },
+          tabBarItemStyle: {
+            marginVertical: 5,
+          },
         }}
       >
-        <Tab.Screen name="Project" component={ProjectStackScreen} />
-        <Tab.Screen name="Timer" component={TimerStackScreen} />
-        <Tab.Screen name="Notes" component={NotesStackScreen} />
-        <Tab.Screen name="Task" component={TaskStackScreen} />
+        <Tab.Screen
+          name="Project"
+          component={ProjectStackScreen}
+          options={{
+            tabBarIcon: ({}) => (
+              <Entypo
+                name="blackboard"
+                size={20}
+                color={currentTheme === "dark" ? "white" : "black"}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Timer"
+          component={TimerStackScreen}
+          options={{
+            tabBarIcon: ({}) => (
+              <Entypo
+                name="stopwatch"
+                size={20}
+                color={currentTheme === "dark" ? "white" : "black"}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Notes"
+          component={NotesStackScreen}
+          options={{
+            tabBarIcon: ({}) => (
+              <Foundation
+                name="clipboard-notes"
+                size={22}
+                color={currentTheme === "dark" ? "white" : "black"}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Task"
+          component={TaskStackScreen}
+          options={{
+            tabBarIcon: ({}) => (
+              <FontAwesome5
+                name="list"
+                size={20}
+                color={currentTheme === "dark" ? "white" : "black"}
+              />
+            ),
+          }}
+        />
         <Tab.Screen
           name="Settings"
           component={SettingsScreen}

@@ -10,7 +10,6 @@ import {
 } from "react-native";
 
 import { Cell, Section, TableView } from "react-native-tableview-simple";
-import RadioGroup from "react-native-radio-buttons-group";
 import { themeContext } from "../context/themeContext";
 
 const handleTurnNotificationsOn = async () => {
@@ -27,36 +26,37 @@ export default function SettingsScreen() {
   //for radio buttons selection
   const [selectedId, setSelectedId] = useState();
 
-  const radioButtons = useMemo(
-    () => [
-      {
-        id: "1",
-        label: "Dark",
-        value: "Dark",
-      },
-      {
-        id: "2",
-        label: "Light",
-        value: "Light",
-      },
-    ],
-    []
-  );
+  //theme state color
+  const [darkState, setDarkState] = useState(true);
+  const [lightState, setLightState] = useState(false);
 
   //handle theme saving when "Done" is pressed in modal
-  const handleTheme = () => {
-    if (selectedId == "1") {
+  const setTheme = () => {
+    if (darkState == true && lightState == false) {
       setCurrentTheme("dark");
       toggleThemeModal(false);
     }
-    if (selectedId == "2") {
+
+    if (darkState == false && lightState == true) {
       setCurrentTheme("light");
       toggleThemeModal(false);
     }
   };
 
+  const handleThemeTouch = (theme) => {
+    if (theme === "dark") {
+      setLightState(false);
+      setDarkState(!darkState);
+    }
+
+    if (theme === "light") {
+      setLightState(!lightState);
+      setDarkState(false);
+    }
+  };
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={currentTheme === "dark" ? styles.safeAreaDark : styles.safeAreaLight}>
       <View style={styles.navigationView}>
         <Text style={styles.PageTitle}>Settings</Text>
       </View>
@@ -70,36 +70,50 @@ export default function SettingsScreen() {
               visible={themeModal}
               statusBarTranslucent={true}
             >
-              <View style={styles.themeModalView}>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderBottomWidth: 1,
-                  }}
-                >
-                  <Text style={{ fontSize: 25 }}>Select Theme</Text>
-                </View>
-                <View
-                  style={{
-                    flex: 3,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <RadioGroup
-                    radioButtons={radioButtons}
-                    onPress={setSelectedId}
-                    selectedId={selectedId}
-                    containerStyle={styles.radioGroup}
-                  />
-                  <TouchableOpacity
-                    style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
-                    onPress={handleTheme}
-                  >
-                    <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
-                  </TouchableOpacity>
+              <View style={styles.themeModalContainer}>
+                <View style={styles.themeModalView}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 22, paddingTop: 5 }}>Choose theme</Text>
+                  </View>
+                  <View style={{ flex: 4, justifyContent: "center", alignItems: "center" }}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => handleThemeTouch("dark")}
+                        style={darkState ? styles.themeTextPressed : styles.themeTextUnpressed}
+                      >
+                        <Text style={{ fontSize: 17 }}>Dark</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => handleThemeTouch("light")}
+                        style={lightState ? styles.themeTextPressed : styles.themeTextUnpressed}
+                      >
+                        <Text style={{ fontSize: 17 }}>Light</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={{ flex: 2 }}>
+                    <TouchableOpacity
+                      style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
+                      onPress={() => setTheme()}
+                    >
+                      <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </Modal>
@@ -108,14 +122,39 @@ export default function SettingsScreen() {
               <Cell
                 contentContainerStyle={{ height: 70 }}
                 onPress={handleTurnNotificationsOn}
-                cellContentView={<Text style={{ fontSize: 17 }}>Notifications</Text>}
+                cellContentView={
+                  <Text
+                    style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}
+                  >
+                    Notifications
+                  </Text>
+                }
+                backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
               />
               <Cell
                 contentContainerStyle={{ height: 70 }}
                 onPress={() => {
                   toggleThemeModal(true);
                 }}
-                cellContentView={<Text style={{ fontSize: 17 }}>Theme</Text>}
+                cellContentView={
+                  <Text
+                    style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}
+                  >
+                    Theme
+                  </Text>
+                }
+                backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
+              />
+              <Cell
+                contentContainerStyle={{ height: 70 }}
+                cellContentView={
+                  <Text
+                    style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}
+                  >
+                    Replay Tutorial
+                  </Text>
+                }
+                backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
               />
             </Section>
           )}
@@ -126,9 +165,14 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  safeAreaLight: {
     flex: 1,
     height: "100%",
+  },
+  safeAreaDark: {
+    flex: 1,
+    height: "100%",
+    backgroundColor: "#141414",
   },
   navigationView: {
     flex: 1,
@@ -145,17 +189,39 @@ const styles = StyleSheet.create({
     color: "black",
     paddingTop: "10%",
   },
-  themeModalView: {
+  themeModalContainer: {
     flex: 1,
-    marginVertical: "70%",
-    marginHorizontal: "10%",
-    backgroundColor: "grey",
-    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  themeModalView: {
+    backgroundColor: "lightgrey",
+    height: "30%",
+    width: "70%",
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
   },
   radioGroup: {
     flex: 1,
     marginVertical: "10%",
     justifyContent: "space-evenly",
     alignItems: "center",
+  },
+  themeTextPressed: {
+    marginVertical: 10,
+    borderRadius: 2,
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 2,
+    backgroundColor: "gold",
+  },
+  themeTextUnpressed: {
+    marginVertical: 10,
+    borderRadius: 2,
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 2,
+    backgroundColor: "white",
   },
 });

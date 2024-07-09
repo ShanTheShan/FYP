@@ -1,13 +1,5 @@
 import { React, useState, useEffect, useContext } from "react";
-import {
-  StyleSheet,
-  Image,
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Image, Text, View, SafeAreaView, ScrollView } from "react-native";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import { useIsFocused } from "@react-navigation/native";
@@ -50,7 +42,7 @@ const DetailsCell = (props) => {
               {reformedDeadlineData}
             </Text>
           ) : null}
-          {reformedSubTaskData.length != 1 ? (
+          {reformedSubTaskData.length != 0 ? (
             <View>
               {reformedSubTaskData.map((item, i) => (
                 <Text

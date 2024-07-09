@@ -1,9 +1,7 @@
 import { React, useState, useEffect, useContext } from "react";
 import {
-  StyleSheet,
   Text,
   View,
-  Image,
   SafeAreaView,
   Modal,
   TouchableOpacity,
@@ -13,7 +11,10 @@ import {
 } from "react-native";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
+
 import Carousel from "react-native-reanimated-carousel";
+import { CarouselItem } from "../components/customCarousel";
+import { tutorialImages } from "../constants/carouImages";
 
 import { useIsFocused } from "@react-navigation/native";
 
@@ -72,13 +73,6 @@ export default function HomeScreen({ navigation }) {
   //status bar theme
   const [statusBarColor, statusBarTextColor] = useStatusBarStyle();
 
-  //array of images for tutorial
-  const tutorialImages = [
-    require("../assets/tutorial_overview.jpg"),
-    require("../assets/tutorial_visual.jpg"),
-    require("../assets/tutorial_timer.jpg"),
-  ];
-
   //project names state
   const [projects, storeProjects] = useState([]);
 
@@ -111,7 +105,6 @@ export default function HomeScreen({ navigation }) {
       setInput("");
     } catch (error) {
       console.log(error);
-      s;
     }
   };
 
@@ -127,39 +120,23 @@ export default function HomeScreen({ navigation }) {
             setModalVisible(!modalVisible);
           }}
         >
-          <View style={homeScreenStyles.centeredView}>
-            <Carousel
-              loop
-              width={200}
-              height={300}
-              autoPlay={false}
-              data={tutorialImages}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    flex: 1,
-                    borderWidth: 1,
-                    justifyContent: "center",
-                  }}
-                >
-                  <Image source={item} style={homeScreenStyles.image} />
-                </View>
-              )}
-            />
-            <Text
-              style={{
-                flex: 1,
-              }}
-            >
-              Lorem Impsum.
-            </Text>
-
-            <Pressable
-              style={homeScreenStyles.button}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={homeScreenStyles.textStyle}>OKAY</Text>
-            </Pressable>
+          <View style={homeScreenStyles.tutorialContainer}>
+            <View style={homeScreenStyles.tutorialView}>
+              <Carousel
+                loop={false}
+                width={300}
+                height={500}
+                autoPlay={false}
+                data={tutorialImages}
+                renderItem={({ index, item }) => <CarouselItem key={index} item={item} />}
+              />
+              <Pressable
+                style={homeScreenStyles.modalButton}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={homeScreenStyles.textStyle}>OKAY</Text>
+              </Pressable>
+            </View>
           </View>
         </Modal>
       </View>

@@ -21,7 +21,6 @@ function RenderCamera({ navigation, route }) {
   let navState = navigation.getState();
   navState = navState.routeNames;
   navState = navState.join(",").replace(/,+/g, "/");
-  console.log(navState);
 
   switch (navState) {
     case "My Notes/Create Note/Camera Note":
@@ -73,7 +72,7 @@ function RenderCamera({ navigation, route }) {
     try {
       let photo = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
+        allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
       });

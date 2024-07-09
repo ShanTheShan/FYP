@@ -22,6 +22,26 @@ export const homeScreenStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  tutorialContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#323232",
+  },
+  tutorialView: {
+    height: "90%",
+    width: "90%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalButton: {
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginBottom: 50,
+    elevation: 2,
+    backgroundColor: "darkgreen",
+  },
   button: {
     borderRadius: 20,
     padding: 10,
