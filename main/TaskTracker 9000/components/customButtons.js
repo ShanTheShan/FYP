@@ -9,7 +9,7 @@ const SmallButton = ({ title, color, press }) => {
   return <Button onPress={press} title={title} color={color} style={styles.small} />;
 };
 
-const AddButton = ({ press, heightOffset }) => {
+const AddButton = ({ press }) => {
   return (
     <TouchableOpacity onPress={press} style={styles.addButton}>
       <Text style={{ color: "white", fontSize: 30 }}>+</Text>

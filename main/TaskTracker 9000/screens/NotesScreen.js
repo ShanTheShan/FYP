@@ -6,6 +6,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { noteScreenStyles } from "./styles/NotesScreenStyle";
 
 import { AddButton } from "../components/customButtons";
+import { MyPlaceHolder } from "../components/customPlaceHolder";
 
 import { db } from "../constants/database";
 
@@ -88,75 +89,86 @@ export default function NotesScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={noteScreenStyles.safeArea}>
-      <ScrollView
-        style={
-          currentTheme === "dark"
-            ? noteScreenStyles.scrollViewDark
-            : noteScreenStyles.scrollViewLight
-        }
-      >
-        <TableView>
-          <Section>
-            {userNotes.map((item, i) => (
-              <NoteCell
-                key={i}
-                note={item.note}
-                customImage={item.image}
-                textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
-              />
-            ))}
-            {modalVisible ? (
-              <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalVisible}
-                statusBarTranslucent={true}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "rgba(0, 0, 0, 0.8)",
-                  }}
+    <SafeAreaView
+      style={
+        currentTheme === "dark" ? noteScreenStyles.safeAreaDark : noteScreenStyles.safeAreaLight
+      }
+    >
+      {userNotes.length == 0 ? (
+        <MyPlaceHolder offsetTop={"50%"} currentTheme={currentTheme} value={"notes"} />
+      ) : (
+        <ScrollView
+          style={
+            currentTheme === "dark"
+              ? noteScreenStyles.scrollViewDark
+              : noteScreenStyles.scrollViewLight
+          }
+        >
+          <TableView>
+            <Section>
+              {userNotes.map((item, i) => (
+                <NoteCell
+                  key={i}
+                  note={item.note}
+                  customImage={item.image}
+                  textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                  backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                />
+              ))}
+              {modalVisible ? (
+                <Modal
+                  animationType="fade"
+                  transparent={true}
+                  visible={modalVisible}
+                  statusBarTranslucent={true}
                 >
                   <View
-                    style={
-                      currentTheme === "dark"
-                        ? noteScreenStyles.deleteModalDarkView
-                        : noteScreenStyles.deleteModalLightView
-                    }
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    }}
                   >
-                    <Text style={currentTheme === "dark" ? { color: "white" } : { color: "black" }}>
-                      Do you want to delete this note?
-                    </Text>
+                    <View
+                      style={
+                        currentTheme === "dark"
+                          ? noteScreenStyles.deleteModalDarkView
+                          : noteScreenStyles.deleteModalLightView
+                      }
+                    >
+                      <Text
+                        style={currentTheme === "dark" ? { color: "white" } : { color: "black" }}
+                      >
+                        Do you want to delete this note?
+                      </Text>
 
-                    <TouchableOpacity
-                      style={noteScreenStyles.buttonEnter}
-                      onPress={() => {
-                        setModalVisible(false);
-                        deleteNote(toDelete);
-                      }}
-                    >
-                      <Text style={{ color: "white" }}>YES</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={noteScreenStyles.buttonClose}
-                      onPress={() => {
-                        setModalVisible(false);
-                      }}
-                    >
-                      <Text style={{ color: "white" }}>NO</Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        style={noteScreenStyles.buttonEnter}
+                        onPress={() => {
+                          setModalVisible(false);
+                          deleteNote(toDelete);
+                        }}
+                      >
+                        <Text style={{ color: "white" }}>YES</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={noteScreenStyles.buttonClose}
+                        onPress={() => {
+                          setModalVisible(false);
+                        }}
+                      >
+                        <Text style={{ color: "white" }}>NO</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              </Modal>
-            ) : null}
-          </Section>
-        </TableView>
-      </ScrollView>
+                </Modal>
+              ) : null}
+            </Section>
+          </TableView>
+        </ScrollView>
+      )}
+
       <AddButton
         press={() => {
           navigation.navigate("Create Note", { photoUri: null });

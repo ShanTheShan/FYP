@@ -3,7 +3,6 @@ import { View, Text, Image, StyleSheet } from "react-native";
 
 export const CarouselItem = (props) => {
   const { item } = props;
-  console.log(item.img);
 
   return (
     <View style={styles.container}>

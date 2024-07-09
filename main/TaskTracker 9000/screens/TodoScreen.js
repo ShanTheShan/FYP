@@ -18,15 +18,13 @@ import { db } from "../constants/database";
 
 import { themeContext } from "../context/themeContext";
 import { AddButton } from "../components/customButtons";
+import { MyPlaceHolder } from "../components/customPlaceHolder";
 
 export default function TodoScreen() {
   //global theme state
   const { currentTheme } = useContext(themeContext);
 
   const [todos, setTodos] = useState([]);
-
-  //strikethrough style state
-  const [strikethrough, setStrikeThrough] = useState(false);
 
   //states to determine date
   const today = moment().format("YYYY-MM-DD");
@@ -57,7 +55,6 @@ export default function TodoScreen() {
   const handleDayPress = async (day) => {
     setDateSelected(day.dateString);
     await getAll(day.dateString);
-    console.log(todos);
   };
 
   const createNewTodo = async (value) => {
@@ -72,9 +69,7 @@ export default function TodoScreen() {
 
   const deleteTodo = async (value) => {
     try {
-      console.log(value);
       await db.runAsync("DELETE FROM Todos WHERE todo =?", [value]);
-
       await getAll(dateSelected);
       setToDelete(null);
       toggleDeleteModal(false);
@@ -88,7 +83,6 @@ export default function TodoScreen() {
     const strike = "yes";
 
     try {
-      console.log(value);
       await db.runAsync("UPDATE Todos SET done = ? WHERE todo =?", [strike, value]);
 
       await getAll(dateSelected);
@@ -143,7 +137,7 @@ export default function TodoScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={currentTheme === "dark" ? styles.safeAreaDark : styles.safeAreaLight}>
       <View>
         <Calendar
           onDayPress={handleDayPress}
@@ -153,117 +147,124 @@ export default function TodoScreen() {
           theme={currentTheme === "dark" ? styles.calendarThemeDark : styles.calendarThemeLight}
         />
       </View>
-      <ScrollView style={currentTheme === "dark" ? styles.scrollViewDark : styles.scrollViewLight}>
-        <TableView>
-          <Section>
-            {todos.map((item) => {
-              return (
-                <TodoCell
-                  key={item.id}
-                  title={item.todo}
-                  done={item.done}
-                  theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
-                  textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                />
-              );
-            })}
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={todoModal}
-              statusBarTranslucent={true}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={todoModal}
+        statusBarTranslucent={true}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+          }}
+        >
+          <View style={currentTheme === "dark" ? styles.modalDarkView : styles.modalLightView}>
+            <TextInput
+              style={currentTheme === "dark" ? styles.textInputDark : styles.textInputLight}
+              placeholder="Enter todo..."
+              onChangeText={(newText) => setInput(newText)}
+              placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
+              defaultValue={input}
+            />
+            <TouchableOpacity
+              style={styles.buttonEnter}
+              onPress={() => {
+                toggleTodoModal(false);
+                createNewTodo(input);
+                setInput("");
+              }}
             >
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "rgba(0, 0, 0, 0.8)",
-                }}
-              >
-                <View
-                  style={currentTheme === "dark" ? styles.modalDarkView : styles.modalLightView}
-                >
-                  <TextInput
-                    style={currentTheme === "dark" ? styles.textInputDark : styles.textInputLight}
-                    placeholder="Enter todo..."
-                    onChangeText={(newText) => setInput(newText)}
-                    placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
-                    defaultValue={input}
-                  />
-                  <TouchableOpacity
-                    style={styles.buttonEnter}
-                    onPress={() => {
-                      toggleTodoModal(false);
-                      createNewTodo(input);
-                      setInput("");
-                    }}
-                  >
-                    <Text style={{ color: "white" }}>Create Todo</Text>
-                  </TouchableOpacity>
+              <Text style={{ color: "white" }}>Create Todo</Text>
+            </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={styles.buttonClose}
-                    onPress={() => {
-                      toggleTodoModal(false);
-                      setInput("");
-                    }}
-                  >
-                    <Text style={{ color: "white" }}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-            {deleteModal ? (
-              <Modal
-                animationType="fade"
-                transparent={true}
-                visible={deleteModal}
-                statusBarTranslucent={true}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "rgba(0, 0, 0, 0.8)",
-                  }}
+            <TouchableOpacity
+              style={styles.buttonClose}
+              onPress={() => {
+                toggleTodoModal(false);
+                setInput("");
+              }}
+            >
+              <Text style={{ color: "white" }}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      {todos.length == 0 ? (
+        <MyPlaceHolder offsetTop={"20%"} value={"todos today"} currentTheme={currentTheme} />
+      ) : (
+        <ScrollView
+          style={currentTheme === "dark" ? styles.scrollViewDark : styles.scrollViewLight}
+        >
+          <TableView>
+            <Section>
+              {todos.map((item) => {
+                return (
+                  <TodoCell
+                    key={item.id}
+                    title={item.todo}
+                    done={item.done}
+                    theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                    textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                  />
+                );
+              })}
+              {deleteModal ? (
+                <Modal
+                  animationType="fade"
+                  transparent={true}
+                  visible={deleteModal}
+                  statusBarTranslucent={true}
                 >
                   <View
-                    style={
-                      currentTheme === "dark"
-                        ? styles.deleteModalDarkView
-                        : styles.deleteModalLightView
-                    }
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    }}
                   >
-                    <Text style={currentTheme === "dark" ? { color: "white" } : { color: "black" }}>
-                      Do you want to delete this todo?
-                    </Text>
+                    <View
+                      style={
+                        currentTheme === "dark"
+                          ? styles.deleteModalDarkView
+                          : styles.deleteModalLightView
+                      }
+                    >
+                      <Text
+                        style={currentTheme === "dark" ? { color: "white" } : { color: "black" }}
+                      >
+                        Do you want to delete this todo?
+                      </Text>
 
-                    <TouchableOpacity
-                      style={styles.buttonEnter}
-                      onPress={() => {
-                        toggleDeleteModal(false);
-                        deleteTodo(toDelete);
-                      }}
-                    >
-                      <Text style={{ color: "white" }}>YES</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.buttonClose}
-                      onPress={() => {
-                        toggleDeleteModal(false);
-                      }}
-                    >
-                      <Text style={{ color: "white" }}>NO</Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.buttonEnter}
+                        onPress={() => {
+                          toggleDeleteModal(false);
+                          deleteTodo(toDelete);
+                        }}
+                      >
+                        <Text style={{ color: "white" }}>YES</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.buttonClose}
+                        onPress={() => {
+                          toggleDeleteModal(false);
+                        }}
+                      >
+                        <Text style={{ color: "white" }}>NO</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              </Modal>
-            ) : null}
-          </Section>
-        </TableView>
-      </ScrollView>
+                </Modal>
+              ) : null}
+            </Section>
+          </TableView>
+        </ScrollView>
+      )}
+
       <AddButton
         press={() => {
           toggleTodoModal(true);
@@ -274,10 +275,15 @@ export default function TodoScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  safeAreaDark: {
     flex: 1,
     height: "100%",
     backgroundColor: "#1C1C1C",
+  },
+  safeAreaLight: {
+    flex: 1,
+    height: "100%",
+    backgroundColor: "#FFFFFF",
   },
   scrollViewLight: {
     height: "100%",

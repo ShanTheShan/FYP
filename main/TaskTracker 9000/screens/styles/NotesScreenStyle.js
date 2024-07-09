@@ -1,12 +1,15 @@
 import { StyleSheet } from "react-native";
 
 export const noteScreenStyles = StyleSheet.create({
-  container: {
+  safeAreaDark: {
     flex: 1,
-    flexDirection: "column",
-  },
-  safeArea: {
     height: "100%",
+    backgroundColor: "#1C1C1C",
+  },
+  safeAreaLight: {
+    flex: 1,
+    height: "100%",
+    backgroundColor: "#FFFFFF",
   },
   scrollViewLight: {
     height: "100%",

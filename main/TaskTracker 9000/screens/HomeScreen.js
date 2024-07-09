@@ -22,6 +22,7 @@ import { StatusBar } from "expo-status-bar";
 
 import { db } from "../constants/database";
 import { AddButton } from "../components/customButtons";
+import { MyPlaceHolder } from "../components/customPlaceHolder";
 
 import { themeContext } from "../context/themeContext";
 import { homeScreenStyles } from "./styles/HomeScreenStyles";
@@ -202,6 +203,8 @@ export default function HomeScreen({ navigation }) {
               </View>
             </View>
           </Modal>
+        ) : projects.length == 0 ? (
+          <MyPlaceHolder offsetTop={"50%"} currentTheme={currentTheme} value={"projects"} />
         ) : (
           <TableView>
             <Section>
