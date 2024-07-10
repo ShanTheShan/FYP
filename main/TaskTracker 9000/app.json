@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "TaskTracker 9000",
-    "slug": "TaskTracker 9000",
+    "slug": "tasktracker-9000",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,12 +17,17 @@
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "black"
+        "backgroundColor": "#000000"
       },
-      "package": "com.GammaDigital"
+      "package": "com.GammaDigital.TaskTracker9000"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "abdec9f4-333d-449e-ad54-4d51372f8c27"
+      }
     }
   }
 }
