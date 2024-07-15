@@ -23,37 +23,12 @@ import { StatusBar } from "expo-status-bar";
 import { db } from "../constants/database";
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
+import { DeleteCellModal } from "../components/customDeleteModal";
 
 import { themeContext } from "../context/themeContext";
 import { homeScreenStyles } from "./styles/HomeScreenStyles";
 
 import useStatusBarStyle from "../hooks/statusBar";
-
-//custom cell for project board page
-const HomescreenCell = (props) => (
-  <Cell
-    onPress={props.action}
-    backgroundColor={props.theme}
-    {...props}
-    cellContentView={
-      <View>
-        <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
-          {props.title}
-        </Text>
-        <Progress.Bar
-          style={{ marginBottom: 5 }}
-          progress={props.progressValue}
-          width={200}
-          borderColor="black"
-          borderWidth={1}
-          height={20}
-          color="green"
-          unfilledColor="#B9B9B9"
-        />
-      </View>
-    }
-  />
-);
 
 export default function HomeScreen({ navigation }) {
   //if screen is focused
@@ -67,6 +42,10 @@ export default function HomeScreen({ navigation }) {
 
   //create a project state modal
   const [createProjectModal, setCreateProjectModalVisible] = useState(false);
+
+  //delete modal
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [toDelete, setToDelete] = useState(null);
 
   //text input state
   const [input, setInput] = useState("");
@@ -108,6 +87,48 @@ export default function HomeScreen({ navigation }) {
       console.log(error);
     }
   };
+
+  const deleteProject = async () => {
+    try {
+      await db.runAsync(
+        "DELETE FROM Projects WHERE id = (SELECT id FROM Projects WHERE projectName = ?)",
+        [toDelete]
+      );
+      getAll();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //custom cell for project board page
+  const HomescreenCell = (props) => (
+    <Cell
+      onPress={props.action}
+      onLongPress={() => {
+        setDeleteModalVisible(true);
+        setToDelete(props.title);
+      }}
+      backgroundColor={props.theme}
+      {...props}
+      cellContentView={
+        <View>
+          <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
+            {props.title}
+          </Text>
+          <Progress.Bar
+            style={{ marginBottom: 5 }}
+            progress={props.progressValue}
+            width={200}
+            borderColor="black"
+            borderWidth={1}
+            height={20}
+            color="green"
+            unfilledColor="#B9B9B9"
+          />
+        </View>
+      }
+    />
+  );
 
   return (
     <SafeAreaView>
@@ -205,6 +226,15 @@ export default function HomeScreen({ navigation }) {
           </Modal>
         ) : projects.length == 0 ? (
           <MyPlaceHolder offsetTop={"50%"} currentTheme={currentTheme} value={"projects"} />
+        ) : deleteModalVisible ? (
+          <DeleteCellModal
+            modalVisible={deleteModalVisible}
+            setModalVisible={setDeleteModalVisible}
+            deleteObj={deleteProject}
+            toDelete={toDelete}
+            currentTheme={currentTheme}
+            text="project"
+          />
         ) : (
           <TableView>
             <Section>

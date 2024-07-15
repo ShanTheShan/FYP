@@ -7,6 +7,7 @@ import { noteScreenStyles } from "./styles/NotesScreenStyle";
 
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
+import { DeleteCellModal } from "../components/customDeleteModal";
 
 import { db } from "../constants/database";
 
@@ -59,20 +60,20 @@ export default function NotesScreen({ navigation }) {
     const taskImage = props.customImage;
 
     return (
-      <Cell
-        key={props.key}
-        onPress={false}
-        backgroundColor={props.theme}
-        titleTextColor={props.textColor}
-        {...props}
-        cellContentView={
-          <View>
-            <TouchableOpacity
-              onLongPress={() => {
-                setModalVisible(true);
-                setToDelete(props.note);
-              }}
-            >
+      <TouchableOpacity
+        onLongPress={() => {
+          setModalVisible(true);
+          setToDelete(props.note);
+        }}
+      >
+        <Cell
+          key={props.key}
+          onPress={false}
+          backgroundColor={props.theme}
+          titleTextColor={props.textColor}
+          {...props}
+          cellContentView={
+            <View>
               <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
                 {props.note}
               </Text>
@@ -81,10 +82,10 @@ export default function NotesScreen({ navigation }) {
                   <Image source={{ uri: taskImage }} style={noteScreenStyles.image} />
                 </View>
               ) : null}
-            </TouchableOpacity>
-          </View>
-        }
-      />
+            </View>
+          }
+        />
+      </TouchableOpacity>
     );
   };
 
@@ -116,53 +117,14 @@ export default function NotesScreen({ navigation }) {
                 />
               ))}
               {modalVisible ? (
-                <Modal
-                  animationType="fade"
-                  transparent={true}
-                  visible={modalVisible}
-                  statusBarTranslucent={true}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: "rgba(0, 0, 0, 0.8)",
-                    }}
-                  >
-                    <View
-                      style={
-                        currentTheme === "dark"
-                          ? noteScreenStyles.deleteModalDarkView
-                          : noteScreenStyles.deleteModalLightView
-                      }
-                    >
-                      <Text
-                        style={currentTheme === "dark" ? { color: "white" } : { color: "black" }}
-                      >
-                        Do you want to delete this note?
-                      </Text>
-
-                      <TouchableOpacity
-                        style={noteScreenStyles.buttonEnter}
-                        onPress={() => {
-                          setModalVisible(false);
-                          deleteNote(toDelete);
-                        }}
-                      >
-                        <Text style={{ color: "white" }}>YES</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={noteScreenStyles.buttonClose}
-                        onPress={() => {
-                          setModalVisible(false);
-                        }}
-                      >
-                        <Text style={{ color: "white" }}>NO</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
+                <DeleteCellModal
+                  modalVisible={modalVisible}
+                  setModalVisible={setModalVisible}
+                  deleteObj={deleteNote}
+                  toDelete={toDelete}
+                  currentTheme={currentTheme}
+                  text="note"
+                />
               ) : null}
             </Section>
           </TableView>

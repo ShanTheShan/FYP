@@ -201,11 +201,6 @@ export default function ProjectDetails({ navigation, route }) {
           navigation.navigate("Create Task", { id: id });
         }}
       />
-      <DeleteButton
-        press={() => {
-          deleteProject(id, navigation);
-        }}
-      />
     </SafeAreaView>
   );
 }

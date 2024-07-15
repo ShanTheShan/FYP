@@ -93,20 +93,20 @@ export default function TodoScreen() {
 
   //custom cell
   const TodoCell = (props) => (
-    <Cell
-      backgroundColor={props.theme}
-      {...props}
-      cellContentView={
-        <View>
-          <TouchableOpacity
-            onLongPress={() => {
-              toggleDeleteModal(true);
-              setToDelete(props.title);
-            }}
-            onPress={() => {
-              handleStrikeThrough(props.title);
-            }}
-          >
+    <TouchableOpacity
+      onLongPress={() => {
+        toggleDeleteModal(true);
+        setToDelete(props.title);
+      }}
+      onPress={() => {
+        handleStrikeThrough(props.title);
+      }}
+    >
+      <Cell
+        backgroundColor={props.theme}
+        {...props}
+        cellContentView={
+          <View>
             {/* if todo is done, render strike through, else no strike through */}
             {props.done === "yes" ? (
               <Text
@@ -130,10 +130,10 @@ export default function TodoScreen() {
                 {props.title}
               </Text>
             )}
-          </TouchableOpacity>
-        </View>
-      }
-    />
+          </View>
+        }
+      />
+    </TouchableOpacity>
   );
 
   return (
