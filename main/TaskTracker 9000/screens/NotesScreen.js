@@ -120,7 +120,7 @@ export default function NotesScreen({ navigation }) {
                 <DeleteCellModal
                   modalVisible={modalVisible}
                   setModalVisible={setModalVisible}
-                  deleteObj={deleteNote}
+                  deleteFn={deleteNote}
                   toDelete={toDelete}
                   currentTheme={currentTheme}
                   text="note"

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Modal, TouchableOpacity } from "react-native";
 export const DeleteCellModal = ({
   modalVisible,
   setModalVisible,
-  deleteObj,
+  deleteFn,
   toDelete,
   currentTheme,
   text,
@@ -35,7 +35,7 @@ export const DeleteCellModal = ({
             style={styles.buttonEnter}
             onPress={() => {
               setModalVisible(false);
-              deleteObj(toDelete);
+              deleteFn(toDelete);
             }}
           >
             <Text style={{ color: "white" }}>YES</Text>

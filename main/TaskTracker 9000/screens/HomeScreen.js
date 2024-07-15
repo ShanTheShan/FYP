@@ -24,6 +24,7 @@ import { db } from "../constants/database";
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
 import { DeleteCellModal } from "../components/customDeleteModal";
+import { TutorialModal } from "../components/tutorialModal";
 
 import { themeContext } from "../context/themeContext";
 import { homeScreenStyles } from "./styles/HomeScreenStyles";
@@ -134,33 +135,7 @@ export default function HomeScreen({ navigation }) {
     <SafeAreaView>
       <StatusBar backgroundColor={statusBarColor} style={statusBarTextColor} />
       <View style={homeScreenStyles.centeredView}>
-        <Modal
-          animationType="fade"
-          transparent={false}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={homeScreenStyles.tutorialContainer}>
-            <View style={homeScreenStyles.tutorialView}>
-              <Carousel
-                loop={false}
-                width={300}
-                height={500}
-                autoPlay={false}
-                data={tutorialImages}
-                renderItem={({ index, item }) => <CarouselItem key={index} item={item} />}
-              />
-              <Pressable
-                style={homeScreenStyles.modalButton}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={homeScreenStyles.textStyle}>OKAY</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
+        <TutorialModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
       </View>
       <ScrollView
         style={
@@ -230,7 +205,7 @@ export default function HomeScreen({ navigation }) {
           <DeleteCellModal
             modalVisible={deleteModalVisible}
             setModalVisible={setDeleteModalVisible}
-            deleteObj={deleteProject}
+            deleteFn={deleteProject}
             toDelete={toDelete}
             currentTheme={currentTheme}
             text="project"

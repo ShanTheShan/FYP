@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   ScrollView,
   Modal,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
 } from "react-native";
@@ -16,6 +15,8 @@ import moment from "moment";
 
 import { db } from "../constants/database";
 
+import { DeleteCellModal } from "../components/customDeleteModal";
+import { todoScreenStyles } from "./styles/TodoScreenStyle";
 import { themeContext } from "../context/themeContext";
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
@@ -29,6 +30,7 @@ export default function TodoScreen() {
   //states to determine date
   const today = moment().format("YYYY-MM-DD");
   const [dateSelected, setDateSelected] = useState(today);
+  const [markedDates, setMarkedDates] = useState({});
 
   //create modal state
   const [todoModal, toggleTodoModal] = useState(false);
@@ -43,13 +45,28 @@ export default function TodoScreen() {
       const allRows = await db.getAllAsync("SELECT * FROM Todos WHERE date = ?", [value]);
       setTodos(allRows);
     } catch (error) {
-      console.log(error);
+      console.log("getAll()", error);
+    }
+  };
+
+  const getAllDates = async () => {
+    try {
+      const allRows = await db.getAllAsync("SELECT DISTINCT date FROM Todos");
+      //Calendar marked dates must be of object type
+      const object = allRows.reduce(
+        (obj, item) => Object.assign(obj, { [item.date]: { marked: true, dotColor: "orange" } }),
+        {}
+      );
+      setMarkedDates(object);
+    } catch (error) {
+      console.log("getAllDates()", error);
     }
   };
 
   //run on mount
   useEffect(() => {
     getAll(today);
+    getAllDates();
   }, []);
 
   const handleDayPress = async (day) => {
@@ -62,6 +79,7 @@ export default function TodoScreen() {
       await db.runAsync("INSERT INTO Todos (date,todo) VALUES (?,?)", [dateSelected, value]);
       await getAll(dateSelected);
       setInput("");
+      getAllDates();
     } catch (error) {
       console.log(error);
     }
@@ -73,6 +91,7 @@ export default function TodoScreen() {
       await getAll(dateSelected);
       setToDelete(null);
       toggleDeleteModal(false);
+      getAllDates();
     } catch (error) {
       console.log(error);
     }
@@ -137,14 +156,23 @@ export default function TodoScreen() {
   );
 
   return (
-    <SafeAreaView style={currentTheme === "dark" ? styles.safeAreaDark : styles.safeAreaLight}>
-      <View>
+    <SafeAreaView
+      style={
+        currentTheme === "dark" ? todoScreenStyles.safeAreaDark : todoScreenStyles.safeAreaLight
+      }
+    >
+      <View key={currentTheme}>
         <Calendar
           onDayPress={handleDayPress}
           markedDates={{
+            ...markedDates,
             [dateSelected]: { selected: true },
           }}
-          theme={currentTheme === "dark" ? styles.calendarThemeDark : styles.calendarThemeLight}
+          theme={
+            currentTheme === "dark"
+              ? todoScreenStyles.calendarThemeDark
+              : todoScreenStyles.calendarThemeLight
+          }
         />
       </View>
       <Modal
@@ -161,16 +189,26 @@ export default function TodoScreen() {
             backgroundColor: "rgba(0, 0, 0, 0.8)",
           }}
         >
-          <View style={currentTheme === "dark" ? styles.modalDarkView : styles.modalLightView}>
+          <View
+            style={
+              currentTheme === "dark"
+                ? todoScreenStyles.modalDarkView
+                : todoScreenStyles.modalLightView
+            }
+          >
             <TextInput
-              style={currentTheme === "dark" ? styles.textInputDark : styles.textInputLight}
+              style={
+                currentTheme === "dark"
+                  ? todoScreenStyles.textInputDark
+                  : todoScreenStyles.textInputLight
+              }
               placeholder="Enter todo..."
               onChangeText={(newText) => setInput(newText)}
               placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
               defaultValue={input}
             />
             <TouchableOpacity
-              style={styles.buttonEnter}
+              style={todoScreenStyles.buttonEnter}
               onPress={() => {
                 toggleTodoModal(false);
                 createNewTodo(input);
@@ -181,7 +219,7 @@ export default function TodoScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.buttonClose}
+              style={todoScreenStyles.buttonClose}
               onPress={() => {
                 toggleTodoModal(false);
                 setInput("");
@@ -196,7 +234,11 @@ export default function TodoScreen() {
         <MyPlaceHolder offsetTop={"20%"} value={"todos today"} currentTheme={currentTheme} />
       ) : (
         <ScrollView
-          style={currentTheme === "dark" ? styles.scrollViewDark : styles.scrollViewLight}
+          style={
+            currentTheme === "dark"
+              ? todoScreenStyles.scrollViewDark
+              : todoScreenStyles.scrollViewLight
+          }
         >
           <TableView>
             <Section>
@@ -212,53 +254,14 @@ export default function TodoScreen() {
                 );
               })}
               {deleteModal ? (
-                <Modal
-                  animationType="fade"
-                  transparent={true}
-                  visible={deleteModal}
-                  statusBarTranslucent={true}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: "rgba(0, 0, 0, 0.8)",
-                    }}
-                  >
-                    <View
-                      style={
-                        currentTheme === "dark"
-                          ? styles.deleteModalDarkView
-                          : styles.deleteModalLightView
-                      }
-                    >
-                      <Text
-                        style={currentTheme === "dark" ? { color: "white" } : { color: "black" }}
-                      >
-                        Do you want to delete this todo?
-                      </Text>
-
-                      <TouchableOpacity
-                        style={styles.buttonEnter}
-                        onPress={() => {
-                          toggleDeleteModal(false);
-                          deleteTodo(toDelete);
-                        }}
-                      >
-                        <Text style={{ color: "white" }}>YES</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.buttonClose}
-                        onPress={() => {
-                          toggleDeleteModal(false);
-                        }}
-                      >
-                        <Text style={{ color: "white" }}>NO</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
+                <DeleteCellModal
+                  modalVisible={deleteModal}
+                  setModalVisible={toggleDeleteModal}
+                  deleteFn={deleteTodo}
+                  toDelete={toDelete}
+                  currentTheme={currentTheme}
+                  text="note"
+                />
               ) : null}
             </Section>
           </TableView>
@@ -273,97 +276,3 @@ export default function TodoScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeAreaDark: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: "#1C1C1C",
-  },
-  safeAreaLight: {
-    flex: 1,
-    height: "100%",
-    backgroundColor: "#FFFFFF",
-  },
-  scrollViewLight: {
-    height: "100%",
-    backgroundColor: "#FFFFFF",
-  },
-  scrollViewDark: {
-    height: "100%",
-    backgroundColor: "#1C1C1C",
-  },
-  calendarThemeDark: {
-    backgroundColor: "black",
-    calendarBackground: "black",
-    textSectionTitleColor: "white",
-    dayTextColor: "white",
-    textDisabledColor: "grey",
-    monthTextColor: "white",
-  },
-  calendarThemeLight: {
-    backgroundColor: "white",
-    textSectionTitleColor: "black",
-  },
-  modalDarkView: {
-    backgroundColor: "#1F1F1F",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    elevation: 10,
-  },
-  modalLightView: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    elevation: 10,
-  },
-  deleteModalDarkView: {
-    backgroundColor: "#1F1F1F",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    elevation: 10,
-  },
-  deleteModalLightView: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    elevation: 10,
-  },
-  textInputDark: {
-    borderColor: "white",
-    color: "white",
-    height: 40,
-    width: 155,
-    borderWidth: 1,
-    marginTop: 20,
-    borderRadius: 10,
-    paddingLeft: 5,
-  },
-  textInputLight: {
-    borderColor: "black",
-    height: 40,
-    width: 155,
-    borderWidth: 1,
-    marginTop: 20,
-    borderRadius: 10,
-    paddingLeft: 5,
-  },
-  buttonEnter: {
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 20,
-    elevation: 2,
-    backgroundColor: "darkgreen",
-  },
-  buttonClose: {
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 10,
-    elevation: 2,
-    backgroundColor: "darkred",
-  },
-});
