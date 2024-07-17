@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "193379453275",
+    "project_id": "tasktracker9000push",
+    "storage_bucket": "tasktracker9000push.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193379453275:android:c39c9ae6b2450b9da9727e",
+        "android_client_info": {
+          "package_name": "com.GammaDigital.TaskTracker9000"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3VTs4rFpjyb-hpxxJAgqBsK8cmeFZc20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

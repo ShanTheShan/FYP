@@ -12,7 +12,7 @@ import { taskCreationScreenStyles } from "./styles/TaskCreationScreenStyles";
 
 export default function ProjectTaskScreen({ navigation, route }) {
   //not sure if push notifications should go here, but i put here first
-  //const { expoPushToken, notification } = usePushNotifications();
+  const { expoPushToken, notification } = usePushNotifications();
 
   //if screen is focused
   const isFocused = useIsFocused();
@@ -348,7 +348,12 @@ export default function ProjectTaskScreen({ navigation, route }) {
               : taskCreationScreenStyles.bulletsLight
           }
         >
-          <TouchableOpacity style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={{ flexDirection: "row" }}
+            onPress={() => {
+              console.log(expoPushToken);
+            }}
+          >
             <Image source={require("../assets/bell.png")} style={taskCreationScreenStyles.image} />
             <Text
               style={

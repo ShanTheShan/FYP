@@ -19,7 +19,8 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.GammaDigital.TaskTracker9000"
+      "package": "com.GammaDigital.TaskTracker9000",
+      "googleServicesFile": "./android/app/google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
