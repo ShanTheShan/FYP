@@ -7,8 +7,10 @@ import { db } from "../constants/database";
 import { usePushNotifications, createNotification } from "../constants/push";
 
 import { themeContext } from "../context/themeContext";
+import { animationContext } from "../context/animationContext";
 import { taskCreationScreenStyles } from "./styles/TaskCreationScreenStyles";
 import { AddButton } from "../components/customButtons";
+import { TextValidator, ActionDone } from "../components/customTextValidator";
 import { ReminderTouchable, CameraTouchable, DeadlineTouchable } from "../components/taskCreation";
 
 export default function ProjectTaskScreen({ navigation, route }) {
@@ -23,6 +25,9 @@ export default function ProjectTaskScreen({ navigation, route }) {
 
   //global theme state
   const { currentTheme } = useContext(themeContext);
+  //global animation state
+  const { setToggleValidator } = useContext(animationContext);
+  const { setToggleActionDone } = useContext(animationContext);
 
   //text input state
   const [task, createTask] = useState("");
@@ -79,7 +84,14 @@ export default function ProjectTaskScreen({ navigation, route }) {
     let notesValue = null;
     let imageValue = null;
 
-    console.log(reminderValue);
+    //check if text input is empty
+    if (!task) {
+      setToggleValidator(true);
+      setTimeout(() => {
+        setToggleValidator(false);
+      }, 2000);
+      return;
+    }
 
     //if we have an image, store it
     if (photoUri != null || photoUri != undefined) imageValue = photoUri.uri;
@@ -103,6 +115,12 @@ export default function ProjectTaskScreen({ navigation, route }) {
       setReminderTimeFormated(null);
       setSubTaskArray([]);
       setImagePreview(false);
+
+      //toggle the added animation
+      setToggleActionDone(true);
+      setTimeout(() => {
+        setToggleActionDone(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -175,6 +193,19 @@ export default function ProjectTaskScreen({ navigation, route }) {
     showModeReminder("time");
   };
 
+  const resetElement = (id) => {
+    switch (id) {
+      case 1:
+        setDateFormater(null);
+        setTimeFormater(null);
+        break;
+      case 2:
+        setReminderDateFormated(null);
+        setReminderTimeFormated(null);
+        break;
+    }
+  };
+
   return (
     <SafeAreaView
       style={
@@ -207,21 +238,6 @@ export default function ProjectTaskScreen({ navigation, route }) {
               : taskCreationScreenStyles.bulletsLight
           }
         >
-          {/* <TouchableOpacity style={{ flexDirection: "row" }} onPress={showDatepicker}>
-            <Image
-              source={require("../assets/deadline.png")}
-              style={taskCreationScreenStyles.image}
-            />
-            <Text
-              style={
-                currentTheme === "dark"
-                  ? taskCreationScreenStyles.bulletTextDark
-                  : taskCreationScreenStyles.bulletTextLight
-              }
-            >
-              Deadline
-            </Text>
-          </TouchableOpacity> */}
           <DeadlineTouchable
             styles={taskCreationScreenStyles}
             currentTheme={currentTheme}
@@ -249,7 +265,10 @@ export default function ProjectTaskScreen({ navigation, route }) {
                   >
                     {timeFormatted}
                   </Text>
-                  <TouchableOpacity style={{ flexDirection: "row" }}>
+                  <TouchableOpacity
+                    style={{ flexDirection: "row" }}
+                    onPress={() => resetElement(1)}
+                  >
                     <Text
                       style={
                         currentTheme === "dark"
@@ -394,24 +413,6 @@ export default function ProjectTaskScreen({ navigation, route }) {
               : taskCreationScreenStyles.bulletsLight
           }
         >
-          {/* <TouchableOpacity
-            onPress={() => navigation.navigate("Camera", { id: id })}
-            style={{ flexDirection: "row" }}
-          >
-            <Image
-              source={require("../assets/camera.png")}
-              style={taskCreationScreenStyles.image}
-            />
-            <Text
-              style={
-                currentTheme === "dark"
-                  ? taskCreationScreenStyles.bulletTextDark
-                  : taskCreationScreenStyles.bulletTextLight
-              }
-            >
-              Add Image
-            </Text>
-          </TouchableOpacity> */}
           <CameraTouchable
             styles={taskCreationScreenStyles}
             currentTheme={currentTheme}
@@ -434,18 +435,6 @@ export default function ProjectTaskScreen({ navigation, route }) {
               : taskCreationScreenStyles.bulletsLight
           }
         >
-          {/* <TouchableOpacity style={{ flexDirection: "row" }} onPress={showDatepickerReminder}>
-            <Image source={require("../assets/bell.png")} style={taskCreationScreenStyles.image} />
-            <Text
-              style={
-                currentTheme === "dark"
-                  ? taskCreationScreenStyles.bulletTextDark
-                  : taskCreationScreenStyles.bulletTextLight
-              }
-            >
-              Reminder
-            </Text>
-          </TouchableOpacity> */}
           <ReminderTouchable
             styles={taskCreationScreenStyles}
             currentTheme={currentTheme}
@@ -463,15 +452,31 @@ export default function ProjectTaskScreen({ navigation, route }) {
                 {dateReminderFormatted}
               </Text>
               {timeReminderFormatted != null ? (
-                <Text
-                  style={
-                    currentTheme === "dark"
-                      ? taskCreationScreenStyles.timeDark
-                      : taskCreationScreenStyles.timeLight
-                  }
-                >
-                  {timeReminderFormatted}
-                </Text>
+                <>
+                  <Text
+                    style={
+                      currentTheme === "dark"
+                        ? taskCreationScreenStyles.timeDark
+                        : taskCreationScreenStyles.timeLight
+                    }
+                  >
+                    {timeReminderFormatted}
+                  </Text>
+                  <TouchableOpacity
+                    style={{ flexDirection: "row" }}
+                    onPress={() => resetElement(2)}
+                  >
+                    <Text
+                      style={
+                        currentTheme === "dark"
+                          ? taskCreationScreenStyles.timeTouchableDark
+                          : taskCreationScreenStyles.timeTouchableLight
+                      }
+                    >
+                      ❌
+                    </Text>
+                  </TouchableOpacity>
+                </>
               ) : (
                 <TouchableOpacity style={{ flexDirection: "row" }} onPress={showTimepickerReminder}>
                   <Text
@@ -504,6 +509,8 @@ export default function ProjectTaskScreen({ navigation, route }) {
           alignItems: "center",
         }}
       >
+        <TextValidator value="Task" currentTheme={currentTheme} />
+        <ActionDone value="Task" currentTheme={currentTheme} />
         <AddButton press={() => insertTaskQuery()} />
       </View>
     </SafeAreaView>

@@ -74,6 +74,11 @@ export default function HomeScreen({ navigation }) {
   }, [isFocused]);
 
   const createNewProject = async (value) => {
+    //check if input empty
+    if (!input) {
+      return;
+    }
+
     try {
       await db.runAsync("INSERT INTO Projects (projectName,progress) VALUES (?,?)", [value, 0]);
       //fetch the updated list of projects after insertion

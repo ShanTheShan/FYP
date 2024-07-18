@@ -5,13 +5,12 @@ import { useIsFocused } from "@react-navigation/native";
 import { db } from "../constants/database";
 
 import { themeContext } from "../context/themeContext";
+import { animationContext } from "../context/animationContext";
 import { AddButton } from "../components/customButtons";
+import { TextValidator, ActionDone } from "../components/customTextValidator";
 import { taskCreationScreenStyles } from "./styles/TaskCreationScreenStyles";
 
 export default function NoteCreationScreen({ navigation, route }) {
-  //not sure if push notifications should go here, but i put here first
-  //const { expoPushToken, notification } = usePushNotifications();
-
   //if screen is focused
   const isFocused = useIsFocused();
 
@@ -19,6 +18,10 @@ export default function NoteCreationScreen({ navigation, route }) {
 
   //global theme state
   const { currentTheme } = useContext(themeContext);
+
+  //global animation state
+  const { setToggleValidator } = useContext(animationContext);
+  const { setToggleActionDone } = useContext(animationContext);
 
   //text input state
   const [note, createNote] = useState("");
@@ -37,12 +40,27 @@ export default function NoteCreationScreen({ navigation, route }) {
     //if we have an image, store it
     if (photoUri != null || undefined) imageValue = photoUri.uri;
 
+    //check if text input is empty
+    if (!note) {
+      setToggleValidator(true);
+      setTimeout(() => {
+        setToggleValidator(false);
+      }, 2000);
+      return;
+    }
+
     try {
       db.runSync("INSERT INTO Notes (note,image) VALUES (?,?)", [note, imageValue]);
       //empty the text input so we can type again
       createNote("");
       //empty datetime, subtask, images and reminder, for new input
       setImagePreview(false);
+
+      //toggle the added animation
+      setToggleActionDone(true);
+      setTimeout(() => {
+        setToggleActionDone(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -114,6 +132,8 @@ export default function NoteCreationScreen({ navigation, route }) {
           alignItems: "center",
         }}
       >
+        <TextValidator value="Note" currentTheme={currentTheme} />
+        <ActionDone value="Note" currentTheme={currentTheme} />
         <AddButton press={() => insertNoteQuery()} />
       </View>
     </SafeAreaView>

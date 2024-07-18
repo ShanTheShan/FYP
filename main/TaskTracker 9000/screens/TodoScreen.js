@@ -75,6 +75,11 @@ export default function TodoScreen() {
   };
 
   const createNewTodo = async (value) => {
+    //check if text input empty
+    if (!input) {
+      return;
+    }
+
     try {
       await db.runAsync("INSERT INTO Todos (date,todo) VALUES (?,?)", [dateSelected, value]);
       await getAll(dateSelected);
