@@ -6,8 +6,6 @@ import Constants from "expo-constants";
 
 import { Platform } from "react-native";
 
-//https://github.com/friyiajr/ExpoPushNotifications2/blob/main/usePushNotifications.ts
-
 export const usePushNotifications = () => {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -82,4 +80,27 @@ export const usePushNotifications = () => {
     expoPushToken,
     notification,
   };
+};
+
+function formatDateTimeToISO(dateString, timeString) {
+  const [day, month, year] = dateString.split("/");
+  let date = `${year}-${month}-${day}`;
+
+  return date + "T" + timeString;
+}
+
+export const createNotification = async (date, time) => {
+  let IsoFormat = formatDateTimeToISO(date, time);
+
+  let d = new Date(IsoFormat);
+
+  const trigger = d;
+
+  const id = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Task reminder",
+      body: "You have a task to complete, get to it!",
+    },
+    trigger,
+  });
 };

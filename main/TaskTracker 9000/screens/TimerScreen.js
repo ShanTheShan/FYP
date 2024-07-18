@@ -1,5 +1,5 @@
 import { React, useState, useContext } from "react";
-import { StyleSheet, Text, View, Button, SafeAreaView, Alert } from "react-native";
+import { StyleSheet, Text, View, Button, SafeAreaView } from "react-native";
 
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 
@@ -44,7 +44,7 @@ function TimerScreen() {
     //increment unique key count, to start timer again
     resetState((prevKey) => prevKey + 1);
     //change 52 mins to 17 mins
-    setDuration(10);
+    setDuration(1020);
   }
 
   return (

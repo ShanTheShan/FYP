@@ -8,7 +8,7 @@ const db = SQLite.openDatabaseSync("userData");
 // DROP TABLE IF EXISTS Todos;
 const intiatelizeDatabase = () => {
   try {
-    //database persists across retasrt
+    //database persists across restart
     db.execSync(`   
           CREATE TABLE IF NOT EXISTS Projects (
           id INTEGER PRIMARY KEY, 

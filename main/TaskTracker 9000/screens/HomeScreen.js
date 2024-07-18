@@ -7,14 +7,9 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Pressable,
 } from "react-native";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
-
-import Carousel from "react-native-reanimated-carousel";
-import { CarouselItem } from "../components/customCarousel";
-import { tutorialImages } from "../constants/carouImages";
 
 import { useIsFocused } from "@react-navigation/native";
 

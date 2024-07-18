@@ -7,7 +7,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { db } from "../constants/database";
 
 import { themeContext } from "../context/themeContext";
-import { AddButton, DeleteButton } from "../components/customButtons";
+import { AddButton } from "../components/customButtons";
 
 //custom cell for project details cell
 const DetailsCell = (props) => {
@@ -27,13 +27,13 @@ const DetailsCell = (props) => {
   return (
     <Cell
       key={props.key}
-      image={<Image style={{ height: 50, width: 50, borderRadius: 5 }} source={props.image} />}
+      //image={<Image style={{ height: 50, width: 50, borderRadius: 5 }} source={props.image} />}
       onPress={props.action}
       backgroundColor={props.theme}
       titleTextColor={props.textColor}
       {...props}
       cellContentView={
-        <View>
+        <View style={{ paddingLeft: 5, paddingVertical: 5 }}>
           <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
             {props.tasks}
           </Text>
@@ -42,7 +42,7 @@ const DetailsCell = (props) => {
               {reformedDeadlineData}
             </Text>
           ) : null}
-          {reformedSubTaskData.length != 0 ? (
+          {reformedSubTaskData[0] != "" ? (
             <View>
               {reformedSubTaskData.map((item, i) => (
                 <Text
@@ -55,7 +55,7 @@ const DetailsCell = (props) => {
             </View>
           ) : null}
 
-          {taskImage != null || undefined ? (
+          {taskImage ? (
             <View>
               <Image source={{ uri: taskImage }} style={styles.image} />
             </View>
@@ -147,15 +147,6 @@ export default function ProjectDetails({ navigation, route }) {
       await db.runAsync("UPDATE Projects SET progress = ? WHERE id = ?", [calculatePercent, id]);
     } catch (error) {
       console.log("updateProgressBar() error: ", error);
-    }
-  };
-
-  const deleteProject = async (id, navigation) => {
-    try {
-      await db.runAsync("DELETE FROM Projects WHERE id = ?", [id]);
-      navigation.navigate("Projects Overview");
-    } catch (error) {
-      console.log(error);
     }
   };
 
