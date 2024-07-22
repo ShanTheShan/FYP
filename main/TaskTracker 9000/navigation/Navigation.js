@@ -1,7 +1,7 @@
 import { React, useContext } from "react";
 import { TouchableOpacity, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import HomeScreen from "../screens/HomeScreen";
@@ -23,6 +23,13 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 import { themeContext } from "../context/themeContext";
 
+//fade transition betweens screens, from the react nav doc
+const forFade = ({ current }) => ({
+  cardStyle: {
+    opacity: current.progress,
+  },
+});
+
 // navigation stack object
 const ProjectStack = createStackNavigator();
 
@@ -32,7 +39,12 @@ function ProjectStackScreen({ navigation }) {
   const headerTitle = useHeaderTitle();
 
   return (
-    <ProjectStack.Navigator>
+    <ProjectStack.Navigator
+      screenOptions={{
+        animationEnabled: true,
+        cardStyleInterpolator: forFade,
+      }}
+    >
       <ProjectStack.Screen
         name="Projects Overview"
         component={HomeScreen}
@@ -91,7 +103,12 @@ function TimerStackScreen({ navigation }) {
   const headerTitle = useHeaderTitle();
 
   return (
-    <TimerStack.Navigator>
+    <TimerStack.Navigator
+      screenOptions={{
+        animationEnabled: true,
+        cardStyleInterpolator: forFade,
+      }}
+    >
       <TimerStack.Screen
         name="Focus Tool"
         component={TimerScreen}
@@ -123,7 +140,12 @@ function TaskStackScreen({ navigation }) {
   const headerTitle = useHeaderTitle();
 
   return (
-    <TaskStack.Navigator>
+    <TaskStack.Navigator
+      screenOptions={{
+        animationEnabled: true,
+        cardStyleInterpolator: forFade,
+      }}
+    >
       <TaskStack.Screen
         name="Todos"
         component={TodoScreen}
@@ -155,7 +177,12 @@ function NotesStackScreen({ navigation }) {
   const headerTitle = useHeaderTitle();
 
   return (
-    <NotesStack.Navigator>
+    <NotesStack.Navigator
+      screenOptions={{
+        animationEnabled: true,
+        cardStyleInterpolator: forFade,
+      }}
+    >
       <NotesStack.Screen
         name="My Notes"
         component={NotesScreen}

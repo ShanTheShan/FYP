@@ -12,6 +12,7 @@ import { Cell, Section, TableView } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 
 import { useIsFocused } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { StatusBar } from "expo-status-bar";
 
@@ -61,9 +62,21 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  const isTutorialViewed = async () => {
+    try {
+      const value = await AsyncStorage.getItem("viewed");
+      if (value === "true") {
+        setModalVisible(false);
+      }
+    } catch (error) {
+      console.log("isTutorialViwed(): ", error);
+    }
+  };
+
   //run on mount
   useEffect(() => {
     getAll();
+    isTutorialViewed();
   }, []);
 
   //run when a project is deleted, and we are back to home page

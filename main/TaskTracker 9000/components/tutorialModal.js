@@ -1,10 +1,21 @@
 import { React } from "react";
 import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Carousel from "react-native-reanimated-carousel";
 import { CarouselItem } from "../components/customCarousel";
 import { tutorialImages } from "../constants/carouImages";
 
 export const TutorialModal = ({ modalVisible, setModalVisible }) => {
+  const closeTutorial = async () => {
+    try {
+      await AsyncStorage.setItem("viewed", "true");
+      setModalVisible(!modalVisible);
+    } catch (error) {
+      console.log("closeTutorial() :", error);
+    }
+  };
+
   return (
     <Modal
       animationType="fade"
@@ -24,7 +35,7 @@ export const TutorialModal = ({ modalVisible, setModalVisible }) => {
             data={tutorialImages}
             renderItem={({ index, item }) => <CarouselItem key={index} item={item} />}
           />
-          <Pressable style={styles.modalButton} onPress={() => setModalVisible(!modalVisible)}>
+          <Pressable style={styles.modalButton} onPress={closeTutorial}>
             <Text>OKAY</Text>
           </Pressable>
         </View>

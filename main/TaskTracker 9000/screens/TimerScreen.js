@@ -1,5 +1,7 @@
-import { React, useState, useContext } from "react";
+import { React, useState, useContext, useEffect } from "react";
 import { StyleSheet, Text, View, Button, SafeAreaView } from "react-native";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import { useIsFocused } from "@react-navigation/native";
 
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 
@@ -15,6 +17,17 @@ function TimerScreen() {
   const [duration, setDuration] = useState(3120);
   //button reset
   const [time, resetState] = useState(0);
+
+  //if screen in focus, active keepawake
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      activateKeepAwakeAsync;
+    } else {
+      deactivateKeepAwake;
+    }
+  }, [isFocused]);
 
   //funtion to reformt time
   const children = ({ remainingTime }) => {
