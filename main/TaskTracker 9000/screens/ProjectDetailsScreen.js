@@ -1,6 +1,6 @@
 import { React, useState, useEffect, useContext } from "react";
-import { StyleSheet, Image, Text, View, SafeAreaView, ScrollView } from "react-native";
-import { Cell, Section, TableView } from "react-native-tableview-simple";
+import { StyleSheet, Image, Text, View, SafeAreaView } from "react-native";
+import { Cell, Section } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -8,6 +8,7 @@ import { db } from "../constants/database";
 
 import { themeContext } from "../context/themeContext";
 import { AddButton } from "../components/customButtons";
+import { AccordionItem, Item, Parent, AccordionTouchable } from "../components/customAccordion";
 
 //custom cell for project details cell
 const DetailsCell = (props) => {
@@ -150,8 +151,17 @@ export default function ProjectDetails({ navigation, route }) {
     }
   };
 
+  //for reanimated accordion
+  const [isOpenItem1, setIsOpenItem1] = useState(true);
+  const [isOpenItem2, setIsOpenItem2] = useState(false);
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        currentTheme === "dark" ? { backgroundColor: "#1C1C1C" } : { backgroundColor: "#FFFFFF" },
+      ]}
+    >
       <View
         style={
           currentTheme === "dark" ? styles.projecTabProgressDark : styles.projecTabProgressLight
@@ -167,26 +177,65 @@ export default function ProjectDetails({ navigation, route }) {
           {Math.floor(progressValue * 100)}%
         </Text>
       </View>
-      <ScrollView style={currentTheme === "dark" ? styles.scrollViewDark : styles.scrollViewLight}>
-        <TableView>
-          <Section>
-            {projectDetails.map((item) => (
-              <DetailsCell
-                key={item.id}
-                tasks={item.tasks}
-                deadline={item.deadline}
-                subtasks={item.subtasks}
-                customImage={item.image}
-                textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
-                onPress={() => {
-                  handleTaskTouch(item.tasks);
-                }}
-              />
-            ))}
-          </Section>
-        </TableView>
-      </ScrollView>
+      <View style={styles.completedTaskView}>
+        <AccordionTouchable
+          onPress={() => setIsOpenItem1(!isOpenItem1)}
+          text="Uncompleted"
+          currentTheme={"dark"}
+        />
+      </View>
+      <View>
+        <Parent
+          isOpen={isOpenItem1}
+          uniqueKey={"first"}
+          AccordionComponent={AccordionItem}
+          ItemComponent={() => (
+            <Item
+              scrollHeight={350}
+              currentTheme={currentTheme}
+              content={
+                <Section>
+                  {projectDetails.map((item) => (
+                    <DetailsCell
+                      key={item.id}
+                      tasks={item.tasks}
+                      deadline={item.deadline}
+                      subtasks={item.subtasks}
+                      customImage={item.image}
+                      textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                      backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                      onPress={() => {
+                        handleTaskTouch(item.tasks);
+                      }}
+                    />
+                  ))}
+                </Section>
+              }
+            />
+          )}
+        />
+      </View>
+      <View style={styles.completedTaskView}>
+        <AccordionTouchable
+          onPress={() => setIsOpenItem2(!isOpenItem2)}
+          text="Completed"
+          currentTheme={"dark"}
+        />
+      </View>
+      <View>
+        <Parent
+          isOpen={isOpenItem2}
+          uniqueKey={"second"}
+          AccordionComponent={AccordionItem}
+          ItemComponent={() => (
+            <Item
+              scrollHeight={200}
+              currentTheme={currentTheme}
+              content={<Cell title="Nothing" />}
+            />
+          )}
+        />
+      </View>
       <AddButton
         press={() => {
           navigation.navigate("Create Task", { id: id });
@@ -243,7 +292,6 @@ const styles = StyleSheet.create({
   buttons: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: "red",
   },
   projecTabTasks: {
     flex: 4,
@@ -258,7 +306,6 @@ const styles = StyleSheet.create({
     backgroundColor: "blue",
   },
   submitButton: {
-    backgroundColor: "red",
     padding: 10,
     margin: 15,
     height: 40,
@@ -267,6 +314,9 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
+  },
+  completedTaskView: {
     alignItems: "center",
   },
   button: {

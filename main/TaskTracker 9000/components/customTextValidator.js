@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { View, StyleSheet, Text, Dimensions } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
@@ -6,7 +6,7 @@ import { animationContext } from "../context/animationContext";
 
 const windowHeight = Dimensions.get("window").height;
 
-export const TextValidator = ({ value, currentTheme }) => {
+export const TextValidator = ({ value }) => {
   const { toggleValidator } = useContext(animationContext);
   const scale = useSharedValue(0);
 
@@ -28,7 +28,7 @@ export const TextValidator = ({ value, currentTheme }) => {
     </View>
   );
 };
-export const ActionDone = ({ value, currentTheme }) => {
+export const ActionDone = ({ value }) => {
   const { toggleActionDone } = useContext(animationContext);
   const scale = useSharedValue(0);
 
