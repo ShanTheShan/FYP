@@ -14,6 +14,9 @@ import { TextValidator, ActionDone } from "../components/customTextValidator";
 import { ReminderTouchable, CameraTouchable, DeadlineTouchable } from "../components/taskCreation";
 
 export default function ProjectTaskScreen({ navigation, route }) {
+  //trigger request for notification permission
+  const { expoPushToken, notification } = usePushNotifications();
+
   //if screen is focused
   const isFocused = useIsFocused();
 
