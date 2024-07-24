@@ -9,7 +9,7 @@ const db = SQLite.openDatabaseSync("userData");
 const intiatelizeDatabase = () => {
   try {
     //database persists across restart
-    db.execSync(`   
+    db.execSync(` 
           CREATE TABLE IF NOT EXISTS Projects (
           id INTEGER PRIMARY KEY, 
           projectName TEXT NOT NULL,
@@ -24,7 +24,8 @@ const intiatelizeDatabase = () => {
           deadline TEXT,
           reminder TEXT, 
           notes TEXT,
-          image TEXT, 
+          image TEXT,
+          completed TEXT, 
           FOREIGN KEY (projectId) REFERENCES Projects (id));
 
           CREATE TABLE IF NOT EXISTS Notes (

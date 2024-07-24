@@ -91,19 +91,26 @@ export default function ProjectDetails({ navigation, route }) {
 
   const getAllTasks = async () => {
     try {
-      const allRows = await db.getAllAsync("SELECT * FROM ProjectDetails WHERE projectId = ?", [
-        id,
-      ]);
+      const allUncompletedRows = await db.getAllAsync(
+        "SELECT * FROM ProjectDetails WHERE projectId = ? AND completed = ?",
+        [id, "no"]
+      );
+      const allCompletedRows = await db.getAllAsync(
+        "SELECT * FROM ProjectDetails WHERE projectId = ? AND completed = ?",
+        [id, "yes"]
+      );
       const projectNameAndProgress = await db.getFirstAsync(
         "SELECT projectName, progress FROM Projects WHERE id = ?",
         [id]
       );
 
-      setProjectDetails(allRows);
+      setProjectDetails(allUncompletedRows);
       setProjectName(projectNameAndProgress.projectName);
       setProgressValue(projectNameAndProgress.progress);
 
-      const lengthOfProject = allRows.length;
+      setCompletedTasks(allCompletedRows);
+
+      const lengthOfProject = allUncompletedRows.length;
       setTaskCount(lengthOfProject);
     } catch (error) {
       console.log("getAllTasks() error: ", error);
@@ -129,8 +136,11 @@ export default function ProjectDetails({ navigation, route }) {
 
   const deleteTask = async (task) => {
     try {
-      await db.runAsync("DELETE FROM ProjectDetails WHERE projectId = ? AND tasks = ?", [id, task]);
-
+      //await db.runAsync("DELETE FROM ProjectDetails WHERE projectId = ? AND tasks = ?", [id, task]);
+      await db.runAsync(
+        "UPDATE ProjectDetails SET completed = ? WHERE projectId = ? AND tasks = ?",
+        ["yes", id, task]
+      );
       //update state
       let stateCopy = projectDetails.filter((obj) => obj.tasks !== task);
       setProjectDetails(stateCopy);
@@ -156,8 +166,8 @@ export default function ProjectDetails({ navigation, route }) {
   };
 
   //for reanimated accordion
-  const [isOpenItem1, setIsOpenItem1] = useState(true);
-  const [isOpenItem2, setIsOpenItem2] = useState(false);
+  const [firstAccordionOpen, setFirstAccordionOpen] = useState(true);
+  const [secondAccordionOpen, setSecondAccordionOpen] = useState(false);
 
   return (
     <SafeAreaView
@@ -195,14 +205,14 @@ export default function ProjectDetails({ navigation, route }) {
       </View>
       <View style={projectDetailStyles.completedTaskView}>
         <AccordionTouchable
-          onPress={() => setIsOpenItem1(!isOpenItem1)}
+          onPress={() => setFirstAccordionOpen(!firstAccordionOpen)}
           text="Uncompleted"
           currentTheme={"dark"}
         />
       </View>
       <View>
         <Parent
-          isOpen={isOpenItem1}
+          isOpen={firstAccordionOpen}
           uniqueKey={"first"}
           AccordionComponent={AccordionItem}
           ItemComponent={() => (
@@ -233,14 +243,14 @@ export default function ProjectDetails({ navigation, route }) {
       </View>
       <View style={projectDetailStyles.completedTaskView}>
         <AccordionTouchable
-          onPress={() => setIsOpenItem2(!isOpenItem2)}
+          onPress={() => setSecondAccordionOpen(!secondAccordionOpen)}
           text="Completed"
           currentTheme={"dark"}
         />
       </View>
       <View>
         <Parent
-          isOpen={isOpenItem2}
+          isOpen={secondAccordionOpen}
           uniqueKey={"second"}
           AccordionComponent={AccordionItem}
           ItemComponent={() => (

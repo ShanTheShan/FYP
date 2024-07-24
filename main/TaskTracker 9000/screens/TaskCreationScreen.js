@@ -14,9 +14,6 @@ import { TextValidator, ActionDone } from "../components/customTextValidator";
 import { ReminderTouchable, CameraTouchable, DeadlineTouchable } from "../components/taskCreation";
 
 export default function ProjectTaskScreen({ navigation, route }) {
-  //not sure if push notifications should go here, but i put here first
-  const { expoPushToken, notification } = usePushNotifications();
-
   //if screen is focused
   const isFocused = useIsFocused();
 
@@ -83,6 +80,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
     let reminderValue = dateReminderFormatted;
     let notesValue = null;
     let imageValue = null;
+    let completedValue = "no";
 
     //check if text input is empty
     if (!task) {
@@ -103,8 +101,17 @@ export default function ProjectTaskScreen({ navigation, route }) {
 
     try {
       db.runSync(
-        "INSERT INTO ProjectDetails (projectId, tasks,subtasks,deadline,reminder,notes,image) VALUES (?,?,?,?,?,?,?)",
-        [id, task, subtasksValue, deadlineValue, reminderValue, notesValue, imageValue]
+        "INSERT INTO ProjectDetails (projectId, tasks,subtasks,deadline,reminder,notes,image,completed) VALUES (?,?,?,?,?,?,?,?)",
+        [
+          id,
+          task,
+          subtasksValue,
+          deadlineValue,
+          reminderValue,
+          notesValue,
+          imageValue,
+          completedValue,
+        ]
       );
       //empty the text input so we can type again
       createTask("");
