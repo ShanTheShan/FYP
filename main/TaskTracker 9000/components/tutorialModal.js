@@ -1,12 +1,13 @@
-import { React } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Carousel from "react-native-reanimated-carousel";
 import { CarouselItem } from "../components/customCarousel";
 import { tutorialImages } from "../constants/carouImages";
 
 export const TutorialModal = ({ modalVisible, setModalVisible }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const closeTutorial = async () => {
     try {
       await AsyncStorage.setItem("viewed", "true");
@@ -33,8 +34,19 @@ export const TutorialModal = ({ modalVisible, setModalVisible }) => {
             height={500}
             autoPlay={false}
             data={tutorialImages}
+            onProgressChange={(_, absoluteProgress) => {
+              setCurrentIndex(Math.round(absoluteProgress));
+            }}
             renderItem={({ index, item }) => <CarouselItem key={index} item={item} />}
           />
+          <View style={styles.pagination}>
+            {tutorialImages.map((_, index) => (
+              <View
+                key={index}
+                style={[styles.dot, currentIndex === index ? styles.activeDot : styles.inactiveDot]}
+              />
+            ))}
+          </View>
           <Pressable style={styles.modalButton} onPress={closeTutorial}>
             <Text>OKAY</Text>
           </Pressable>
@@ -52,10 +64,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#323232",
   },
   tutorialView: {
-    height: "90%",
+    height: "85%",
     width: "90%",
     justifyContent: "center",
     alignItems: "center",
+  },
+  pagination: {
+    flexDirection: "row",
+    marginBottom: "10%",
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: "white",
+  },
+  inactiveDot: {
+    backgroundColor: "gray",
   },
   modalButton: {
     borderRadius: 20,

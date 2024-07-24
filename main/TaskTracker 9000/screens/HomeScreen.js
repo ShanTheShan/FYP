@@ -42,7 +42,8 @@ export default function HomeScreen({ navigation }) {
 
   //delete modal
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [toDelete, setToDelete] = useState(null);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+  const [projectDetailsToDelete, setProjectDetailsToDelete] = useState(null);
 
   //text input state
   const [input, setInput] = useState("");
@@ -106,8 +107,9 @@ export default function HomeScreen({ navigation }) {
     try {
       await db.runAsync(
         "DELETE FROM Projects WHERE id = (SELECT id FROM Projects WHERE projectName = ?)",
-        [toDelete]
+        [projectToDelete]
       );
+      await db.runAsync("DELETE FROM ProjectDetails WHERE projectid = ?", [projectDetailsToDelete]);
       getAll();
     } catch (error) {
       console.log(error);
@@ -120,7 +122,8 @@ export default function HomeScreen({ navigation }) {
       onPress={props.action}
       onLongPress={() => {
         setDeleteModalVisible(true);
-        setToDelete(props.title);
+        setProjectToDelete(props.title);
+        setProjectDetailsToDelete(props.projectId);
       }}
       backgroundColor={props.theme}
       {...props}
@@ -231,7 +234,7 @@ export default function HomeScreen({ navigation }) {
             modalVisible={deleteModalVisible}
             setModalVisible={setDeleteModalVisible}
             deleteFn={deleteProject}
-            toDelete={toDelete}
+            projectToDelete={projectToDelete}
             currentTheme={currentTheme}
             text="project"
           />
@@ -243,6 +246,7 @@ export default function HomeScreen({ navigation }) {
                   <HomescreenCell
                     action={() => navigation.navigate("Project Details", { id: item.id })}
                     key={item.id}
+                    projectId={item.id}
                     title={item.projectName}
                     progressValue={item.progress}
                     theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}

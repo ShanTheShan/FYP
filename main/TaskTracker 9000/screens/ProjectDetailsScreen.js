@@ -29,7 +29,6 @@ const DetailsCell = (props) => {
   return (
     <Cell
       key={props.key}
-      //image={<Image style={{ height: 50, width: 50, borderRadius: 5 }} source={props.image} />}
       onPress={props.action}
       backgroundColor={props.theme}
       titleTextColor={props.textColor}
