@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useContext } from "react";
-import { StyleSheet, Image, Text, View, SafeAreaView } from "react-native";
+import { Image, Text, View, SafeAreaView } from "react-native";
 import { Cell, Section } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import { useIsFocused } from "@react-navigation/native";
@@ -7,6 +7,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { db } from "../constants/database";
 
 import { themeContext } from "../context/themeContext";
+import { projectDetailStyles } from "./styles/ProjectDetailStyles";
 import { AddButton } from "../components/customButtons";
 import { AccordionItem, Item, Parent, AccordionTouchable } from "../components/customAccordion";
 
@@ -58,7 +59,7 @@ const DetailsCell = (props) => {
 
           {taskImage ? (
             <View>
-              <Image source={{ uri: taskImage }} style={styles.image} />
+              <Image source={{ uri: taskImage }} style={projectDetailStyles.image} />
             </View>
           ) : null}
         </View>
@@ -76,10 +77,12 @@ export default function ProjectDetails({ navigation, route }) {
   //inititae id that was passed from overview page
   const { id } = route.params;
 
+  //array state to store project name
+  const [projectName, setProjectName] = useState([]);
   //array state to store project tasks
   const [projectDetails, setProjectDetails] = useState([]);
-  //array state to store project tasks
-  const [projectName, setProjectName] = useState([]);
+  //array state to store completed tasks
+  const [completedTasks, setCompletedTasks] = useState([]);
 
   //for progress bar logic
   const [progressValue, setProgressValue] = useState(0);
@@ -114,9 +117,10 @@ export default function ProjectDetails({ navigation, route }) {
     }
   }, [isFocused]);
 
-  const handleTaskTouch = (task) => {
+  const handleTaskTouch = (item) => {
     try {
-      deleteTask(task);
+      setCompletedTasks((oldArray) => [...oldArray, item]);
+      deleteTask(item.tasks);
       updateProgressBar();
     } catch (error) {
       console.log(error);
@@ -158,26 +162,38 @@ export default function ProjectDetails({ navigation, route }) {
   return (
     <SafeAreaView
       style={[
-        styles.container,
+        projectDetailStyles.container,
         currentTheme === "dark" ? { backgroundColor: "#1C1C1C" } : { backgroundColor: "#FFFFFF" },
       ]}
     >
       <View
         style={
-          currentTheme === "dark" ? styles.projecTabProgressDark : styles.projecTabProgressLight
+          currentTheme === "dark"
+            ? projectDetailStyles.projecTabProgressDark
+            : projectDetailStyles.projecTabProgressLight
         }
       >
-        <Text style={currentTheme === "dark" ? styles.projectNameDark : styles.projecNameLight}>
+        <Text
+          style={
+            currentTheme === "dark"
+              ? projectDetailStyles.projectNameDark
+              : projectDetailStyles.projecNameLight
+          }
+        >
           {projectName}
         </Text>
         <Progress.Bar progress={progressValue} width={200} height={20} color={"green"} />
         <Text
-          style={currentTheme === "dark" ? styles.progressPercentDark : styles.progressPercentLight}
+          style={
+            currentTheme === "dark"
+              ? projectDetailStyles.progressPercentDark
+              : projectDetailStyles.progressPercentLight
+          }
         >
           {Math.floor(progressValue * 100)}%
         </Text>
       </View>
-      <View style={styles.completedTaskView}>
+      <View style={projectDetailStyles.completedTaskView}>
         <AccordionTouchable
           onPress={() => setIsOpenItem1(!isOpenItem1)}
           text="Uncompleted"
@@ -205,7 +221,7 @@ export default function ProjectDetails({ navigation, route }) {
                       textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                       backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                       onPress={() => {
-                        handleTaskTouch(item.tasks);
+                        handleTaskTouch(item);
                       }}
                     />
                   ))}
@@ -215,7 +231,7 @@ export default function ProjectDetails({ navigation, route }) {
           )}
         />
       </View>
-      <View style={styles.completedTaskView}>
+      <View style={projectDetailStyles.completedTaskView}>
         <AccordionTouchable
           onPress={() => setIsOpenItem2(!isOpenItem2)}
           text="Completed"
@@ -231,7 +247,21 @@ export default function ProjectDetails({ navigation, route }) {
             <Item
               scrollHeight={200}
               currentTheme={currentTheme}
-              content={<Cell title="Nothing" />}
+              content={
+                <Section>
+                  {completedTasks.map((item) => (
+                    <DetailsCell
+                      key={item.id}
+                      tasks={item.tasks}
+                      deadline={item.deadline}
+                      subtasks={item.subtasks}
+                      customImage={item.image}
+                      textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                      backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                    />
+                  ))}
+                </Section>
+              }
             />
           )}
         />
@@ -244,91 +274,3 @@ export default function ProjectDetails({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  projecTabProgressDark: {
-    backgroundColor: "#1C1C1C",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  projecTabProgressLight: {
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  projecNameLight: {
-    fontSize: 20,
-    paddingBottom: 10,
-    color: "black",
-  },
-  projectNameDark: {
-    fontSize: 20,
-    paddingVertical: 10,
-
-    color: "white",
-  },
-  progressPercentDark: {
-    fontSize: 22,
-    color: "white",
-    paddingTop: 5,
-  },
-  progressPercentLight: {
-    color: "black",
-  },
-
-  scrollViewLight: {
-    height: "100%",
-    backgroundColor: "#FFFFFF",
-  },
-  scrollViewDark: {
-    height: "100%",
-    backgroundColor: "#1C1C1C",
-  },
-  buttons: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  projecTabTasks: {
-    flex: 4,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  addTaskBtn: {
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "blue",
-  },
-  submitButton: {
-    padding: 10,
-    margin: 15,
-    height: 40,
-    width: 100,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  completedTaskView: {
-    alignItems: "center",
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    marginBottom: 40,
-  },
-  image: {
-    margin: "5%",
-    width: 100,
-    height: 100,
-    borderRadius: 5,
-  },
-});

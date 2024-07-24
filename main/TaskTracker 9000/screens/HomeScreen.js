@@ -125,20 +125,32 @@ export default function HomeScreen({ navigation }) {
       backgroundColor={props.theme}
       {...props}
       cellContentView={
-        <View>
-          <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
-            {props.title}
-          </Text>
-          <Progress.Bar
-            style={{ marginBottom: 5 }}
-            progress={props.progressValue}
-            width={200}
-            borderColor="black"
-            borderWidth={1}
-            height={20}
-            color="green"
-            unfilledColor="#B9B9B9"
-          />
+        <View style={{ flex: 1 }}>
+          <View>
+            <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
+              {props.title}
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingBottom: 5,
+            }}
+          >
+            <Progress.Bar
+              progress={props.progressValue}
+              width={200}
+              borderColor="black"
+              borderWidth={1}
+              height={25}
+              color="green"
+              unfilledColor="#B9B9B9"
+            />
+            <Text style={{ fontSize: 17, color: props.textColor }}>
+              {Math.round(props.progressValue * 100)}%
+            </Text>
+          </View>
         </View>
       }
     />
