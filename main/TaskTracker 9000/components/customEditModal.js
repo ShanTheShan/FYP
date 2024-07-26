@@ -1,14 +1,11 @@
+import { useState } from "react";
 import { React } from "react";
-import { StyleSheet, Text, View, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Modal, TouchableOpacity, TextInput } from "react-native";
 
-export const DeleteCellModal = ({
-  modalVisible,
-  setModalVisible,
-  deleteFn,
-  toDelete,
-  currentTheme,
-  text,
-}) => {
+export const EditCellModal = ({ modalVisible, note, updateNote, noteID, currentTheme }) => {
+  //need to have a input state here to edit the text, we cant pass setInput as a prop
+  const [input, setInput] = useState(note);
+
   return (
     <Modal
       animationType="fade"
@@ -27,25 +24,19 @@ export const DeleteCellModal = ({
         <View
           style={currentTheme === "dark" ? styles.deleteModalDarkView : styles.deleteModalLightView}
         >
-          <Text style={currentTheme === "dark" ? { color: "white" } : { color: "black" }}>
-            Do you want to delete this {text}?
-          </Text>
-
+          <TextInput
+            style={currentTheme === "dark" ? styles.textInputDark : styles.textInputLight}
+            value={input}
+            onChangeText={(newText) => setInput(newText)}
+            placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
+          />
           <TouchableOpacity
             style={styles.buttonEnter}
             onPress={() => {
-              deleteFn(toDelete);
+              updateNote(input, noteID);
             }}
           >
-            <Text style={{ color: "white" }}>YES</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonClose}
-            onPress={() => {
-              setModalVisible(false);
-            }}
-          >
-            <Text style={{ color: "white" }}>NO</Text>
+            <Text style={{ color: "white" }}>Done</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -80,5 +71,24 @@ const styles = StyleSheet.create({
     padding: 15,
     marginTop: 15,
     backgroundColor: "darkred",
+  },
+  textInputDark: {
+    borderColor: "white",
+    color: "white",
+    height: 100,
+    width: 150,
+    borderWidth: 1,
+    marginTop: 20,
+    borderRadius: 10,
+    paddingLeft: 5,
+  },
+  textInputLight: {
+    borderColor: "black",
+    height: 40,
+    width: 155,
+    borderWidth: 1,
+    marginTop: 20,
+    borderRadius: 10,
+    paddingLeft: 5,
   },
 });

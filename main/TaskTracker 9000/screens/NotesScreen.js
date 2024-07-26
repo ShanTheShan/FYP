@@ -1,13 +1,15 @@
 import { React, useState, useEffect, useContext } from "react";
-import { Text, View, Image, SafeAreaView, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { Text, View, Image, SafeAreaView, ScrollView } from "react-native";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import { useIsFocused } from "@react-navigation/native";
-
+import { Gesture, GestureDetector, TouchableOpacity } from "react-native-gesture-handler";
+import { runOnJS } from "react-native-reanimated";
 import { noteScreenStyles } from "./styles/NotesScreenStyle";
 
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
 import { DeleteCellModal } from "../components/customDeleteModal";
+import { EditCellModal } from "../components/customEditModal";
 
 import { db } from "../constants/database";
 
@@ -17,8 +19,13 @@ export default function NotesScreen({ navigation }) {
   //global theme state
   const { currentTheme } = useContext(themeContext);
 
+  //edit notes
+  const [input, setInput] = useState();
+  const [noteID, setNoteID] = useState(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+
   //delete modal
-  const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [toDelete, setToDelete] = useState(null);
 
   const [userNotes, setUserNotes] = useState([]);
@@ -35,13 +42,24 @@ export default function NotesScreen({ navigation }) {
     }
   };
 
+  //param is the note id
+  const updateNote = async (value, id) => {
+    try {
+      await db.runAsync("UPDATE Notes SET note = ? WHERE id = ?", [value, id]);
+      getAllNotes();
+      setEditModalVisible(false);
+    } catch (error) {
+      console.log("updateNote(): ", error);
+    }
+  };
+
   //param is the note state
   const deleteNote = async (value) => {
     try {
       await db.runAsync("DELETE FROM Notes WHERE note =?", [value]);
 
       setToDelete(null);
-      setModalVisible(false);
+      setDeleteModalVisible(false);
       getAllNotes();
     } catch (error) {
       console.log("deleteNote() error: ", error);
@@ -57,35 +75,49 @@ export default function NotesScreen({ navigation }) {
 
   //custom cell for project board page
   const NoteCell = (props) => {
+    //for double tap handling
+    const doubleTap = Gesture.Tap()
+      .numberOfTaps(2)
+      .onEnd((_event, successful) => {
+        if (successful) {
+          //gesture handle runs on UI thread, states is React (JavaScript)
+          runOnJS(setNoteID)(props.id);
+          runOnJS(setInput)(props.note);
+          runOnJS(setEditModalVisible)(true);
+        }
+      });
+
     const taskImage = props.customImage;
 
     return (
-      <TouchableOpacity
-        onLongPress={() => {
-          setModalVisible(true);
-          setToDelete(props.note);
-        }}
-      >
-        <Cell
-          key={props.key}
-          onPress={false}
-          backgroundColor={props.theme}
-          titleTextColor={props.textColor}
-          {...props}
-          cellContentView={
-            <View>
-              <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
-                {props.note}
-              </Text>
-              {taskImage != null || undefined ? (
-                <View>
-                  <Image source={{ uri: taskImage }} style={noteScreenStyles.image} />
-                </View>
-              ) : null}
-            </View>
-          }
-        />
-      </TouchableOpacity>
+      <GestureDetector gesture={doubleTap}>
+        <TouchableOpacity
+          onLongPress={() => {
+            setDeleteModalVisible(true);
+            setToDelete(props.note);
+          }}
+        >
+          <Cell
+            key={props.key}
+            onPress={false}
+            backgroundColor={props.theme}
+            titleTextColor={props.textColor}
+            {...props}
+            cellContentView={
+              <View>
+                <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
+                  {props.note}
+                </Text>
+                {taskImage != null || undefined ? (
+                  <View>
+                    <Image source={{ uri: taskImage }} style={noteScreenStyles.image} />
+                  </View>
+                ) : null}
+              </View>
+            }
+          />
+        </TouchableOpacity>
+      </GestureDetector>
     );
   };
 
@@ -110,20 +142,31 @@ export default function NotesScreen({ navigation }) {
               {userNotes.map((item, i) => (
                 <NoteCell
                   key={i}
+                  id={item.id}
                   note={item.note}
                   customImage={item.image}
                   textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                   backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                 />
               ))}
-              {modalVisible ? (
+              {deleteModalVisible ? (
                 <DeleteCellModal
-                  modalVisible={modalVisible}
-                  setModalVisible={setModalVisible}
+                  modalVisible={deleteModalVisible}
+                  setModalVisible={setDeleteModalVisible}
                   deleteFn={deleteNote}
                   toDelete={toDelete}
                   currentTheme={currentTheme}
                   text="note"
+                />
+              ) : null}
+              {editModalVisible ? (
+                <EditCellModal
+                  modalVisible={editModalVisible}
+                  setModalVisible={setEditModalVisible}
+                  note={input}
+                  noteID={noteID}
+                  updateNote={updateNote}
+                  currentTheme={currentTheme}
                 />
               ) : null}
             </Section>
