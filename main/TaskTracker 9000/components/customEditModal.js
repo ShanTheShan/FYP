@@ -26,6 +26,7 @@ export const EditCellModal = ({ modalVisible, note, updateNote, noteID, currentT
         >
           <TextInput
             style={currentTheme === "dark" ? styles.textInputDark : styles.textInputLight}
+            multiline={true}
             value={input}
             onChangeText={(newText) => setInput(newText)}
             placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
@@ -75,20 +76,27 @@ const styles = StyleSheet.create({
   textInputDark: {
     borderColor: "white",
     color: "white",
-    height: 100,
-    width: 150,
+    height: 150,
+    width: 200,
+    textAlignVertical: "top",
     borderWidth: 1,
     marginTop: 20,
     borderRadius: 10,
     paddingLeft: 5,
+    paddingTop: 5,
+    paddingRight: 2,
   },
   textInputLight: {
     borderColor: "black",
-    height: 40,
-    width: 155,
+    color: "black",
+    height: 150,
+    width: 200,
+    textAlignVertical: "top",
     borderWidth: 1,
     marginTop: 20,
     borderRadius: 10,
     paddingLeft: 5,
+    paddingTop: 5,
+    paddingRight: 2,
   },
 });

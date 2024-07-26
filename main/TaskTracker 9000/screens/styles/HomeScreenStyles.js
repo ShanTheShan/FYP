@@ -78,8 +78,8 @@ export const homeScreenStyles = StyleSheet.create({
   textInputDark: {
     borderColor: "white",
     color: "white",
-    height: 40,
-    width: 155,
+    height: 45,
+    width: 175,
     borderWidth: 1,
     marginTop: 20,
     borderRadius: 10,

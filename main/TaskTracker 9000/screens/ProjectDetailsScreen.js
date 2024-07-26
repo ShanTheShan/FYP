@@ -76,17 +76,21 @@ export default function ProjectDetails({ navigation, route }) {
   //inititae id that was passed from overview page
   const { id } = route.params;
 
-  //array state to store project name
   const [projectName, setProjectName] = useState([]);
   //array state to store project tasks
   const [projectDetails, setProjectDetails] = useState([]);
-  //array state to store completed tasks
   const [completedTasks, setCompletedTasks] = useState([]);
+  const [comments, setProjectComments] = useState([]);
 
   //for progress bar logic
   const [progressValue, setProgressValue] = useState(0);
   const [counter, setCounter] = useState(1);
   const [numberOfTasks, setTaskCount] = useState(0);
+
+  //for reanimated accordion
+  const [firstAccordionOpen, setFirstAccordionOpen] = useState(false);
+  const [secondAccordionOpen, setSecondAccordionOpen] = useState(false);
+  const [thirdAccordionOpen, setThirdAccordionOpen] = useState(false);
 
   const getAllTasks = async () => {
     try {
@@ -163,10 +167,6 @@ export default function ProjectDetails({ navigation, route }) {
       console.log("updateProgressBar() error: ", error);
     }
   };
-
-  //for reanimated accordion
-  const [firstAccordionOpen, setFirstAccordionOpen] = useState(true);
-  const [secondAccordionOpen, setSecondAccordionOpen] = useState(false);
 
   return (
     <SafeAreaView
@@ -259,6 +259,41 @@ export default function ProjectDetails({ navigation, route }) {
               content={
                 <Section>
                   {completedTasks.map((item) => (
+                    <DetailsCell
+                      key={item.id}
+                      tasks={item.tasks}
+                      deadline={item.deadline}
+                      subtasks={item.subtasks}
+                      customImage={item.image}
+                      textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                      backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                    />
+                  ))}
+                </Section>
+              }
+            />
+          )}
+        />
+      </View>
+      <View style={projectDetailStyles.completedTaskView}>
+        <AccordionTouchable
+          onPress={() => setThirdAccordionOpen(!thirdAccordionOpen)}
+          text="Comments"
+          currentTheme={"dark"}
+        />
+      </View>
+      <View>
+        <Parent
+          isOpen={thirdAccordionOpen}
+          uniqueKey={"third"}
+          AccordionComponent={AccordionItem}
+          ItemComponent={() => (
+            <Item
+              scrollHeight={200}
+              currentTheme={currentTheme}
+              content={
+                <Section>
+                  {comments.map((item) => (
                     <DetailsCell
                       key={item.id}
                       tasks={item.tasks}

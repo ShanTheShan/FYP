@@ -1,13 +1,14 @@
 import React from "react";
-import { StyleSheet, View, ScrollView, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, ScrollView, TouchableHighlight, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withTiming,
+  interpolateColor,
 } from "react-native-reanimated";
 
-export function AccordionItem({ isExpanded, viewKey, children, style, duration = 150 }) {
+export function AccordionItem({ isExpanded, viewKey, children, style, duration = 200 }) {
   const height = useSharedValue(0);
 
   const derivedHeight = useDerivedValue(() =>
@@ -64,18 +65,33 @@ export function Parent({ isOpen, AccordionComponent, ItemComponent, uniqueKey })
 }
 
 export function AccordionTouchable({ onPress, currentTheme, text }) {
+  const progress = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: interpolateColor(progress.value, [0, 1], ["#2B2B2B", "#1A119E"]),
+    };
+  });
+
   return (
-    <TouchableOpacity onPress={onPress} style={styles.buttonStyling}>
-      <Text
-        style={
-          currentTheme === "dark"
-            ? { color: "white", fontSize: 15, paddingVertical: 3 }
-            : { color: "black", fontSize: 15, paddingVertical: 3 }
-        }
-      >
-        {text}
-      </Text>
-    </TouchableOpacity>
+    <TouchableHighlight
+      onPress={() => {
+        onPress(), (progress.value = withTiming(1 - progress.value, { duration: 200 }));
+      }}
+      style={styles.buttonStyling}
+    >
+      <Animated.View style={[styles.animatedWrapper, animatedStyle]}>
+        <Text
+          style={
+            currentTheme === "dark"
+              ? { color: "white", fontSize: 15, paddingVertical: 3, paddingRight: 5 }
+              : { color: "black", fontSize: 15, paddingVertical: 3 }
+          }
+        >
+          {text}
+        </Text>
+      </Animated.View>
+    </TouchableHighlight>
   );
 }
 
@@ -96,8 +112,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   buttonStyling: {
-    backgroundColor: "#2B2B2B",
     width: "100%",
+  },
+  animatedWrapper: {
+    backgroundColor: "#2B2B2B",
     alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
   },
 });

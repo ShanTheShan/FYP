@@ -111,6 +111,7 @@ export default function HomeScreen({ navigation }) {
       );
       await db.runAsync("DELETE FROM ProjectDetails WHERE projectid = ?", [projectDetailsToDelete]);
       getAll();
+      setDeleteModalVisible(false);
     } catch (error) {
       console.log(error);
     }
@@ -200,6 +201,7 @@ export default function HomeScreen({ navigation }) {
                       : homeScreenStyles.textInputLight
                   }
                   placeholder="Enter project name..."
+                  multiline={true}
                   onChangeText={(newText) => setInput(newText)}
                   placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
                   defaultValue={input}

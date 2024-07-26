@@ -1,6 +1,6 @@
 import { React, useState, useEffect, useContext } from "react";
 import { Text, View, Image, SafeAreaView, ScrollView } from "react-native";
-import { Cell, Section, TableView } from "react-native-tableview-simple";
+import { Cell, Section } from "react-native-tableview-simple";
 import { useIsFocused } from "@react-navigation/native";
 import { Gesture, GestureDetector, TouchableOpacity } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
@@ -137,40 +137,38 @@ export default function NotesScreen({ navigation }) {
               : noteScreenStyles.scrollViewLight
           }
         >
-          <TableView>
-            <Section>
-              {userNotes.map((item, i) => (
-                <NoteCell
-                  key={i}
-                  id={item.id}
-                  note={item.note}
-                  customImage={item.image}
-                  textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                  backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
-                />
-              ))}
-              {deleteModalVisible ? (
-                <DeleteCellModal
-                  modalVisible={deleteModalVisible}
-                  setModalVisible={setDeleteModalVisible}
-                  deleteFn={deleteNote}
-                  toDelete={toDelete}
-                  currentTheme={currentTheme}
-                  text="note"
-                />
-              ) : null}
-              {editModalVisible ? (
-                <EditCellModal
-                  modalVisible={editModalVisible}
-                  setModalVisible={setEditModalVisible}
-                  note={input}
-                  noteID={noteID}
-                  updateNote={updateNote}
-                  currentTheme={currentTheme}
-                />
-              ) : null}
-            </Section>
-          </TableView>
+          <Section>
+            {userNotes.map((item, i) => (
+              <NoteCell
+                key={i}
+                id={item.id}
+                note={item.note}
+                customImage={item.image}
+                textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+              />
+            ))}
+            {deleteModalVisible ? (
+              <DeleteCellModal
+                modalVisible={deleteModalVisible}
+                setModalVisible={setDeleteModalVisible}
+                deleteFn={deleteNote}
+                toDelete={toDelete}
+                currentTheme={currentTheme}
+                text="note"
+              />
+            ) : null}
+            {editModalVisible ? (
+              <EditCellModal
+                modalVisible={editModalVisible}
+                setModalVisible={setEditModalVisible}
+                note={input}
+                noteID={noteID}
+                updateNote={updateNote}
+                currentTheme={currentTheme}
+              />
+            ) : null}
+          </Section>
         </ScrollView>
       )}
 
