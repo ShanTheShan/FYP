@@ -51,12 +51,12 @@ export default function TodoScreen() {
 
   const getAllDates = async () => {
     try {
-      const allRows = await db.getAllAsync("SELECT DISTINCT date FROM Todos");
+      const allRows = await db.getAllAsync("SELECT DISTINCT * FROM Todos");
       //Calendar marked dates must be of object type
-      const object = allRows.reduce(
-        (obj, item) => Object.assign(obj, { [item.date]: { marked: true, dotColor: "orange" } }),
-        {}
-      );
+      const object = allRows.reduce((obj, item) => {
+        const dotColor = item.done === "yes" ? "grey" : "orange";
+        return Object.assign(obj, { [item.date]: { marked: true, dotColor: dotColor } });
+      }, {});
       setMarkedDates(object);
     } catch (error) {
       console.log("getAllDates()", error);
@@ -81,7 +81,11 @@ export default function TodoScreen() {
     }
 
     try {
-      await db.runAsync("INSERT INTO Todos (date,todo) VALUES (?,?)", [dateSelected, value]);
+      await db.runAsync("INSERT INTO Todos (date,todo,done) VALUES (?,?,?)", [
+        dateSelected,
+        value,
+        "no",
+      ]);
       await getAll(dateSelected);
       setInput("");
       getAllDates();
@@ -104,10 +108,8 @@ export default function TodoScreen() {
 
   //handle todo completed style
   const handleStrikeThrough = async (value) => {
-    const strike = "yes";
-
     try {
-      await db.runAsync("UPDATE Todos SET done = ? WHERE todo =?", [strike, value]);
+      await db.runAsync("UPDATE Todos SET done = ? WHERE todo =?", ["yes", value]);
 
       await getAll(dateSelected);
     } catch (error) {

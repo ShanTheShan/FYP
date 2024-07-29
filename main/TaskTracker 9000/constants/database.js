@@ -13,20 +13,21 @@ const intiatelizeDatabase = () => {
           CREATE TABLE IF NOT EXISTS Projects (
           id INTEGER PRIMARY KEY, 
           projectName TEXT NOT NULL,
-          progress INTEGER
+          progress INTEGER NOT NULL
           );
 
           CREATE TABLE IF NOT EXISTS ProjectDetails (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          id INTEGER PRIMARY KEY,
           projectId INTEGER NOT NULL, 
-          tasks TEXT, 
+          tasks TEXT NOT NULL, 
           subtasks TEXT,
           deadline TEXT,
           reminder TEXT, 
           notes TEXT,
           image TEXT,
-          completed TEXT, 
-          FOREIGN KEY (projectId) REFERENCES Projects (id));
+          completed TEXT NOT NULL, 
+          FOREIGN KEY (projectId) REFERENCES Projects (id)
+          );
 
           CREATE TABLE IF NOT EXISTS Notes (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,9 +37,9 @@ const intiatelizeDatabase = () => {
           
           CREATE TABLE IF NOT EXISTS Todos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          date TEXT,
-          todo TEXT,
-          done TEXT
+          date TEXT NOT NULL,
+          todo TEXT NOT NULL,
+          done TEXT NOT NULL
           );
           
           `);
