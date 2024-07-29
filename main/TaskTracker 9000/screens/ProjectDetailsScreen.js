@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useContext } from "react";
-import { Image, Text, View, SafeAreaView } from "react-native";
+import { Image, Text, View, SafeAreaView, TouchableOpacity } from "react-native";
 import { Cell, Section } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import { useIsFocused } from "@react-navigation/native";
@@ -7,7 +7,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { db } from "../constants/database";
 
 import { themeContext } from "../context/themeContext";
-import { projectDetailStyles } from "./styles/ProjectDetailStyles";
+import { projectDetailStyles, Circle } from "./styles/ProjectDetailStyles";
 import { AddButton } from "../components/customButtons";
 import { AccordionItem, Item, Parent, AccordionTouchable } from "../components/customAccordion";
 
@@ -30,37 +30,61 @@ const DetailsCell = (props) => {
     <Cell
       key={props.key}
       onPress={props.action}
+      isDisabled={true}
       backgroundColor={props.theme}
       titleTextColor={props.textColor}
       {...props}
       cellContentView={
         <View style={{ paddingLeft: 5, paddingVertical: 5 }}>
-          <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
-            {props.tasks}
-          </Text>
-          {props.deadline != "null | null" ? (
-            <Text style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
-              {reformedDeadlineData}
-            </Text>
-          ) : null}
-          {reformedSubTaskData[0] != "" ? (
-            <View>
-              {reformedSubTaskData.map((item, i) => (
-                <Text
-                  key={i}
-                  style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}
-                >
-                  {item}
-                </Text>
-              ))}
-            </View>
-          ) : null}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {props.completed ? null : (
+              <TouchableOpacity onPress={props.customPress}>
+                <Circle />
+              </TouchableOpacity>
+            )}
 
-          {taskImage ? (
-            <View>
-              <Image source={{ uri: taskImage }} style={projectDetailStyles.image} />
-            </View>
-          ) : null}
+            <Text
+              style={[
+                { fontSize: 20, paddingBottom: 5, paddingLeft: 10 },
+                { color: props.textColor },
+              ]}
+            >
+              {props.tasks}
+            </Text>
+          </View>
+
+          <View style={{ paddingLeft: 25 }}>
+            {props.deadline != "null | null" ? (
+              <Text style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
+                {reformedDeadlineData}
+              </Text>
+            ) : null}
+            {reformedSubTaskData[0] != "" ? (
+              <View>
+                {reformedSubTaskData.map((item, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    onPress={() => {
+                      console.log("sub task presssed");
+                    }}
+                  >
+                    <Text
+                      key={i}
+                      style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}
+                    >
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : null}
+
+            {taskImage ? (
+              <View>
+                <Image source={{ uri: taskImage }} style={projectDetailStyles.image} />
+              </View>
+            ) : null}
+          </View>
         </View>
       }
     />
@@ -229,9 +253,13 @@ export default function ProjectDetails({ navigation, route }) {
                       customImage={item.image}
                       textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                       backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
-                      onPress={() => {
+                      completed={false}
+                      customPress={() => {
                         handleTaskTouch(item);
                       }}
+                      // onPress={() => {
+                      //   handleTaskTouch(item);
+                      // }}
                     />
                   ))}
                 </Section>
@@ -267,6 +295,7 @@ export default function ProjectDetails({ navigation, route }) {
                       customImage={item.image}
                       textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                       backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                      completed={true}
                     />
                   ))}
                 </Section>

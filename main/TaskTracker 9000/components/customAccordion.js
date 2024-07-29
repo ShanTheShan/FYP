@@ -69,7 +69,7 @@ export function AccordionTouchable({ onPress, currentTheme, text }) {
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      backgroundColor: interpolateColor(progress.value, [0, 1], ["#2B2B2B", "#1A119E"]),
+      backgroundColor: interpolateColor(progress.value, [0, 1], ["#2B2B2B", "#003366"]),
     };
   });
 
