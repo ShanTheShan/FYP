@@ -109,7 +109,9 @@ export default function HomeScreen({ navigation }) {
         "DELETE FROM Projects WHERE id = (SELECT id FROM Projects WHERE projectName = ?)",
         [projectToDelete]
       );
-      await db.runAsync("DELETE FROM ProjectDetails WHERE projectid = ?", [projectDetailsToDelete]);
+      await db.runAsync("DELETE FROM ProjectDetails WHERE project_id = ?", [
+        projectDetailsToDelete,
+      ]);
       getAll();
       setDeleteModalVisible(false);
     } catch (error) {
