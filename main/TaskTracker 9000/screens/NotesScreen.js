@@ -8,8 +8,7 @@ import { noteScreenStyles } from "./styles/NotesScreenStyle";
 
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
-import { DeleteCellModal } from "../components/customDeleteModal";
-import { EditCellModal } from "../components/customEditModal";
+import { EditCellModal, DeleteCellModal } from "../components/customModals";
 
 import { db } from "../constants/database";
 
@@ -162,9 +161,9 @@ export default function NotesScreen({ navigation }) {
               <EditCellModal
                 modalVisible={editModalVisible}
                 setModalVisible={setEditModalVisible}
-                note={input}
-                noteID={noteID}
-                updateNote={updateNote}
+                text={input}
+                textID={noteID}
+                updateText={updateNote}
                 currentTheme={currentTheme}
               />
             ) : null}

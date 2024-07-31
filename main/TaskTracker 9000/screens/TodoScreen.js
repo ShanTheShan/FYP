@@ -15,7 +15,7 @@ import moment from "moment";
 
 import { db } from "../constants/database";
 
-import { DeleteCellModal } from "../components/customDeleteModal";
+import { DeleteCellModal } from "../components/customModals";
 import { todoScreenStyles } from "./styles/TodoScreenStyle";
 import { themeContext } from "../context/themeContext";
 import { AddButton } from "../components/customButtons";

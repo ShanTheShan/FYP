@@ -19,7 +19,7 @@ import { StatusBar } from "expo-status-bar";
 import { db } from "../constants/database";
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
-import { DeleteCellModal } from "../components/customDeleteModal";
+import { DeleteCellModal } from "../components/customModals";
 import { TutorialModal } from "../components/tutorialModal";
 
 import { themeContext } from "../context/themeContext";
@@ -103,17 +103,28 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  const deleteProject = async () => {
+  const deleteProject = () => {
     try {
-      await db.runAsync(
-        "DELETE FROM Projects WHERE id = (SELECT id FROM Projects WHERE projectName = ?)",
-        [projectToDelete]
-      );
-      await db.runAsync("DELETE FROM ProjectDetails WHERE projectid = ?", [projectDetailsToDelete]);
-      getAll();
-      setDeleteModalVisible(false);
+      db.withTransactionAsync(async () => {
+        //delete subtasks, then tasks, comments, then project
+        await db.runAsync(
+          "DELETE FROM ProjectSubTasks WHERE parent_task_id IN (SELECT task_id FROM ProjectDetails WHERE project_id = ?)",
+          [projectDetailsToDelete]
+        );
+
+        await db.runAsync("DELETE FROM ProjectDetails WHERE project_id = ?", [
+          projectDetailsToDelete,
+        ]);
+
+        await db.runAsync(
+          "DELETE FROM Projects WHERE id = (SELECT id FROM Projects WHERE projectName = ?)",
+          [projectToDelete]
+        );
+        getAll();
+        setDeleteModalVisible(false);
+      });
     } catch (error) {
-      console.log(error);
+      console.log("deleteProject() error:", error);
     }
   };
 

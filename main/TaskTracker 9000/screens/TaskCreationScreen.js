@@ -103,19 +103,23 @@ export default function ProjectTaskScreen({ navigation, route }) {
     }
 
     try {
-      db.runSync(
-        "INSERT INTO ProjectDetails (projectId, tasks,subtasks,deadline,reminder,notes,image,completed) VALUES (?,?,?,?,?,?,?,?)",
-        [
-          id,
-          task,
-          subtasksValue,
-          deadlineValue,
-          reminderValue,
-          notesValue,
-          imageValue,
-          completedValue,
-        ]
-      );
+      db.withTransactionAsync(async () => {
+        await db.runAsync(
+          "INSERT INTO ProjectDetails (project_id , task_name, deadline,reminder, image,task_completed) VALUES (?,?,?,?,?,?)",
+          [id, task, deadlineValue, reminderValue, imageValue, completedValue]
+        );
+        if (subTaskArray.length != 0) {
+          //get the id of the latest task inserted first
+          const { lastInsertRowId: task_id } = await db.runAsync("SELECT last_insert_rowid()");
+          for (let sub of subTaskArray) {
+            await db.runAsync(
+              "INSERT INTO ProjectSubTasks (parent_task_id,subs,sub_completed) VALUES (?,?,?)",
+              [task_id, sub, "no"]
+            );
+          }
+        }
+      });
+
       //empty the text input so we can type again
       createTask("");
       //empty datetime, subtask, images and reminder, for new input
