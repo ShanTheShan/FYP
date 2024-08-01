@@ -16,6 +16,7 @@ import moment from "moment";
 import { db } from "../constants/database";
 
 import { DeleteCellModal } from "../components/customModals";
+import { TodoCell } from "../components/customCells";
 import { todoScreenStyles } from "./styles/TodoScreenStyle";
 import { themeContext } from "../context/themeContext";
 import { AddButton } from "../components/customButtons";
@@ -118,49 +119,49 @@ export default function TodoScreen() {
   };
 
   //custom cell
-  const TodoCell = (props) => (
-    <TouchableOpacity
-      onLongPress={() => {
-        toggleDeleteModal(true);
-        setToDelete(props.title);
-      }}
-      onPress={() => {
-        handleStrikeThrough(props.title);
-      }}
-    >
-      <Cell
-        backgroundColor={props.theme}
-        {...props}
-        cellContentView={
-          <View>
-            {/* if todo is done, render strike through, else no strike through */}
-            {props.done === "yes" ? (
-              <Text
-                style={{
-                  fontSize: 20,
-                  paddingBottom: 5,
-                  color: props.textColor,
-                  textDecorationLine: "line-through",
-                }}
-              >
-                {props.title}
-              </Text>
-            ) : (
-              <Text
-                style={{
-                  fontSize: 20,
-                  paddingBottom: 5,
-                  color: props.textColor,
-                }}
-              >
-                {props.title}
-              </Text>
-            )}
-          </View>
-        }
-      />
-    </TouchableOpacity>
-  );
+  // const TodoCell = (props) => (
+  //   <TouchableOpacity
+  //     onLongPress={() => {
+  //       toggleDeleteModal(true);
+  //       setToDelete(props.title);
+  //     }}
+  //     onPress={() => {
+  //       handleStrikeThrough(props.title);
+  //     }}
+  //   >
+  //     <Cell
+  //       backgroundColor={props.theme}
+  //       {...props}
+  //       cellContentView={
+  //         <View>
+  //           {/* if todo is done, render strike through, else no strike through */}
+  //           {props.done === "yes" ? (
+  //             <Text
+  //               style={{
+  //                 fontSize: 20,
+  //                 paddingBottom: 5,
+  //                 color: props.textColor,
+  //                 textDecorationLine: "line-through",
+  //               }}
+  //             >
+  //               {props.title}
+  //             </Text>
+  //           ) : (
+  //             <Text
+  //               style={{
+  //                 fontSize: 20,
+  //                 paddingBottom: 5,
+  //                 color: props.textColor,
+  //               }}
+  //             >
+  //               {props.title}
+  //             </Text>
+  //           )}
+  //         </View>
+  //       }
+  //     />
+  //   </TouchableOpacity>
+  // );
 
   return (
     <SafeAreaView
@@ -255,6 +256,9 @@ export default function TodoScreen() {
                     key={item.id}
                     title={item.todo}
                     done={item.done}
+                    toggleDeleteModal={toggleDeleteModal}
+                    setToDelete={setToDelete}
+                    handleStrikeThrough={handleStrikeThrough}
                     theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                     textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                   />

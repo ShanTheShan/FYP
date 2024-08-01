@@ -100,4 +100,48 @@ const DetailsCell = (props) => {
   );
 };
 
-export { DetailsCell };
+const TodoCell = (props) => (
+  <TouchableOpacity
+    onLongPress={() => {
+      props.toggleDeleteModal(true);
+      props.setToDelete(props.title);
+    }}
+    onPress={() => {
+      props.handleStrikeThrough(props.title);
+    }}
+  >
+    <Cell
+      backgroundColor={props.theme}
+      {...props}
+      cellContentView={
+        <View>
+          {/* if todo is done, render strike through, else no strike through */}
+          {props.done === "yes" ? (
+            <Text
+              style={{
+                fontSize: 20,
+                paddingBottom: 5,
+                color: props.textColor,
+                textDecorationLine: "line-through",
+              }}
+            >
+              {props.title}
+            </Text>
+          ) : (
+            <Text
+              style={{
+                fontSize: 20,
+                paddingBottom: 5,
+                color: props.textColor,
+              }}
+            >
+              {props.title}
+            </Text>
+          )}
+        </View>
+      }
+    />
+  </TouchableOpacity>
+);
+
+export { DetailsCell, TodoCell };

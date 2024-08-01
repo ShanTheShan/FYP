@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useContext } from "react";
-import { Image, Text, View, SafeAreaView } from "react-native";
+import { Text, View, SafeAreaView } from "react-native";
 import { Cell, Section } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import { useIsFocused } from "@react-navigation/native";
