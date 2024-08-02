@@ -116,10 +116,15 @@ export default function HomeScreen({ navigation }) {
           projectDetailsToDelete,
         ]);
 
+        await db.runAsync("DELETE FROM ProjectComments WHERE project_id = ?", [
+          projectDetailsToDelete,
+        ]);
+
         await db.runAsync(
           "DELETE FROM Projects WHERE id = (SELECT id FROM Projects WHERE projectName = ?)",
           [projectToDelete]
         );
+
         getAll();
         setDeleteModalVisible(false);
       });

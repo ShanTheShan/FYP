@@ -38,11 +38,13 @@ export const settingStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  radioGroup: {
-    flex: 1,
-    marginVertical: "10%",
-    justifyContent: "space-evenly",
+  timerModalView: {
+    backgroundColor: "lightgrey",
+    height: "40%",
+    width: "70%",
+    borderRadius: 15,
     alignItems: "center",
+    justifyContent: "space-evenly",
   },
   themeTextPressed: {
     marginVertical: 10,

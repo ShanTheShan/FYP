@@ -1,10 +1,13 @@
 import { React, useState, useContext } from "react";
 import { Text, View, SafeAreaView, TouchableOpacity, Linking, Modal } from "react-native";
+import WheelPicker from "react-native-wheely";
 
-import { Cell, Section, TableView } from "react-native-tableview-simple";
+import { Cell, Section } from "react-native-tableview-simple";
 import { themeContext } from "../context/themeContext";
+import { timerContext } from "../context/timerContext";
 import { settingStyles } from "./styles/SettingsScreenStyles";
 import { TutorialModal } from "../components/tutorialModal";
+import { times } from "../constants/timePreset";
 
 const handleTurnNotificationsOn = async () => {
   await Linking.openSettings();
@@ -13,14 +16,20 @@ const handleTurnNotificationsOn = async () => {
 export default function SettingsScreen() {
   //retrieve global theme state
   const { currentTheme, setCurrentTheme } = useContext(themeContext);
+  const { setWorkDuration, setRestDuration } = useContext(timerContext);
 
   //create a project state modal
   const [themeModal, toggleThemeModal] = useState(false);
   const [tutorialModal, toggleTutorialModal] = useState(false);
+  const [timerModal, toggleTimerModal] = useState(false);
 
   //theme state color
   const [darkState, setDarkState] = useState(true);
   const [lightState, setLightState] = useState(false);
+
+  //wheely
+  const [workMinutes, setWorkMinutes] = useState(0);
+  const [restMinutes, setRestMinutes] = useState(0);
 
   //handle theme saving when "Done" is pressed in modal
   const setTheme = () => {
@@ -47,6 +56,15 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleTimerPrest = () => {
+    toggleTimerModal(!timerModal);
+    //convert string to integer seconds
+    const workTime_toSeconds = times[workMinutes] * 60;
+    const restTime_toSeconds = times[restMinutes] * 60;
+    setWorkDuration(workTime_toSeconds);
+    setRestDuration(restTime_toSeconds);
+  };
+
   return (
     <SafeAreaView
       style={currentTheme === "dark" ? settingStyles.safeAreaDark : settingStyles.safeAreaLight}
@@ -59,8 +77,30 @@ export default function SettingsScreen() {
         <TutorialModal modalVisible={tutorialModal} setModalVisible={toggleTutorialModal} />
       ) : (
         <View style={settingStyles.settingsContainer}>
-          <TableView>
-            {/* if theme pressed, launch modal */}
+          {/* if theme pressed, launch modal */}
+          <Section>
+            <Cell
+              contentContainerStyle={{ height: 70 }}
+              onPress={handleTurnNotificationsOn}
+              cellContentView={
+                <Text style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}>
+                  Notifications
+                </Text>
+              }
+              backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
+            />
+            <Cell
+              contentContainerStyle={{ height: 70 }}
+              onPress={() => {
+                toggleThemeModal(true);
+              }}
+              cellContentView={
+                <Text style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}>
+                  Theme
+                </Text>
+              }
+              backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
+            />
             {themeModal ? (
               <Modal
                 animationType="fade"
@@ -123,51 +163,93 @@ export default function SettingsScreen() {
                   </View>
                 </View>
               </Modal>
-            ) : (
-              <Section>
-                <Cell
-                  contentContainerStyle={{ height: 70 }}
-                  onPress={handleTurnNotificationsOn}
-                  cellContentView={
-                    <Text
-                      style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}
+            ) : null}
+            <Cell
+              contentContainerStyle={{ height: 70 }}
+              onPress={() => {
+                toggleTimerModal(true);
+              }}
+              cellContentView={
+                <Text style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}>
+                  Timer
+                </Text>
+              }
+              backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
+            />
+            {timerModal ? (
+              <Modal
+                animationType="fade"
+                transparent={true}
+                visible={timerModal}
+                statusBarTranslucent={true}
+              >
+                <View style={settingStyles.themeModalContainer}>
+                  <View style={settingStyles.timerModalView}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignContent: "space-evenly",
+                      }}
                     >
-                      Notifications
-                    </Text>
-                  }
-                  backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
-                />
-                <Cell
-                  contentContainerStyle={{ height: 70 }}
-                  onPress={() => {
-                    toggleThemeModal(true);
-                  }}
-                  cellContentView={
-                    <Text
-                      style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}
+                      {/* row view with 2 columns inside, one for each wheely*/}
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          alignItems: "center",
+                          marginRight: 5,
+                        }}
+                      >
+                        <Text style={{ fontSize: 15 }}>Work</Text>
+                        <WheelPicker
+                          selectedIndex={workMinutes}
+                          options={times}
+                          onChange={(index) => setWorkMinutes(index)}
+                          containerStyle={{
+                            marginHorizontal: 10,
+                          }}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          alignItems: "center",
+                          marginLeft: 5,
+                        }}
+                      >
+                        <Text style={{ fontSize: 15 }}>Rest</Text>
+                        <WheelPicker
+                          selectedIndex={restMinutes}
+                          options={times}
+                          onChange={(index) => setRestMinutes(index)}
+                          containerStyle={{
+                            marginHorizontal: 10,
+                          }}
+                        />
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
+                      onPress={() => handleTimerPrest()}
                     >
-                      Theme
-                    </Text>
-                  }
-                  backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
-                />
-                <Cell
-                  contentContainerStyle={{ height: 70 }}
-                  onPress={() => {
-                    toggleTutorialModal(true);
-                  }}
-                  cellContentView={
-                    <Text
-                      style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}
-                    >
-                      Replay Tutorial
-                    </Text>
-                  }
-                  backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
-                />
-              </Section>
-            )}
-          </TableView>
+                      <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
+            ) : null}
+            <Cell
+              contentContainerStyle={{ height: 70 }}
+              onPress={() => {
+                toggleTutorialModal(true);
+              }}
+              cellContentView={
+                <Text style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}>
+                  Replay Tutorial
+                </Text>
+              }
+              backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
+            />
+          </Section>
         </View>
       )}
     </SafeAreaView>
