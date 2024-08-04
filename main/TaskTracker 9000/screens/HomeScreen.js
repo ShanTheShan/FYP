@@ -27,6 +27,9 @@ import { homeScreenStyles } from "./styles/HomeScreenStyles";
 
 import useStatusBarStyle from "../hooks/statusBar";
 
+import * as SplashScreen from "expo-splash-screen";
+SplashScreen.preventAutoHideAsync();
+
 export default function HomeScreen({ navigation }) {
   //if screen is focused
   const isFocused = useIsFocused();
@@ -35,7 +38,7 @@ export default function HomeScreen({ navigation }) {
   const { currentTheme } = useContext(themeContext);
 
   //tutorial state modal
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   //create a project state modal
   const [createProjectModal, setCreateProjectModalVisible] = useState(false);
@@ -68,19 +71,36 @@ export default function HomeScreen({ navigation }) {
       const value = await AsyncStorage.getItem("viewed");
       if (value === "true") {
         setModalVisible(false);
+        console.log(value);
+        return true;
       }
     } catch (error) {
       console.log("isTutorialViwed(): ", error);
     }
   };
 
-  //run on mount
   useEffect(() => {
-    getAll();
-    isTutorialViewed();
+    const waiting = async () => {
+      const viewHistory = await isTutorialViewed();
+      await SplashScreen.hideAsync();
+      if (viewHistory) {
+        return;
+      } else {
+        setModalVisible(true);
+      }
+    };
+
+    setTimeout(() => {
+      waiting();
+    }, 2000);
   }, []);
 
-  //run when a project is deleted, and we are back to home page
+  // //run on mount
+  // useEffect(() => {
+  //   getAll();
+  //   //isTutorialViewed();
+  // }, []);
+
   useEffect(() => {
     if (isFocused) {
       getAll();

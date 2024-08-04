@@ -38,7 +38,8 @@
     "react-native-screens": "^3.32.0",
     "react-native-svg": "^15.3.0",
     "react-native-tableview-simple": "^4.4.0",
-    "react-native-wheely": "^0.6.0"
+    "react-native-wheely": "^0.6.0",
+    "expo-splash-screen": "~0.27.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

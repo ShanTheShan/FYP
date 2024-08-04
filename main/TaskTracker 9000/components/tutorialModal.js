@@ -7,6 +7,7 @@ import { tutorialImages } from "../constants/carouImages";
 
 export const TutorialModal = ({ modalVisible, setModalVisible }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [carouselWidth, setCarouselWidth] = useState(0);
 
   const closeTutorial = async () => {
     try {
@@ -17,9 +18,17 @@ export const TutorialModal = ({ modalVisible, setModalVisible }) => {
     }
   };
 
+  //carousel size must the size of the view, which is responsive, therefore cant be fixed values
+  // const onLayout = (event) => {
+  //   const { _, width } = event.nativeEvent.layout;
+  //   if (carouselWidth != 0 || carouselWidth != NaN || carouselWidth != null) {
+  //     setCarouselWidth(Math.floor(width));
+  //   }
+  // };
+
   return (
     <Modal
-      animationType="fade"
+      animationType="slide"
       transparent={false}
       visible={modalVisible}
       onRequestClose={() => {
@@ -28,28 +37,36 @@ export const TutorialModal = ({ modalVisible, setModalVisible }) => {
     >
       <View style={styles.tutorialContainer}>
         <View style={styles.tutorialView}>
-          <Carousel
-            loop={false}
-            width={300}
-            height={500}
-            autoPlay={false}
-            data={tutorialImages}
-            onProgressChange={(_, absoluteProgress) => {
-              setCurrentIndex(Math.round(absoluteProgress));
-            }}
-            renderItem={({ index, item }) => <CarouselItem key={index} item={item} />}
-          />
-          <View style={styles.pagination}>
-            {tutorialImages.map((_, index) => (
-              <View
-                key={index}
-                style={[styles.dot, currentIndex === index ? styles.activeDot : styles.inactiveDot]}
-              />
-            ))}
+          <View style={styles.carouselView}>
+            <Carousel
+              loop={false}
+              width={300}
+              autoPlay={false}
+              data={tutorialImages}
+              onProgressChange={(_, absoluteProgress) => {
+                setCurrentIndex(Math.round(absoluteProgress));
+              }}
+              renderItem={({ index, item }) => <CarouselItem key={index} item={item} />}
+            />
           </View>
-          <Pressable style={styles.modalButton} onPress={closeTutorial}>
-            <Text>OKAY</Text>
-          </Pressable>
+          <View style={styles.paginationParentView}>
+            <View style={styles.paginationChildView}>
+              {tutorialImages.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    currentIndex === index ? styles.activeDot : styles.inactiveDot,
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
+          <View style={styles.buttonView}>
+            <Pressable style={styles.modalButton} onPress={closeTutorial}>
+              <Text>DONE</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </Modal>
@@ -59,19 +76,30 @@ export const TutorialModal = ({ modalVisible, setModalVisible }) => {
 const styles = StyleSheet.create({
   tutorialContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: "10%",
     backgroundColor: "#323232",
   },
   tutorialView: {
-    height: "85%",
-    width: "90%",
+    flex: 1,
+  },
+  carouselView: {
+    flex: 6,
     justifyContent: "center",
     alignItems: "center",
   },
-  pagination: {
+  paginationParentView: {
+    flex: 0.5,
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  paginationChildView: {
     flexDirection: "row",
-    marginBottom: "10%",
+  },
+  buttonView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   dot: {
     width: 10,
@@ -86,10 +114,9 @@ const styles = StyleSheet.create({
     backgroundColor: "gray",
   },
   modalButton: {
-    borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    marginBottom: 50,
+    borderRadius: 10,
     elevation: 2,
     backgroundColor: "darkgreen",
   },
