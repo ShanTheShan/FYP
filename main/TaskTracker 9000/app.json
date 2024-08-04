@@ -17,10 +17,14 @@
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#00784A"
       },
       "package": "com.GammaDigital.TaskTracker9000",
       "googleServicesFile": "./android/app/google-services.json"
+    },
+    "notification": {
+      "icon": "./assets/notification-custom-icon.png",
+      "color": "#00784A"
     },
     "web": {
       "favicon": "./assets/favicon.png"

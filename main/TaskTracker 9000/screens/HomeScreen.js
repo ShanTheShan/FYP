@@ -71,7 +71,6 @@ export default function HomeScreen({ navigation }) {
       const value = await AsyncStorage.getItem("viewed");
       if (value === "true") {
         setModalVisible(false);
-        console.log(value);
         return true;
       }
     } catch (error) {
