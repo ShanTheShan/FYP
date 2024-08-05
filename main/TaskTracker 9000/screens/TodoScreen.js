@@ -8,8 +8,9 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { Cell, Section, TableView } from "react-native-tableview-simple";
+import { Section } from "react-native-tableview-simple";
 import { Calendar } from "react-native-calendars";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import moment from "moment";
 
@@ -40,6 +41,8 @@ export default function TodoScreen() {
   //delete modal state
   const [deleteModal, toggleDeleteModal] = useState(false);
   const [toDelete, setToDelete] = useState(null);
+
+  const [calendarVisible, setCalendarVisible] = useState(false);
 
   const getAll = async (value) => {
     try {
@@ -108,8 +111,14 @@ export default function TodoScreen() {
   };
 
   //handle todo completed style
-  const handleStrikeThrough = async (value) => {
+  const handleStrikeThrough = async (value, isCompleted) => {
     try {
+      if (isCompleted === "yes") {
+        await db.runAsync("UPDATE Todos SET done = ? WHERE todo =?", ["no", value]);
+        await getAll(dateSelected);
+        return;
+      }
+
       await db.runAsync("UPDATE Todos SET done = ? WHERE todo =?", ["yes", value]);
 
       await getAll(dateSelected);
@@ -118,71 +127,39 @@ export default function TodoScreen() {
     }
   };
 
-  //custom cell
-  // const TodoCell = (props) => (
-  //   <TouchableOpacity
-  //     onLongPress={() => {
-  //       toggleDeleteModal(true);
-  //       setToDelete(props.title);
-  //     }}
-  //     onPress={() => {
-  //       handleStrikeThrough(props.title);
-  //     }}
-  //   >
-  //     <Cell
-  //       backgroundColor={props.theme}
-  //       {...props}
-  //       cellContentView={
-  //         <View>
-  //           {/* if todo is done, render strike through, else no strike through */}
-  //           {props.done === "yes" ? (
-  //             <Text
-  //               style={{
-  //                 fontSize: 20,
-  //                 paddingBottom: 5,
-  //                 color: props.textColor,
-  //                 textDecorationLine: "line-through",
-  //               }}
-  //             >
-  //               {props.title}
-  //             </Text>
-  //           ) : (
-  //             <Text
-  //               style={{
-  //                 fontSize: 20,
-  //                 paddingBottom: 5,
-  //                 color: props.textColor,
-  //               }}
-  //             >
-  //               {props.title}
-  //             </Text>
-  //           )}
-  //         </View>
-  //       }
-  //     />
-  //   </TouchableOpacity>
-  // );
-
   return (
     <SafeAreaView
       style={
         currentTheme === "dark" ? todoScreenStyles.safeAreaDark : todoScreenStyles.safeAreaLight
       }
     >
-      <View key={currentTheme}>
-        <Calendar
-          onDayPress={handleDayPress}
-          markedDates={{
-            ...markedDates,
-            [dateSelected]: { selected: true },
-          }}
-          theme={
-            currentTheme === "dark"
-              ? todoScreenStyles.calendarThemeDark
-              : todoScreenStyles.calendarThemeLight
-          }
+      <TouchableOpacity
+        onPress={() => setCalendarVisible(!calendarVisible)}
+        style={{ alignItems: "center", paddingVertical: 15 }}
+      >
+        <FontAwesome
+          name="calendar"
+          size={24}
+          color={currentTheme === "dark" ? "white" : "black"}
         />
-      </View>
+      </TouchableOpacity>
+      {calendarVisible ? (
+        <View key={currentTheme}>
+          <Calendar
+            onDayPress={handleDayPress}
+            markedDates={{
+              ...markedDates,
+              [dateSelected]: { selected: true },
+            }}
+            theme={
+              currentTheme === "dark"
+                ? todoScreenStyles.calendarThemeDark
+                : todoScreenStyles.calendarThemeLight
+            }
+          />
+        </View>
+      ) : null}
+
       <Modal
         animationType="fade"
         transparent={true}
@@ -248,34 +225,32 @@ export default function TodoScreen() {
               : todoScreenStyles.scrollViewLight
           }
         >
-          <TableView>
-            <Section>
-              {todos.map((item) => {
-                return (
-                  <TodoCell
-                    key={item.id}
-                    title={item.todo}
-                    done={item.done}
-                    toggleDeleteModal={toggleDeleteModal}
-                    setToDelete={setToDelete}
-                    handleStrikeThrough={handleStrikeThrough}
-                    theme={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
-                    textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                  />
-                );
-              })}
-              {deleteModal ? (
-                <DeleteCellModal
-                  modalVisible={deleteModal}
-                  setModalVisible={toggleDeleteModal}
-                  deleteFn={deleteTodo}
-                  toDelete={toDelete}
-                  currentTheme={currentTheme}
-                  text="note"
+          <Section>
+            {todos.map((item) => {
+              return (
+                <TodoCell
+                  key={item.id}
+                  title={item.todo}
+                  done={item.done}
+                  toggleDeleteModal={toggleDeleteModal}
+                  setToDelete={setToDelete}
+                  handleStrikeThrough={handleStrikeThrough}
+                  theme={currentTheme}
+                  textColor={currentTheme}
                 />
-              ) : null}
-            </Section>
-          </TableView>
+              );
+            })}
+            {deleteModal ? (
+              <DeleteCellModal
+                modalVisible={deleteModal}
+                setModalVisible={toggleDeleteModal}
+                deleteFn={deleteTodo}
+                toDelete={toDelete}
+                currentTheme={currentTheme}
+                text="note"
+              />
+            ) : null}
+          </Section>
         </ScrollView>
       )}
 

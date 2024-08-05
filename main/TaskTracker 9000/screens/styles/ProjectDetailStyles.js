@@ -1,8 +1,4 @@
-import { StyleSheet, View } from "react-native";
-
-export const Circle = () => {
-  return <View style={projectDetailStyles.circle} />;
-};
+import { StyleSheet } from "react-native";
 
 export const projectDetailStyles = StyleSheet.create({
   container: {
@@ -90,12 +86,5 @@ export const projectDetailStyles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 5,
-  },
-  circle: {
-    width: 25,
-    height: 25,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderColor: "white",
   },
 });

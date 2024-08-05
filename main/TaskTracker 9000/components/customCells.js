@@ -2,7 +2,8 @@ import { React } from "react";
 import { Image, Text, View, TouchableOpacity } from "react-native";
 import { Cell } from "react-native-tableview-simple";
 
-import { projectDetailStyles, Circle } from "../screens/styles/ProjectDetailStyles";
+import { projectDetailStyles } from "../screens/styles/ProjectDetailStyles";
+import { Circle } from "../components/customShapes";
 
 const DetailsCell = (props) => {
   let reformedSubTaskData = null;
@@ -29,7 +30,7 @@ const DetailsCell = (props) => {
       key={props.key}
       onPress={props.action}
       isDisabled={true}
-      backgroundColor={props.theme}
+      backgroundColor={props.theme === "dark" ? "#141414" : "#F6F6F6"}
       titleTextColor={props.textColor}
       {...props}
       cellContentView={
@@ -37,7 +38,7 @@ const DetailsCell = (props) => {
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {props.completed ? null : (
               <TouchableOpacity onPress={props.customPress}>
-                <Circle />
+                <Circle theme={props.theme} />
               </TouchableOpacity>
             )}
 
@@ -106,38 +107,31 @@ const TodoCell = (props) => (
       props.toggleDeleteModal(true);
       props.setToDelete(props.title);
     }}
-    onPress={() => {
-      props.handleStrikeThrough(props.title);
-    }}
   >
     <Cell
-      backgroundColor={props.theme}
+      backgroundColor={props.theme === "dark" ? "#141414" : "#F6F6F6"}
       {...props}
       cellContentView={
-        <View>
-          {/* if todo is done, render strike through, else no strike through */}
-          {props.done === "yes" ? (
-            <Text
-              style={{
-                fontSize: 20,
-                paddingBottom: 5,
-                color: props.textColor,
-                textDecorationLine: "line-through",
-              }}
-            >
-              {props.title}
-            </Text>
-          ) : (
-            <Text
-              style={{
-                fontSize: 20,
-                paddingBottom: 5,
-                color: props.textColor,
-              }}
-            >
-              {props.title}
-            </Text>
-          )}
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={() => {
+              props.handleStrikeThrough(props.title, props.done);
+            }}
+          >
+            <Circle theme={props.theme} />
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 20,
+              paddingBottom: 5,
+              paddingLeft: 10,
+              color: props.textColor === "dark" ? "#FFFFFF" : "#000000",
+              opacity: props.done === "yes" ? 0.5 : 1,
+              textDecorationLine: props.done === "yes" ? "line-through" : "none",
+            }}
+          >
+            {props.title}
+          </Text>
         </View>
       }
     />

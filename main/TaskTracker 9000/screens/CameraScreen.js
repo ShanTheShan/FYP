@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ImageBackground,
+  Image,
 } from "react-native";
 
 import { CameraView, Camera } from "expo-camera";
@@ -130,19 +131,35 @@ function RenderCamera({ navigation, route }) {
             <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
               <View>
                 {navState === "My Notes/Create Note/Camera Note" ? (
-                  <TouchableOpacity onPress={() => navigation.navigate("Create Note", { id: id })}>
-                    <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
+                  <TouchableOpacity
+                    style={{ marginTop: "20%", marginLeft: "10%" }}
+                    onPress={() => navigation.navigate("Create Note", { id: id })}
+                  >
+                    <Image
+                      style={{ height: 40, width: 40 }}
+                      source={require("../assets/left-arrow.png")}
+                    />
                   </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity onPress={() => navigation.navigate("Create Task", { id: id })}>
-                    <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
+                  <TouchableOpacity
+                    style={{ marginTop: "20%", marginLeft: "10%" }}
+                    onPress={() => navigation.navigate("Create Task", { id: id })}
+                  >
+                    <Image
+                      style={{ height: 40, width: 40 }}
+                      source={require("../assets/left-arrow.png")}
+                    />
                   </TouchableOpacity>
                 )}
               </View>
 
               <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={switchCamera}>
-                  <Text style={{ fontSize: 30 }}>🔁</Text>
+                  {/* <Text style={{ fontSize: 30 }}>🔁</Text> */}
+                  <Image
+                    style={{ height: 50, width: 50 }}
+                    source={require("../assets/repeat.png")}
+                  />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.button} onPress={takePhoto}>

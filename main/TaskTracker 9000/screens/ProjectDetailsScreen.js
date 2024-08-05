@@ -355,8 +355,8 @@ export default function ProjectDetails({ navigation, route }) {
                       subtasks={item.sub_tasks}
                       deadline={item.deadline}
                       customImage={item.image}
+                      theme={currentTheme}
                       textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                      backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                       completed={false}
                       handleSubTouch={handleSubTouch}
                       customPress={() => {
