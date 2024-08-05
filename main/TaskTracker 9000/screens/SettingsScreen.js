@@ -1,8 +1,9 @@
 import { React, useState, useContext } from "react";
 import { Text, View, SafeAreaView, TouchableOpacity, Linking, Modal } from "react-native";
+import * as MailComposer from "expo-mail-composer";
 import WheelPicker from "react-native-wheely";
 
-import { Cell, Section } from "react-native-tableview-simple";
+import { TableView, Cell, Section } from "react-native-tableview-simple";
 import { themeContext } from "../context/themeContext";
 import { timerContext } from "../context/timerContext";
 import { settingStyles } from "./styles/SettingsScreenStyles";
@@ -65,6 +66,13 @@ export default function SettingsScreen() {
     setRestDuration(restTime_toSeconds);
   };
 
+  const launchEmail = () => {
+    MailComposer.composeAsync({
+      subject: "TaskTracker 9000 Feedback",
+      recipients: ["shanath_98@protonmail.com"],
+    });
+  };
+
   return (
     <SafeAreaView
       style={currentTheme === "dark" ? settingStyles.safeAreaDark : settingStyles.safeAreaLight}
@@ -72,186 +80,177 @@ export default function SettingsScreen() {
       <View style={settingStyles.navigationView}>
         <Text style={settingStyles.PageTitle}>Settings</Text>
       </View>
-      {/* if tutorial pressed, launch tutorial modal */}
-      {tutorialModal ? (
-        <TutorialModal modalVisible={tutorialModal} setModalVisible={toggleTutorialModal} />
-      ) : (
-        <View style={settingStyles.settingsContainer}>
-          {/* if theme pressed, launch modal */}
-          <Section>
-            <Cell
-              contentContainerStyle={{ height: 70 }}
-              onPress={handleTurnNotificationsOn}
-              cellContentView={
-                <Text style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}>
-                  Notifications
-                </Text>
-              }
-              backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
-            />
-            <Cell
-              contentContainerStyle={{ height: 70 }}
-              onPress={() => {
-                toggleThemeModal(true);
-              }}
-              cellContentView={
-                <Text style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}>
-                  Theme
-                </Text>
-              }
-              backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
-            />
-            {themeModal ? (
-              <Modal
-                animationType="fade"
-                transparent={true}
-                visible={themeModal}
-                statusBarTranslucent={true}
-              >
-                <View style={settingStyles.themeModalContainer}>
-                  <View style={settingStyles.themeModalView}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 22, paddingTop: 5 }}>Choose theme</Text>
-                    </View>
-                    <View style={{ flex: 4, justifyContent: "center", alignItems: "center" }}>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <TouchableOpacity
-                          onPress={() => handleThemeTouch("dark")}
-                          style={
-                            darkState
-                              ? settingStyles.themeTextPressed
-                              : settingStyles.themeTextUnpressed
-                          }
-                        >
-                          <Text style={{ fontSize: 17 }}>Dark</Text>
-                        </TouchableOpacity>
-                      </View>
-
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <TouchableOpacity
-                          onPress={() => handleThemeTouch("light")}
-                          style={
-                            lightState
-                              ? settingStyles.themeTextPressed
-                              : settingStyles.themeTextUnpressed
-                          }
-                        >
-                          <Text style={{ fontSize: 17 }}>Light</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                    <View style={{ flex: 2 }}>
-                      <TouchableOpacity
-                        style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
-                        onPress={() => setTheme()}
-                      >
-                        <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
+      <View style={settingStyles.settingsContainer}>
+        {themeModal ? (
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={themeModal}
+            statusBarTranslucent={true}
+          >
+            <View style={settingStyles.themeModalContainer}>
+              <View style={settingStyles.themeModalView}>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 22, paddingTop: 5 }}>Choose theme</Text>
                 </View>
-              </Modal>
-            ) : null}
-            <Cell
-              contentContainerStyle={{ height: 70 }}
-              onPress={() => {
-                toggleTimerModal(true);
-              }}
-              cellContentView={
-                <Text style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}>
-                  Timer
-                </Text>
-              }
-              backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
-            />
-            {timerModal ? (
-              <Modal
-                animationType="fade"
-                transparent={true}
-                visible={timerModal}
-                statusBarTranslucent={true}
-              >
-                <View style={settingStyles.themeModalContainer}>
-                  <View style={settingStyles.timerModalView}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignContent: "space-evenly",
-                      }}
-                    >
-                      {/* row view with 2 columns inside, one for each wheely*/}
-                      <View
-                        style={{
-                          flexDirection: "column",
-                          alignItems: "center",
-                          marginRight: 5,
-                        }}
-                      >
-                        <Text style={{ fontSize: 15 }}>Work</Text>
-                        <WheelPicker
-                          selectedIndex={workMinutes}
-                          options={times}
-                          onChange={(index) => setWorkMinutes(index)}
-                          containerStyle={{
-                            marginHorizontal: 10,
-                          }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "column",
-                          alignItems: "center",
-                          marginLeft: 5,
-                        }}
-                      >
-                        <Text style={{ fontSize: 15 }}>Rest</Text>
-                        <WheelPicker
-                          selectedIndex={restMinutes}
-                          options={times}
-                          onChange={(index) => setRestMinutes(index)}
-                          containerStyle={{
-                            marginHorizontal: 10,
-                          }}
-                        />
-                      </View>
-                    </View>
+                <View style={{ flex: 4, justifyContent: "center", alignItems: "center" }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
                     <TouchableOpacity
-                      style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
-                      onPress={() => handleTimerPrest()}
+                      onPress={() => handleThemeTouch("dark")}
+                      style={
+                        darkState
+                          ? settingStyles.themeTextPressed
+                          : settingStyles.themeTextUnpressed
+                      }
                     >
-                      <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
+                      <Text style={{ fontSize: 17 }}>Dark</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => handleThemeTouch("light")}
+                      style={
+                        lightState
+                          ? settingStyles.themeTextPressed
+                          : settingStyles.themeTextUnpressed
+                      }
+                    >
+                      <Text style={{ fontSize: 17 }}>Light</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-              </Modal>
-            ) : null}
+                <View style={{ flex: 2 }}>
+                  <TouchableOpacity
+                    style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
+                    onPress={() => setTheme()}
+                  >
+                    <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        ) : null}
+        {timerModal ? (
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={timerModal}
+            statusBarTranslucent={true}
+          >
+            <View style={settingStyles.themeModalContainer}>
+              <View style={settingStyles.timerModalView}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignContent: "space-evenly",
+                  }}
+                >
+                  {/* row view with 2 columns inside, one for each wheely*/}
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      alignItems: "center",
+                      marginRight: 5,
+                    }}
+                  >
+                    <Text style={{ fontSize: 15 }}>Work</Text>
+                    <WheelPicker
+                      selectedIndex={workMinutes}
+                      options={times}
+                      onChange={(index) => setWorkMinutes(index)}
+                      containerStyle={{
+                        marginHorizontal: 10,
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      alignItems: "center",
+                      marginLeft: 5,
+                    }}
+                  >
+                    <Text style={{ fontSize: 15 }}>Rest</Text>
+                    <WheelPicker
+                      selectedIndex={restMinutes}
+                      options={times}
+                      onChange={(index) => setRestMinutes(index)}
+                      containerStyle={{
+                        marginHorizontal: 10,
+                      }}
+                    />
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
+                  onPress={() => handleTimerPrest()}
+                >
+                  <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        ) : null}
+        {tutorialModal ? (
+          <TutorialModal modalVisible={tutorialModal} setModalVisible={toggleTutorialModal} />
+        ) : null}
+        <TableView appearance={currentTheme === "dark" ? "dark" : "light"}>
+          <Section footer="TaskTracker 9000 v1.0.0">
             <Cell
-              contentContainerStyle={{ height: 70 }}
+              title="Notifications"
+              onPress={handleTurnNotificationsOn}
+              titleTextStyle={{ paddingVertical: 10 }}
+            />
+            <Cell
+              title="Theme"
+              onPress={() => {
+                toggleThemeModal(true);
+              }}
+              titleTextStyle={{ paddingVertical: 10 }}
+            />
+            <Cell
+              title="Timer"
+              onPress={() => {
+                toggleTimerModal(true);
+              }}
+              titleTextStyle={{ paddingVertical: 10 }}
+            />
+            <Cell
+              title="Replay Tutorial"
               onPress={() => {
                 toggleTutorialModal(true);
               }}
-              cellContentView={
-                <Text style={{ fontSize: 17, color: currentTheme === "dark" ? "white" : "black" }}>
-                  Replay Tutorial
-                </Text>
-              }
-              backgroundColor={currentTheme === "dark" ? "#1C1C1C" : "#F6F6F6"}
+              titleTextStyle={{ paddingVertical: 10 }}
+            />
+            <Cell
+              title="Send Feedback"
+              onPress={launchEmail}
+              titleTextStyle={{ paddingVertical: 10 }}
+            />
+            <Cell
+              title="Privacy Policy"
+              onPress={() => {
+                Linking.openURL("https://sites.google.com/view/gammadigital-tasktracker9000");
+              }}
+              titleTextStyle={{ paddingVertical: 10 }}
             />
           </Section>
-        </View>
-      )}
+        </TableView>
+      </View>
     </SafeAreaView>
   );
 }
