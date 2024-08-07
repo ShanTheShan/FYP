@@ -11,34 +11,15 @@ export const taskCreationScreenStyles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#FFFFFF",
   },
-  image: {
-    width: 30,
-    height: 30,
-  },
-  imagePreviewView: {
-    backgroundColor: "white",
-    borderRadius: 5,
-    marginLeft: "10%",
-    marginTop: "5%",
-  },
-  imagePreview: {
-    width: 100,
-    height: 100,
-    borderRadius: 5,
-  },
-  containerDark: {
+  mainContainerDark: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
     marginLeft: "5%",
     backgroundColor: "#1C1C1C",
   },
-  containerLight: {
+  mainContainerLight: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
     marginLeft: "5%",
     backgroundColor: "#FFFFFF",
   },
@@ -47,43 +28,37 @@ export const taskCreationScreenStyles = StyleSheet.create({
     height: 50,
     width: "90%",
     borderWidth: 2,
-    marginTop: 20,
+    marginVertical: 20,
     paddingLeft: 10,
     backgroundColor: "lightgrey",
   },
   textInputLight: {
-    height: 40,
+    height: 50,
     width: "90%",
     borderWidth: 2,
-    marginTop: 20,
+    marginVertical: 20,
     paddingLeft: 10,
   },
-  bulletsDark: {
+
+  deadlineMainContainer: {
     flexDirection: "column",
-    marginTop: 30,
-    justifyContent: "center",
-    alignItems: "center",
+    marginVertical: 15,
   },
-  bulletsLight: {
+  subTasksMainContainer: {
     flexDirection: "column",
-    marginTop: 30,
-    justifyContent: "center",
-    alignItems: "center",
+    marginVertical: 15,
   },
-  bulletTextDark: {
-    fontSize: 20,
-    paddingLeft: 10,
-    color: "white",
+  imageMainContainer: {
+    flexDirection: "column",
+    marginVertical: 15,
   },
-  bulletTextLight: {
-    fontSize: 20,
-    paddingLeft: 10,
-    color: "black",
+  reminderMainContainer: {
+    flexDirection: "column",
+    marginVertical: 15,
   },
   dateTimeView: {
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    marginLeft: 40,
   },
   dateDark: {
     fontSize: 16,
@@ -103,6 +78,13 @@ export const taskCreationScreenStyles = StyleSheet.create({
     color: "black",
     paddingLeft: 10,
   },
+  cancelEmoji: {
+    fontSize: 15,
+    borderRadius: 5,
+    padding: 3,
+    marginLeft: 10,
+  },
+
   timeTouchableDark: {
     backgroundColor: "lightgrey",
     fontSize: 15,
@@ -117,16 +99,6 @@ export const taskCreationScreenStyles = StyleSheet.create({
     padding: 3,
     marginLeft: 10,
   },
-  submitButton: {
-    backgroundColor: "green",
-    padding: 10,
-    margin: 15,
-    height: 40,
-    width: 80,
-    borderRadius: 10,
-    marginBottom: "30%",
-  },
-
   buttonEnter: {
     borderRadius: 20,
     padding: 10,
@@ -173,18 +145,33 @@ export const taskCreationScreenStyles = StyleSheet.create({
     borderRadius: 10,
     paddingLeft: 5,
   },
+  subTaskScrollViewVertical: {
+    height: 110,
+  },
+  subTaskScrollViewHorizontal: {
+    marginTop: 5,
+    marginLeft: 40,
+    width: "70%",
+    borderWidth: 1,
+    borderColor: "grey",
+  },
   subTaskView: {
     flexDirection: "column",
     marginTop: 5,
   },
-  subTaskDark: {
-    paddingTop: 5,
-    fontSize: 15,
-    color: "white",
+  image: {
+    width: 30,
+    height: 30,
   },
-  subTaskLight: {
-    paddingTop: 5,
-    fontSize: 15,
-    color: "black",
+  imagePreviewView: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 40,
+    marginTop: 10,
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
   },
 });

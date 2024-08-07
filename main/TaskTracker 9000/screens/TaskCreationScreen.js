@@ -1,5 +1,14 @@
 import { React, useState, useEffect, useContext } from "react";
-import { Text, View, Image, TextInput, SafeAreaView, TouchableOpacity, Modal } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  TextInput,
+  SafeAreaView,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -11,7 +20,13 @@ import { animationContext } from "../context/animationContext";
 import { taskCreationScreenStyles } from "./styles/TaskCreationScreenStyles";
 import { AddButton } from "../components/customButtons";
 import { TextValidator, ActionDone } from "../components/customTextValidator";
-import { ReminderTouchable, CameraTouchable, DeadlineTouchable } from "../components/taskCreation";
+import {
+  ReminderTouchable,
+  SubTasksTouchable,
+  CameraTouchable,
+  DeadlineTouchable,
+  CancelTouchable,
+} from "../components/taskCreation";
 
 export default function ProjectTaskScreen({ navigation, route }) {
   //trigger request for notification permission
@@ -34,11 +49,11 @@ export default function ProjectTaskScreen({ navigation, route }) {
 
   //----------------------------------
 
-  //PLS READ ---> the calendar codes for deadline and reminde are exactly the same
-  //         ---> i hard coded and replicates all the same code, but renamed them,
+  //PLS READ ---> the calendar codes for deadline and reminder are exactly the same
+  //         ---> i replicated all the same code, but renamed them,
   //         ---> so essentially, i have two calendars, calling the exact same functions, but renamed
   //         ---> pls try to refactor, to just use one calendar, by storing data in different states
-  //         ---> depending if deadline or reminde was pressed, passing id works, but its resets the dates
+  //         ---> depending if deadline or reminder was pressed, passing id works, but its resets the dates
 
   //date time states for deadline
   const [date, setDate] = useState(new Date());
@@ -142,13 +157,23 @@ export default function ProjectTaskScreen({ navigation, route }) {
 
   //this function is ran when enter sub task is pressed in sub task modal
   const createSubTask = (value) => {
+    let userInput = value.trim();
+    if (userInput.length == 0) {
+      return;
+    }
     setSubTaskArray((oldArray) => [...oldArray, value]);
   };
 
   //https://www.npmjs.com/package/@react-native-community/datetimepicker#usage
 
   const onChangeDate = (event, selectedDate) => {
+    //means cancel was pressed
+    if (event.type === "dismissed") {
+      setShow(false);
+      return;
+    }
     const currentDate = selectedDate;
+
     setShow(false);
     setDate(currentDate);
     //convert to string date
@@ -157,6 +182,11 @@ export default function ProjectTaskScreen({ navigation, route }) {
   };
 
   const onChangeTime = (event, selectedDate) => {
+    //means cancel was pressed
+    if (event.type === "dismissed") {
+      setShow(false);
+      return;
+    }
     const currentTime = selectedDate;
     setShow(false);
     setTime(currentTime);
@@ -178,6 +208,11 @@ export default function ProjectTaskScreen({ navigation, route }) {
   };
 
   const onChangeDateReminder = (event, selectedDate) => {
+    //means cancel was pressed
+    if (event.type === "dismissed") {
+      setShowReminder(false);
+      return;
+    }
     const currentDate = selectedDate;
     setShowReminder(false);
     setDateReminder(currentDate);
@@ -187,6 +222,11 @@ export default function ProjectTaskScreen({ navigation, route }) {
   };
 
   const onChangeTimeReminder = (event, selectedDate) => {
+    //means cancel was pressed
+    if (event.type === "dismissed") {
+      setShowReminder(false);
+      return;
+    }
     const currentTime = selectedDate;
     setShowReminder(false);
     setTimeReminder(currentTime);
@@ -217,7 +257,17 @@ export default function ProjectTaskScreen({ navigation, route }) {
         setReminderDateFormated(null);
         setReminderTimeFormated(null);
         break;
+      case 3:
+        setImagePreview(false);
+        break;
     }
+  };
+
+  const deleteSubTask = (id) => {
+    let copy = subTaskArray;
+    let task = copy[id];
+    copy = copy.filter((item) => !task.includes(item));
+    setSubTaskArray(copy);
   };
 
   return (
@@ -231,8 +281,8 @@ export default function ProjectTaskScreen({ navigation, route }) {
       <View
         style={
           currentTheme === "dark"
-            ? taskCreationScreenStyles.containerDark
-            : taskCreationScreenStyles.containerLight
+            ? taskCreationScreenStyles.mainContainerDark
+            : taskCreationScreenStyles.mainContainerLight
         }
       >
         <TextInput
@@ -245,44 +295,33 @@ export default function ProjectTaskScreen({ navigation, route }) {
           onChangeText={(newText) => createTask(newText)}
           defaultValue={task}
         />
-        <View
-          style={
-            currentTheme === "dark"
-              ? taskCreationScreenStyles.bulletsDark
-              : taskCreationScreenStyles.bulletsLight
-          }
-        >
-          <DeadlineTouchable
-            styles={taskCreationScreenStyles}
-            currentTheme={currentTheme}
-            showDatepicker={showDatepicker}
-          />
-          {dateFormatted != null ? (
-            <View style={taskCreationScreenStyles.dateTimeView}>
-              <Text
-                style={
-                  currentTheme === "dark"
-                    ? taskCreationScreenStyles.dateDark
-                    : taskCreationScreenStyles.dateLight
-                }
-              >
-                {dateFormatted}
-              </Text>
-              {timeFormatted != null ? (
-                <>
-                  <Text
-                    style={
-                      currentTheme === "dark"
-                        ? taskCreationScreenStyles.timeDark
-                        : taskCreationScreenStyles.timeLight
-                    }
-                  >
-                    {timeFormatted}
-                  </Text>
-                  <TouchableOpacity
-                    style={{ flexDirection: "row" }}
-                    onPress={() => resetElement(1)}
-                  >
+        {/* main container, houses the 4 elements */}
+        <View>
+          <View style={taskCreationScreenStyles.deadlineMainContainer}>
+            <DeadlineTouchable
+              styles={taskCreationScreenStyles}
+              currentTheme={currentTheme}
+              showDatepicker={showDatepicker}
+            />
+            {dateFormatted != null ? (
+              <View style={taskCreationScreenStyles.dateTimeView}>
+                <Text style={{ fontSize: 16, color: currentTheme === "dark" ? "white" : "black" }}>
+                  {dateFormatted}
+                </Text>
+                {timeFormatted != null ? (
+                  <>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        paddingLeft: 10,
+                        color: currentTheme === "dark" ? "white" : "black",
+                      }}
+                    >
+                      {timeFormatted}
+                    </Text>
+                  </>
+                ) : (
+                  <TouchableOpacity style={{ flexDirection: "row" }} onPress={showTimepicker}>
                     <Text
                       style={
                         currentTheme === "dark"
@@ -290,195 +329,169 @@ export default function ProjectTaskScreen({ navigation, route }) {
                           : taskCreationScreenStyles.timeTouchableLight
                       }
                     >
-                      ❌
+                      TIME
                     </Text>
                   </TouchableOpacity>
-                </>
-              ) : (
-                <TouchableOpacity style={{ flexDirection: "row" }} onPress={showTimepicker}>
-                  <Text
-                    style={
-                      currentTheme === "dark"
-                        ? taskCreationScreenStyles.timeTouchableDark
-                        : taskCreationScreenStyles.timeTouchableLight
-                    }
-                  >
-                    TIME
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ) : null}
-          {show ? (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode={mode}
-              is24Hour={true}
-              onChange={mode == "date" ? onChangeDate : onChangeTime}
+                )}
+                <CancelTouchable resetElement={resetElement} elementId={1} />
+              </View>
+            ) : null}
+            {show ? (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                onChange={mode == "date" ? onChangeDate : onChangeTime}
+              />
+            ) : null}
+          </View>
+          <View style={taskCreationScreenStyles.subTasksMainContainer}>
+            <SubTasksTouchable
+              styles={taskCreationScreenStyles}
+              currentTheme={currentTheme}
+              setSubTasksModalVisible={setSubTasksModalVisible}
             />
-          ) : null}
-        </View>
-        <View
-          style={
-            currentTheme === "dark"
-              ? taskCreationScreenStyles.bulletsDark
-              : taskCreationScreenStyles.bulletsLight
-          }
-        >
-          <TouchableOpacity
-            style={{ flexDirection: "row" }}
-            onPress={() => setSubTasksModalVisible(true)}
-          >
-            <Image
-              source={require("../assets/subtasks.png")}
-              style={taskCreationScreenStyles.image}
-            />
-            <Text
-              style={
-                currentTheme === "dark"
-                  ? taskCreationScreenStyles.bulletTextDark
-                  : taskCreationScreenStyles.bulletTextLight
-              }
-            >
-              Sub Tasks
-            </Text>
-          </TouchableOpacity>
-          {subTaskArray.length != 0 ? (
-            <View style={taskCreationScreenStyles.subTaskView}>
-              {subTaskArray.map((item, i) => {
-                return (
-                  <Text
-                    key={i}
-                    style={
-                      currentTheme === "dark"
-                        ? taskCreationScreenStyles.subTaskDark
-                        : taskCreationScreenStyles.subTaskLight
-                    }
-                  >
-                    {item}
-                  </Text>
-                );
-              })}
-            </View>
-          ) : null}
-          {subTasksModal ? (
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={subTasksModal}
-              statusBarTranslucent={true}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "rgba(0, 0, 0, 0.8)",
-                }}
+            {subTaskArray.length != 0 ? (
+              <ScrollView
+                horizontal={true}
+                style={taskCreationScreenStyles.subTaskScrollViewHorizontal}
+              >
+                <ScrollView style={taskCreationScreenStyles.subTaskScrollViewVertical}>
+                  {subTaskArray.map((item, i) => {
+                    return (
+                      <View key={i} style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Text
+                          style={{
+                            paddingTop: 5,
+                            paddingLeft: 5,
+                            fontSize: 18,
+                            color: currentTheme === "dark" ? "white" : "black",
+                          }}
+                        >
+                          {item}
+                        </Text>
+                        <TouchableOpacity
+                          style={{ flexDirection: "row", marginLeft: 5 }}
+                          onPress={() => deleteSubTask(i)}
+                        >
+                          <Text style={taskCreationScreenStyles.cancelEmoji}>❌</Text>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })}
+                </ScrollView>
+              </ScrollView>
+            ) : null}
+            {subTasksModal ? (
+              <Modal
+                animationType="fade"
+                transparent={true}
+                visible={subTasksModal}
+                statusBarTranslucent={true}
               >
                 <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "rgba(0, 0, 0, 0.8)",
+                  }}
+                >
+                  <View
+                    style={
+                      currentTheme === "dark"
+                        ? taskCreationScreenStyles.subTasksModalDarkView
+                        : taskCreationScreenStyles.subTasksModalLightView
+                    }
+                  >
+                    <TextInput
+                      style={
+                        currentTheme === "dark"
+                          ? taskCreationScreenStyles.subTasksTextInputDark
+                          : taskCreationScreenStyles.subTasksTextInputLight
+                      }
+                      placeholder="Enter sub task..."
+                      onChangeText={(newText) => setInput(newText)}
+                      placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
+                      defaultValue={input}
+                    />
+                    <TouchableOpacity
+                      style={taskCreationScreenStyles.buttonEnter}
+                      onPress={() => {
+                        setSubTasksModalVisible(false);
+                        createSubTask(input);
+                        setInput("");
+                      }}
+                    >
+                      <Text style={{ color: "white" }}>Create Sub Task</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={taskCreationScreenStyles.buttonClose}
+                      onPress={() => {
+                        setSubTasksModalVisible(false);
+                        setInput("");
+                      }}
+                    >
+                      <Text style={{ color: "white" }}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
+            ) : null}
+          </View>
+          <View style={taskCreationScreenStyles.imageMainContainer}>
+            <CameraTouchable
+              styles={taskCreationScreenStyles}
+              currentTheme={currentTheme}
+              navigation={navigation}
+              id={id}
+              isDisabled={imagePreview == true ? true : false}
+            />
+            {imagePreview != false ? (
+              <View style={taskCreationScreenStyles.imagePreviewView}>
+                <Image
+                  source={{ uri: photoUri && photoUri.uri }}
+                  style={taskCreationScreenStyles.imagePreview}
+                />
+                <CancelTouchable resetElement={resetElement} elementId={3} />
+              </View>
+            ) : null}
+          </View>
+          <View style={taskCreationScreenStyles.reminderMainContainer}>
+            <ReminderTouchable
+              styles={taskCreationScreenStyles}
+              currentTheme={currentTheme}
+              showDatepickerReminder={showDatepickerReminder}
+            />
+            {dateReminderFormatted != null ? (
+              <View style={taskCreationScreenStyles.dateTimeView}>
+                <Text
                   style={
                     currentTheme === "dark"
-                      ? taskCreationScreenStyles.subTasksModalDarkView
-                      : taskCreationScreenStyles.subTasksModalLightView
+                      ? taskCreationScreenStyles.dateDark
+                      : taskCreationScreenStyles.dateLight
                   }
                 >
-                  <TextInput
-                    style={
-                      currentTheme === "dark"
-                        ? taskCreationScreenStyles.subTasksTextInputDark
-                        : taskCreationScreenStyles.subTasksTextInputLight
-                    }
-                    placeholder="Enter sub task..."
-                    onChangeText={(newText) => setInput(newText)}
-                    placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
-                    defaultValue={input}
-                  />
-                  <TouchableOpacity
-                    style={taskCreationScreenStyles.buttonEnter}
-                    onPress={() => {
-                      setSubTasksModalVisible(false);
-                      createSubTask(input);
-                      setInput("");
-                    }}
-                  >
-                    <Text style={{ color: "white" }}>Create Sub Task</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={taskCreationScreenStyles.buttonClose}
-                    onPress={() => {
-                      setSubTasksModalVisible(false);
-                      setInput("");
-                    }}
-                  >
-                    <Text style={{ color: "white" }}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-          ) : null}
-        </View>
-        <View
-          style={
-            currentTheme === "dark"
-              ? taskCreationScreenStyles.bulletsDark
-              : taskCreationScreenStyles.bulletsLight
-          }
-        >
-          <CameraTouchable
-            styles={taskCreationScreenStyles}
-            currentTheme={currentTheme}
-            navigation={navigation}
-            id={id}
-          />
-          {imagePreview != false ? (
-            <View style={taskCreationScreenStyles.imagePreviewView}>
-              <Image
-                source={{ uri: photoUri && photoUri.uri }}
-                style={taskCreationScreenStyles.imagePreview}
-              />
-            </View>
-          ) : null}
-        </View>
-        <View
-          style={
-            currentTheme === "dark"
-              ? taskCreationScreenStyles.bulletsDark
-              : taskCreationScreenStyles.bulletsLight
-          }
-        >
-          <ReminderTouchable
-            styles={taskCreationScreenStyles}
-            currentTheme={currentTheme}
-            showDatepickerReminder={showDatepickerReminder}
-          />
-          {dateReminderFormatted != null ? (
-            <View style={taskCreationScreenStyles.dateTimeView}>
-              <Text
-                style={
-                  currentTheme === "dark"
-                    ? taskCreationScreenStyles.dateDark
-                    : taskCreationScreenStyles.dateLight
-                }
-              >
-                {dateReminderFormatted}
-              </Text>
-              {timeReminderFormatted != null ? (
-                <>
-                  <Text
-                    style={
-                      currentTheme === "dark"
-                        ? taskCreationScreenStyles.timeDark
-                        : taskCreationScreenStyles.timeLight
-                    }
-                  >
-                    {timeReminderFormatted}
-                  </Text>
+                  {dateReminderFormatted}
+                </Text>
+                {timeReminderFormatted != null ? (
+                  <>
+                    <Text
+                      style={
+                        currentTheme === "dark"
+                          ? taskCreationScreenStyles.timeDark
+                          : taskCreationScreenStyles.timeLight
+                      }
+                    >
+                      {timeReminderFormatted}
+                    </Text>
+                  </>
+                ) : (
                   <TouchableOpacity
                     style={{ flexDirection: "row" }}
-                    onPress={() => resetElement(2)}
+                    onPress={showTimepickerReminder}
                   >
                     <Text
                       style={
@@ -487,36 +500,26 @@ export default function ProjectTaskScreen({ navigation, route }) {
                           : taskCreationScreenStyles.timeTouchableLight
                       }
                     >
-                      ❌
+                      TIME
                     </Text>
                   </TouchableOpacity>
-                </>
-              ) : (
-                <TouchableOpacity style={{ flexDirection: "row" }} onPress={showTimepickerReminder}>
-                  <Text
-                    style={
-                      currentTheme === "dark"
-                        ? taskCreationScreenStyles.timeTouchableDark
-                        : taskCreationScreenStyles.timeTouchableLight
-                    }
-                  >
-                    TIME
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ) : null}
-          {showReminder ? (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={dateReminder}
-              mode={modeReminder}
-              is24Hour={true}
-              onChange={modeReminder == "date" ? onChangeDateReminder : onChangeTimeReminder}
-            />
-          ) : null}
+                )}
+                <CancelTouchable resetElement={resetElement} elementId={2} />
+              </View>
+            ) : null}
+            {showReminder ? (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={dateReminder}
+                mode={modeReminder}
+                is24Hour={true}
+                onChange={modeReminder == "date" ? onChangeDateReminder : onChangeTimeReminder}
+              />
+            ) : null}
+          </View>
         </View>
       </View>
+
       <View
         style={{
           justifyContent: "flex-start",
