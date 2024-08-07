@@ -354,6 +354,7 @@ export default function ProjectDetails({ navigation, route }) {
                       tasks={item.task_name}
                       subtasks={item.sub_tasks}
                       deadline={item.deadline}
+                      reminder={item.reminder}
                       customImage={item.image}
                       theme={currentTheme}
                       textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}

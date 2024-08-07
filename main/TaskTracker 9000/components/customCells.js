@@ -1,6 +1,7 @@
 import { React } from "react";
 import { Image, Text, View, TouchableOpacity } from "react-native";
 import { Cell } from "react-native-tableview-simple";
+import Entypo from "@expo/vector-icons/Entypo";
 
 import { projectDetailStyles } from "../screens/styles/ProjectDetailStyles";
 import { Circle } from "../components/customShapes";
@@ -44,12 +45,15 @@ const DetailsCell = (props) => {
 
             <Text
               style={[
-                { fontSize: 20, paddingBottom: 5, paddingLeft: 10 },
+                { fontSize: 20, paddingBottom: 5, paddingHorizontal: 10 },
                 { color: props.textColor },
               ]}
             >
               {props.tasks}
             </Text>
+            {props.reminder != null ? (
+              <Entypo name="bell" size={12} color={props.theme === "dark" ? "white" : "black"} />
+            ) : null}
           </View>
 
           <View style={{ paddingLeft: 25 }}>

@@ -87,7 +87,7 @@ function formatDateTimeToISO(dateString, timeString) {
   return date + "T" + timeString;
 }
 
-export const createNotification = async (date, time) => {
+export const createNotification = async (date, time, task) => {
   let IsoFormat = formatDateTimeToISO(date, time);
 
   let d = new Date(IsoFormat);
@@ -96,7 +96,7 @@ export const createNotification = async (date, time) => {
 
   const id = await Notifications.scheduleNotificationAsync({
     content: {
-      title: "Task reminder",
+      title: task,
       body: "You have a task to complete, get to it!",
     },
     trigger,

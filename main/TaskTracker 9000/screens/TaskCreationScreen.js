@@ -94,9 +94,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
   const insertTaskQuery = () => {
     //the '@#' symbol is used as a separator
     let deadlineValue = dateFormatted + " | " + timeFormatted;
-    let subtasksValue = subTaskArray.join("@#");
     let reminderValue = dateReminderFormatted;
-    let notesValue = null;
     let imageValue = null;
     let completedValue = "no";
 
@@ -114,7 +112,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
 
     //if we have a reminder, create a reminder schedule notification
     if (reminderValue != null || reminderValue != undefined) {
-      createNotification(dateReminderFormatted, timeReminderFormatted);
+      createNotification(dateReminderFormatted, timeReminderFormatted, task);
     }
 
     try {
