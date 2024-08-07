@@ -1,5 +1,12 @@
 import { React, useState, useContext, useEffect } from "react";
-import { Text, View, TouchableHighlight, SafeAreaView } from "react-native";
+import {
+  Modal,
+  Text,
+  View,
+  TouchableHighlight,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useIsFocused } from "@react-navigation/native";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -14,6 +21,8 @@ import { timerContext } from "../context/timerContext";
 function TimerScreen() {
   const { currentTheme } = useContext(themeContext);
   const { workDuration, restDuration } = useContext(timerContext);
+
+  const [infoModal, setInfoModal] = useState(false);
 
   //button state
   const [timerState, setState] = useState(false);
@@ -50,7 +59,7 @@ function TimerScreen() {
         style={
           currentTheme === "dark" ? timerScreenStyles.digitsDark : timerScreenStyles.digitsLight
         }
-      >{`${hours}:${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""}${seconds}`}</Text>
+      >{`${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""}${seconds}`}</Text>
     );
   };
 
@@ -87,8 +96,61 @@ function TimerScreen() {
             : timerScreenStyles.timerViewLight
         }
       >
+        {infoModal ? (
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={infoModal}
+            statusBarTranslucent={true}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
+              }}
+            >
+              <View
+                style={
+                  currentTheme === "dark"
+                    ? timerScreenStyles.infoModalDarkView
+                    : timerScreenStyles.infoModalLightView
+                }
+              >
+                <Text
+                  style={{
+                    color: currentTheme === "dark" ? "white" : "black",
+                    textAlign: "center",
+                    fontSize: 14,
+                  }}
+                  numberOfLines={5}
+                  ellipsizeMode="tail"
+                >
+                  A time management tool for productivity that utilizes the 52/17 technique, where
+                  you work for 52 minutes and rest for 17. You may adjust the timer presets in
+                  Settings.
+                </Text>
+                <TouchableHighlight
+                  style={timerScreenStyles.buttonEnter}
+                  onPress={() => {
+                    setInfoModal(!infoModal);
+                  }}
+                >
+                  <Text style={{ color: "white" }}>Done</Text>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </Modal>
+        ) : null}
         <View style={{ flex: 2, justifyContent: "center" }}>
-          <Entypo name="info-with-circle" size={24} color="white" />
+          <TouchableOpacity onPress={() => setInfoModal(!infoModal)}>
+            <Entypo
+              name="info-with-circle"
+              size={30}
+              color={currentTheme === "dark" ? "white" : "black"}
+            />
+          </TouchableOpacity>
         </View>
         <View style={{ flex: 5, alignItems: "center" }}>
           <CountdownCircleTimer

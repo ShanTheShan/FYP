@@ -42,4 +42,31 @@ export const timerScreenStyles = StyleSheet.create({
     marginTop: 10,
     alignItems: "center",
   },
+  infoModalDarkView: {
+    backgroundColor: "#1F1F1F",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    elevation: 10,
+  },
+  infoModalLightView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    elevation: 10,
+  },
+  buttonEnter: {
+    borderRadius: 20,
+    padding: 15,
+    marginTop: 10,
+    elevation: 2,
+    backgroundColor: "darkgreen",
+  },
+  buttonClose: {
+    borderRadius: 20,
+    padding: 15,
+    marginTop: 15,
+    backgroundColor: "darkred",
+  },
 });

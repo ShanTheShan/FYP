@@ -44,6 +44,8 @@ export default function TodoScreen() {
 
   const [calendarVisible, setCalendarVisible] = useState(false);
 
+  const [placeholderText, setPlaceHolderText] = useState();
+
   const getAll = async (value) => {
     try {
       const allRows = await db.getAllAsync("SELECT * FROM Todos WHERE date = ?", [value]);
@@ -126,6 +128,18 @@ export default function TodoScreen() {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (dateSelected == today) {
+      setPlaceHolderText("todos today");
+    } else {
+      let dateString = dateSelected;
+      dateString = dateString.substring(5);
+      dateString = dateString.split("-");
+      dateString = dateString[1] + "/" + dateString[0];
+      setPlaceHolderText(`todos on ${dateString}`);
+    }
+  }, [dateSelected]);
 
   return (
     <SafeAreaView
@@ -216,7 +230,7 @@ export default function TodoScreen() {
         </View>
       </Modal>
       {todos.length == 0 ? (
-        <MyPlaceHolder offsetTop={"20%"} value={"todos today"} currentTheme={currentTheme} />
+        <MyPlaceHolder offsetTop={"20%"} value={placeholderText} currentTheme={currentTheme} />
       ) : (
         <ScrollView
           style={
