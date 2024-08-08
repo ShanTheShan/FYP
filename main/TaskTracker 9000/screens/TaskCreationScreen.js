@@ -62,6 +62,9 @@ export default function ProjectTaskScreen({ navigation, route }) {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
+  //to automatically open time when datepick was set
+  const [autoDeadline, setAutoTransitionDeadline] = useState(false);
+
   //----------------------------
 
   //date time states for reminder
@@ -73,6 +76,9 @@ export default function ProjectTaskScreen({ navigation, route }) {
 
   const [modeReminder, setModeReminder] = useState("date");
   const [showReminder, setShowReminder] = useState(false);
+
+  //to automatically open time when datepick was set
+  const [autoReminder, setAutoTransitionReminder] = useState(false);
 
   //--------------------------------------
 
@@ -188,7 +194,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
     const value = currentDate.toLocaleString("en-GB").split(",", 1)[0];
     setDateFormater(value);
     if (event.type === "set") {
-      showTimepicker();
+      setAutoTransitionDeadline(true);
     }
   };
 
@@ -196,6 +202,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
     //means cancel was pressed
     if (event.type === "dismissed") {
       setShow(false);
+      setAutoTransitionDeadline(false);
       return;
     }
     const currentTime = selectedDate;
@@ -203,6 +210,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
     setTime(currentTime);
     const value = currentTime.toTimeString().slice(0, 5);
     setTimeFormater(value);
+    setAutoTransitionDeadline(false);
   };
 
   const showMode = (currentMode) => {
@@ -231,7 +239,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
     const value = currentDate.toLocaleString("en-GB").split(",", 1)[0];
     setReminderDateFormated(value);
     if (event.type === "set") {
-      showTimepickerReminder();
+      setAutoTransitionReminder(true);
     }
   };
 
@@ -239,6 +247,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
     //means cancel was pressed
     if (event.type === "dismissed") {
       setShowReminder(false);
+      setAutoTransitionReminder(false);
       return;
     }
     const currentTime = selectedDate;
@@ -246,6 +255,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
     setTimeReminder(currentTime);
     const value = currentTime.toTimeString().slice(0, 5);
     setReminderTimeFormated(value);
+    setAutoTransitionReminder(false);
   };
 
   const showModeReminder = (currentMode) => {
@@ -260,6 +270,18 @@ export default function ProjectTaskScreen({ navigation, route }) {
   const showTimepickerReminder = () => {
     showModeReminder("time");
   };
+
+  useEffect(() => {
+    if (autoDeadline == true) {
+      showTimepicker();
+    }
+  }, [autoDeadline]);
+
+  useEffect(() => {
+    if (autoReminder == true) {
+      showTimepickerReminder();
+    }
+  }, [autoReminder]);
 
   const resetElement = (id) => {
     switch (id) {

@@ -36,6 +36,9 @@ export default function TodoCreationScreen({ navigation, route }) {
   const [modeReminder, setModeReminder] = useState("date");
   const [showReminder, setShowReminder] = useState(false);
 
+  //to automatically open time when datepick was set
+  const [auto, setAutoTransition] = useState(false);
+
   const insertTodoQuery = async (value) => {
     let reminderValue = dateReminderFormatted;
     //check if text input empty
@@ -94,7 +97,7 @@ export default function TodoCreationScreen({ navigation, route }) {
     const value = currentDate.toLocaleString("en-GB").split(",", 1)[0];
     setReminderDateFormated(value);
     if (event.type === "set") {
-      showTimepickerReminder();
+      setAutoTransition(true);
     }
   };
 
@@ -102,6 +105,7 @@ export default function TodoCreationScreen({ navigation, route }) {
     //means cancel was pressed
     if (event.type === "dismissed") {
       setShowReminder(false);
+      setAutoTransition(false);
       return;
     }
     const currentTime = selectedDate;
@@ -109,6 +113,7 @@ export default function TodoCreationScreen({ navigation, route }) {
     setTimeReminder(currentTime);
     const value = currentTime.toTimeString().slice(0, 5);
     setReminderTimeFormated(value);
+    setAutoTransition(false);
   };
 
   const showModeReminder = (currentMode) => {
@@ -123,6 +128,12 @@ export default function TodoCreationScreen({ navigation, route }) {
   const showTimepickerReminder = () => {
     showModeReminder("time");
   };
+
+  useEffect(() => {
+    if (auto == true) {
+      showTimepickerReminder();
+    }
+  }, [auto]);
 
   const resetElement = () => {
     setReminderDateFormated(null);
