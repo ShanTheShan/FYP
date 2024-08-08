@@ -29,9 +29,6 @@ import {
 } from "../components/taskCreation";
 
 export default function ProjectTaskScreen({ navigation, route }) {
-  //trigger request for notification permission
-  const { expoPushToken, notification } = usePushNotifications();
-
   //if screen is focused
   const isFocused = useIsFocused();
 
@@ -87,7 +84,9 @@ export default function ProjectTaskScreen({ navigation, route }) {
   //image state
   const [imagePreview, setImagePreview] = useState(false);
   useEffect(() => {
-    if (photoUri != null && isFocused == true) setImagePreview(true);
+    if (photoUri != undefined && isFocused == true) {
+      setImagePreview(true);
+    }
   }, [isFocused]);
 
   //SQLite query to insert task to project
@@ -107,8 +106,19 @@ export default function ProjectTaskScreen({ navigation, route }) {
       return;
     }
 
+    //check of reminder has both date and time
+    if (dateReminderFormatted != null && timeReminderFormatted === null) {
+      setToggleValidator(true);
+      setTimeout(() => {
+        setToggleValidator(false);
+      }, 2000);
+      return;
+    }
+
     //if we have an image, store it
-    if (photoUri != null || photoUri != undefined) imageValue = photoUri.uri;
+    if (photoUri != undefined && imagePreview === true) {
+      imageValue = photoUri.uri;
+    }
 
     //if we have a reminder, create a reminder schedule notification
     if (reminderValue != null || reminderValue != undefined) {
@@ -177,6 +187,9 @@ export default function ProjectTaskScreen({ navigation, route }) {
     //convert to string date
     const value = currentDate.toLocaleString("en-GB").split(",", 1)[0];
     setDateFormater(value);
+    if (event.type === "set") {
+      showTimepicker();
+    }
   };
 
   const onChangeTime = (event, selectedDate) => {
@@ -217,6 +230,9 @@ export default function ProjectTaskScreen({ navigation, route }) {
     //convert to string date
     const value = currentDate.toLocaleString("en-GB").split(",", 1)[0];
     setReminderDateFormated(value);
+    if (event.type === "set") {
+      showTimepickerReminder();
+    }
   };
 
   const onChangeTimeReminder = (event, selectedDate) => {
@@ -300,6 +316,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
               styles={taskCreationScreenStyles}
               currentTheme={currentTheme}
               showDatepicker={showDatepicker}
+              toDisablePress={dateFormatted}
             />
             {dateFormatted != null ? (
               <View style={taskCreationScreenStyles.dateTimeView}>
@@ -462,6 +479,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
               styles={taskCreationScreenStyles}
               currentTheme={currentTheme}
               showDatepickerReminder={showDatepickerReminder}
+              toDisablePress={dateReminderFormatted}
             />
             {dateReminderFormatted != null ? (
               <View style={taskCreationScreenStyles.dateTimeView}>

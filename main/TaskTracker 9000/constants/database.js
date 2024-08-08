@@ -54,7 +54,8 @@ const intiatelizeDatabase = () => {
           id INTEGER PRIMARY KEY,
           date TEXT NOT NULL,
           todo TEXT NOT NULL,
-          done TEXT NOT NULL
+          done TEXT NOT NULL,
+          reminder TEXT
           );
           
           `);

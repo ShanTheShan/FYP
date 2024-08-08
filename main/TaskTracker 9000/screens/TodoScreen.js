@@ -11,6 +11,7 @@ import {
 import { Section } from "react-native-tableview-simple";
 import { Calendar } from "react-native-calendars";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useIsFocused } from "@react-navigation/native";
 
 import moment from "moment";
 
@@ -23,7 +24,9 @@ import { themeContext } from "../context/themeContext";
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
 
-export default function TodoScreen() {
+export default function TodoScreen({ navigation }) {
+  const isFocused = useIsFocused();
+
   //global theme state
   const { currentTheme } = useContext(themeContext);
 
@@ -74,6 +77,14 @@ export default function TodoScreen() {
     getAll(today);
     getAllDates();
   }, []);
+
+  //run when screen in focused
+  useEffect(() => {
+    if (isFocused) {
+      getAll(dateSelected);
+      getAllDates();
+    }
+  }, [isFocused]);
 
   const handleDayPress = async (day) => {
     setDateSelected(day.dateString);
@@ -246,6 +257,7 @@ export default function TodoScreen() {
                   key={item.id}
                   title={item.todo}
                   done={item.done}
+                  reminder={item.reminder}
                   toggleDeleteModal={toggleDeleteModal}
                   setToDelete={setToDelete}
                   handleStrikeThrough={handleStrikeThrough}
@@ -270,7 +282,8 @@ export default function TodoScreen() {
 
       <AddButton
         press={() => {
-          toggleTodoModal(true);
+          //toggleTodoModal(true);
+          navigation.navigate("Create Todo", { dateSelected: dateSelected });
         }}
       />
     </SafeAreaView>

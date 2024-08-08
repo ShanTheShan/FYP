@@ -2,9 +2,13 @@ import { React } from "react";
 import { Text, Image, TouchableOpacity } from "react-native";
 import { taskCreationScreenStyles } from "../screens/styles/TaskCreationScreenStyles";
 
-export const DeadlineTouchable = ({ styles, currentTheme, showDatepicker }) => {
+export const DeadlineTouchable = ({ styles, currentTheme, showDatepicker, toDisablePress }) => {
   return (
-    <TouchableOpacity style={{ flexDirection: "row" }} onPress={showDatepicker}>
+    <TouchableOpacity
+      style={{ flexDirection: "row" }}
+      onPress={showDatepicker}
+      disabled={toDisablePress != null ? true : false}
+    >
       <Image source={require("../assets/deadline.png")} style={styles.image} />
       <Text
         style={{
@@ -39,9 +43,18 @@ export const SubTasksTouchable = ({ styles, currentTheme, setSubTasksModalVisibl
   );
 };
 
-export const ReminderTouchable = ({ styles, currentTheme, showDatepickerReminder }) => {
+export const ReminderTouchable = ({
+  styles,
+  currentTheme,
+  showDatepickerReminder,
+  toDisablePress,
+}) => {
   return (
-    <TouchableOpacity style={{ flexDirection: "row" }} onPress={showDatepickerReminder}>
+    <TouchableOpacity
+      style={{ flexDirection: "row" }}
+      onPress={showDatepickerReminder}
+      disabled={toDisablePress != null ? true : false}
+    >
       <Image source={require("../assets/bell.png")} style={styles.image} />
       <Text
         style={{

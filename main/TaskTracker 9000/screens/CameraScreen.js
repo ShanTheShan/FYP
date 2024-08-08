@@ -174,13 +174,32 @@ function RenderCamera({ navigation, route }) {
         </View>
       ) : (
         <SafeAreaView style={styles.safeArea}>
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Create Task", { id: id })}>
-              <Text style={{ fontSize: 30, padding: 30 }}>⬅️</Text>
-            </TouchableOpacity>
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-              <Text>Camera permission denied. Allow camera permission in application Settings</Text>
-            </View>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "black",
+            }}
+          >
+            <Text style={{ paddingHorizontal: 25, paddingBottom: 10, color: "white" }}>
+              Camera permission denied. Allow camera permission in application Settings
+            </Text>
+            {navState === "My Notes/Create Note/Camera Note" ? (
+              <TouchableOpacity onPress={() => navigation.navigate("Create Note", { id: id })}>
+                <Image
+                  style={{ height: 40, width: 40 }}
+                  source={require("../assets/left-arrow.png")}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => navigation.navigate("Create Task", { id: id })}>
+                <Image
+                  style={{ height: 40, width: 40 }}
+                  source={require("../assets/left-arrow.png")}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </SafeAreaView>
       )}

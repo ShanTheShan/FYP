@@ -1,7 +1,7 @@
 import { React, useContext } from "react";
 import { TouchableOpacity, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import HomeScreen from "../screens/HomeScreen";
@@ -9,6 +9,7 @@ import TimerScreen from "../screens/TimerScreen";
 import RenderCamera from "../screens/CameraScreen";
 import ProjectDetails from "../screens/ProjectDetailsScreen";
 import TodoScreen from "../screens/TodoScreen";
+import TodoCreationScreen from "../screens/TodoCreationScreen";
 import ProjectTaskScreen from "../screens/TaskCreationScreen";
 import NotesScreen from "../screens/NotesScreen";
 import NoteCreationScreen from "../screens/NoteCreationScreen";
@@ -140,12 +141,7 @@ function TaskStackScreen({ navigation }) {
   const headerTitle = useHeaderTitle();
 
   return (
-    <TaskStack.Navigator
-      screenOptions={{
-        animationEnabled: true,
-        cardStyleInterpolator: forFade,
-      }}
-    >
+    <TaskStack.Navigator>
       <TaskStack.Screen
         name="Todos"
         component={TodoScreen}
@@ -164,6 +160,18 @@ function TaskStackScreen({ navigation }) {
               <Text style={{ fontSize: 20 }}>⚙️</Text>
             </TouchableOpacity>
           ),
+        }}
+      />
+      <TaskStack.Screen
+        name="Create Todo"
+        component={TodoCreationScreen}
+        options={{
+          headerTintColor: headerTitle,
+          headerTitleStyle: { color: headerTitle },
+          headerStyle: {
+            backgroundColor: headerBackground,
+          },
+          cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
         }}
       />
     </TaskStack.Navigator>

@@ -9,6 +9,7 @@ import { animationContext } from "../context/animationContext";
 import { AddButton } from "../components/customButtons";
 import { TextValidator, ActionDone } from "../components/customTextValidator";
 import { taskCreationScreenStyles } from "./styles/TaskCreationScreenStyles";
+import { CameraTouchable, CancelTouchable } from "../components/taskCreation";
 
 export default function NoteCreationScreen({ navigation, route }) {
   //if screen is focused
@@ -30,7 +31,7 @@ export default function NoteCreationScreen({ navigation, route }) {
   const [imagePreview, setImagePreview] = useState(false);
 
   useEffect(() => {
-    if ((photoUri != null || photoUri != undefined) && isFocused == true) setImagePreview(true);
+    if (photoUri != undefined && isFocused === true) setImagePreview(true);
   }, [isFocused]);
 
   //SQLite query to insert note
@@ -38,7 +39,7 @@ export default function NoteCreationScreen({ navigation, route }) {
     let imageValue = null;
 
     //if we have an image, store it
-    if (photoUri != null || undefined) imageValue = photoUri.uri;
+    if (photoUri != undefined && imagePreview === true) imageValue = photoUri.uri;
 
     //check if text input is empty
     if (!note) {
@@ -66,6 +67,10 @@ export default function NoteCreationScreen({ navigation, route }) {
     }
   };
 
+  const resetElement = (id) => {
+    setImagePreview(false);
+  };
+
   return (
     <SafeAreaView
       style={
@@ -77,8 +82,8 @@ export default function NoteCreationScreen({ navigation, route }) {
       <View
         style={
           currentTheme === "dark"
-            ? taskCreationScreenStyles.containerDark
-            : taskCreationScreenStyles.containerLight
+            ? taskCreationScreenStyles.mainContainerDark
+            : taskCreationScreenStyles.mainContainerLight
         }
       >
         <TextInput
@@ -91,27 +96,22 @@ export default function NoteCreationScreen({ navigation, route }) {
           onChangeText={(newText) => createNote(newText)}
           defaultValue={note}
         />
-        <View
-          style={
-            currentTheme === "dark"
-              ? taskCreationScreenStyles.bulletsDark
-              : taskCreationScreenStyles.bulletsLight
-          }
-        >
+        <View style={taskCreationScreenStyles.imageMainContainer}>
           <TouchableOpacity
             onPress={() => navigation.navigate("Camera Note", { id: "empty" })}
             style={{ flexDirection: "row" }}
+            disabled={imagePreview != false ? true : false}
           >
             <Image
               source={require("../assets/camera.png")}
               style={taskCreationScreenStyles.image}
             />
             <Text
-              style={
-                currentTheme === "dark"
-                  ? taskCreationScreenStyles.bulletTextDark
-                  : taskCreationScreenStyles.bulletTextLight
-              }
+              style={{
+                fontSize: 20,
+                paddingLeft: 10,
+                color: currentTheme === "dark" ? "white" : "black",
+              }}
             >
               Add Image
             </Text>
@@ -122,6 +122,7 @@ export default function NoteCreationScreen({ navigation, route }) {
                 source={{ uri: photoUri && photoUri.uri }}
                 style={taskCreationScreenStyles.imagePreview}
               />
+              <CancelTouchable resetElement={resetElement} />
             </View>
           ) : null}
         </View>

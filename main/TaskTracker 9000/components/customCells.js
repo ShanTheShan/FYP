@@ -128,7 +128,7 @@ const TodoCell = (props) => (
             style={{
               fontSize: 20,
               paddingBottom: 5,
-              paddingLeft: 10,
+              paddingHorizontal: 10,
               color: props.textColor === "dark" ? "#FFFFFF" : "#000000",
               opacity: props.done === "yes" ? 0.5 : 1,
               textDecorationLine: props.done === "yes" ? "line-through" : "none",
@@ -136,6 +136,9 @@ const TodoCell = (props) => (
           >
             {props.title}
           </Text>
+          {props.reminder != null ? (
+            <Entypo name="bell" size={12} color={props.theme === "dark" ? "white" : "black"} />
+          ) : null}
         </View>
       }
     />

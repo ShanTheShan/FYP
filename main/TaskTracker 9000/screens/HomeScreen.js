@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 
 import { db } from "../constants/database";
+import { usePushNotifications } from "../constants/push";
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
 import { DeleteCellModal } from "../components/customModals";
@@ -33,6 +34,9 @@ SplashScreen.preventAutoHideAsync();
 export default function HomeScreen({ navigation }) {
   //if screen is focused
   const isFocused = useIsFocused();
+
+  //trigger request for notification permission
+  const { expoPushToken, notification } = usePushNotifications();
 
   //global theme state
   const { currentTheme } = useContext(themeContext);
