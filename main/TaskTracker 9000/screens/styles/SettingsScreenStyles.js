@@ -8,11 +8,17 @@ export const settingStyles = StyleSheet.create({
   safeAreaDark: {
     flex: 1,
     height: "100%",
-    backgroundColor: "#141414",
+    backgroundColor: "#1C1C1C",
   },
-  navigationView: {
+  navigationViewDark: {
     flex: 1,
-    backgroundColor: "lightgrey",
+    backgroundColor: "black",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  navigationViewLight: {
+    flex: 1,
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -20,20 +26,16 @@ export const settingStyles = StyleSheet.create({
     flex: 5,
     margin: 20,
   },
-  PageTitle: {
-    fontSize: 30,
-    color: "black",
-    paddingTop: "10%",
-  },
   themeModalContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
   },
   themeModalView: {
     backgroundColor: "lightgrey",
     height: "30%",
-    width: "70%",
+    width: "75%",
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
@@ -45,6 +47,7 @@ export const settingStyles = StyleSheet.create({
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "space-evenly",
+    elevation: 10,
   },
   themeTextPressed: {
     marginVertical: 10,

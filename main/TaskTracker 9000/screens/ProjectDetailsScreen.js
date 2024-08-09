@@ -1,6 +1,6 @@
 import { React, useState, useEffect, useContext } from "react";
 import { Text, View, SafeAreaView } from "react-native";
-import { Cell, Section } from "react-native-tableview-simple";
+import { TableView, Cell, Section } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
 import { useIsFocused } from "@react-navigation/native";
 import { useSharedValue } from "react-native-reanimated";
@@ -347,25 +347,39 @@ export default function ProjectDetails({ navigation, route }) {
               scrollHeight={350}
               currentTheme={currentTheme}
               content={
-                <Section>
-                  {projectDetails.map((item) => (
-                    <DetailsCell
-                      key={item.task_id}
-                      tasks={item.task_name}
-                      subtasks={item.sub_tasks}
-                      deadline={item.deadline}
-                      reminder={item.reminder}
-                      customImage={item.image}
-                      theme={currentTheme}
-                      textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                      completed={false}
-                      handleSubTouch={handleSubTouch}
-                      customPress={() => {
-                        handleTaskTouch(item);
-                      }}
-                    />
-                  ))}
-                </Section>
+                <TableView
+                  appearance={"customKey"}
+                  customAppearances={{
+                    customKey: {
+                      colors: {
+                        background: currentTheme === "dark" ? "black" : "white",
+                        separatorColor: currentTheme === "dark" ? "white" : "black",
+                        body: currentTheme === "dark" ? "white" : "black",
+                        secondary: currentTheme === "dark" ? "white" : "black",
+                      },
+                    },
+                  }}
+                >
+                  <Section>
+                    {projectDetails.map((item) => (
+                      <DetailsCell
+                        key={item.task_id}
+                        tasks={item.task_name}
+                        subtasks={item.sub_tasks}
+                        deadline={item.deadline}
+                        reminder={item.reminder}
+                        customImage={item.image}
+                        theme={currentTheme}
+                        textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                        completed={false}
+                        handleSubTouch={handleSubTouch}
+                        customPress={() => {
+                          handleTaskTouch(item);
+                        }}
+                      />
+                    ))}
+                  </Section>
+                </TableView>
               }
             />
           )}
@@ -388,20 +402,34 @@ export default function ProjectDetails({ navigation, route }) {
               scrollHeight={200}
               currentTheme={currentTheme}
               content={
-                <Section>
-                  {completedTasks.map((item) => (
-                    <DetailsCell
-                      key={item.task_id}
-                      tasks={item.task_name}
-                      subtasks={item.sub_tasks}
-                      deadline={item.deadline}
-                      customImage={item.image}
-                      textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                      backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
-                      completed={true}
-                    />
-                  ))}
-                </Section>
+                <TableView
+                  appearance={"customKey"}
+                  customAppearances={{
+                    customKey: {
+                      colors: {
+                        background: currentTheme === "dark" ? "black" : "white",
+                        separatorColor: currentTheme === "dark" ? "white" : "black",
+                        body: currentTheme === "dark" ? "white" : "black",
+                        secondary: currentTheme === "dark" ? "white" : "black",
+                      },
+                    },
+                  }}
+                >
+                  <Section>
+                    {completedTasks.map((item) => (
+                      <DetailsCell
+                        key={item.task_id}
+                        tasks={item.task_name}
+                        subtasks={item.sub_tasks}
+                        deadline={item.deadline}
+                        customImage={item.image}
+                        textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                        backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                        completed={true}
+                      />
+                    ))}
+                  </Section>
+                </TableView>
               }
             />
           )}
@@ -424,18 +452,32 @@ export default function ProjectDetails({ navigation, route }) {
               scrollHeight={200}
               currentTheme={currentTheme}
               content={
-                <Section>
-                  {comments.map((item) => (
-                    <CommentsCell
-                      key={item.id}
-                      id={item.id}
-                      comment={item.comment}
-                      setEditModalVisible={setEditCommentModalVisible}
-                      textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
-                      backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
-                    />
-                  ))}
-                </Section>
+                <TableView
+                  appearance={"customKey"}
+                  customAppearances={{
+                    customKey: {
+                      colors: {
+                        background: currentTheme === "dark" ? "black" : "white",
+                        separatorColor: currentTheme === "dark" ? "white" : "black",
+                        body: currentTheme === "dark" ? "white" : "black",
+                        secondary: currentTheme === "dark" ? "white" : "black",
+                      },
+                    },
+                  }}
+                >
+                  <Section>
+                    {comments.map((item) => (
+                      <CommentsCell
+                        key={item.id}
+                        id={item.id}
+                        comment={item.comment}
+                        setEditModalVisible={setEditCommentModalVisible}
+                        textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
+                        backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                      />
+                    ))}
+                  </Section>
+                </TableView>
               }
             />
           )}

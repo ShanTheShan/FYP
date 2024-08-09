@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { Section } from "react-native-tableview-simple";
+import { TableView, Section } from "react-native-tableview-simple";
 import { Calendar } from "react-native-calendars";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useIsFocused } from "@react-navigation/native";
@@ -250,33 +250,47 @@ export default function TodoScreen({ navigation }) {
               : todoScreenStyles.scrollViewLight
           }
         >
-          <Section>
-            {todos.map((item) => {
-              return (
-                <TodoCell
-                  key={item.id}
-                  title={item.todo}
-                  done={item.done}
-                  reminder={item.reminder}
-                  toggleDeleteModal={toggleDeleteModal}
-                  setToDelete={setToDelete}
-                  handleStrikeThrough={handleStrikeThrough}
-                  theme={currentTheme}
-                  textColor={currentTheme}
+          <TableView
+            appearance={"customKey"}
+            customAppearances={{
+              customKey: {
+                colors: {
+                  background: currentTheme === "dark" ? "black" : "white",
+                  separatorColor: currentTheme === "dark" ? "white" : "black",
+                  body: currentTheme === "dark" ? "white" : "black",
+                  secondary: currentTheme === "dark" ? "white" : "black",
+                },
+              },
+            }}
+          >
+            <Section>
+              {todos.map((item) => {
+                return (
+                  <TodoCell
+                    key={item.id}
+                    title={item.todo}
+                    done={item.done}
+                    reminder={item.reminder}
+                    toggleDeleteModal={toggleDeleteModal}
+                    setToDelete={setToDelete}
+                    handleStrikeThrough={handleStrikeThrough}
+                    theme={currentTheme}
+                    textColor={currentTheme}
+                  />
+                );
+              })}
+              {deleteModal ? (
+                <DeleteCellModal
+                  modalVisible={deleteModal}
+                  setModalVisible={toggleDeleteModal}
+                  deleteFn={deleteTodo}
+                  toDelete={toDelete}
+                  currentTheme={currentTheme}
+                  text="note"
                 />
-              );
-            })}
-            {deleteModal ? (
-              <DeleteCellModal
-                modalVisible={deleteModal}
-                setModalVisible={toggleDeleteModal}
-                deleteFn={deleteTodo}
-                toDelete={toDelete}
-                currentTheme={currentTheme}
-                text="note"
-              />
-            ) : null}
-          </Section>
+              ) : null}
+            </Section>
+          </TableView>
         </ScrollView>
       )}
 

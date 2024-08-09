@@ -18,14 +18,6 @@ export const TutorialModal = ({ modalVisible, setModalVisible }) => {
     }
   };
 
-  //carousel size must the size of the view, which is responsive, therefore cant be fixed values
-  // const onLayout = (event) => {
-  //   const { _, width } = event.nativeEvent.layout;
-  //   if (carouselWidth != 0 || carouselWidth != NaN || carouselWidth != null) {
-  //     setCarouselWidth(Math.floor(width));
-  //   }
-  // };
-
   return (
     <Modal
       animationType="slide"
@@ -64,7 +56,7 @@ export const TutorialModal = ({ modalVisible, setModalVisible }) => {
           </View>
           <View style={styles.buttonView}>
             <Pressable style={styles.modalButton} onPress={closeTutorial}>
-              <Text>DONE</Text>
+              <Text style={{ color: "white" }}>DONE</Text>
             </Pressable>
           </View>
         </View>

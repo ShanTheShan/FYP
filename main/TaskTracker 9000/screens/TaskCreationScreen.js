@@ -19,7 +19,7 @@ import { themeContext } from "../context/themeContext";
 import { animationContext } from "../context/animationContext";
 import { taskCreationScreenStyles } from "./styles/TaskCreationScreenStyles";
 import { AddButton } from "../components/customButtons";
-import { TextValidator, ActionDone } from "../components/customTextValidator";
+import { ReminderValidator, TextValidator, ActionDone } from "../components/customTextValidator";
 import {
   ReminderTouchable,
   SubTasksTouchable,
@@ -40,6 +40,7 @@ export default function ProjectTaskScreen({ navigation, route }) {
   //global animation state
   const { setToggleValidator } = useContext(animationContext);
   const { setToggleActionDone } = useContext(animationContext);
+  const { setReminderValidator } = useContext(animationContext);
 
   //text input state
   const [task, createTask] = useState("");
@@ -114,9 +115,9 @@ export default function ProjectTaskScreen({ navigation, route }) {
 
     //check of reminder has both date and time
     if (dateReminderFormatted != null && timeReminderFormatted === null) {
-      setToggleValidator(true);
+      setReminderValidator(true);
       setTimeout(() => {
-        setToggleValidator(false);
+        setReminderValidator(false);
       }, 2000);
       return;
     }
@@ -564,8 +565,9 @@ export default function ProjectTaskScreen({ navigation, route }) {
           alignItems: "center",
         }}
       >
-        <TextValidator value="Task" currentTheme={currentTheme} />
-        <ActionDone value="Task" currentTheme={currentTheme} />
+        <TextValidator value="Task" />
+        <ReminderValidator />
+        <ActionDone value="Task" />
         <AddButton press={() => insertTaskQuery()} />
       </View>
     </SafeAreaView>

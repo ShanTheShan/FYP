@@ -8,7 +8,7 @@ import { db } from "../constants/database";
 import { themeContext } from "../context/themeContext";
 import { animationContext } from "../context/animationContext";
 import { AddButton } from "../components/customButtons";
-import { TextValidator, ActionDone } from "../components/customTextValidator";
+import { ReminderValidator, TextValidator, ActionDone } from "../components/customTextValidator";
 import { todoCreationScreenStyles } from "./styles/TodoCreationScreenStyles";
 import { ReminderTouchable, CancelTouchable } from "../components/taskCreation";
 
@@ -22,6 +22,7 @@ export default function TodoCreationScreen({ navigation, route }) {
   //global animation state
   const { setToggleValidator } = useContext(animationContext);
   const { setToggleActionDone } = useContext(animationContext);
+  const { setReminderValidator } = useContext(animationContext);
 
   //text input state
   const [input, setInput] = useState("");
@@ -51,9 +52,9 @@ export default function TodoCreationScreen({ navigation, route }) {
     }
     //check of reminder has both date and time
     if (dateReminderFormatted != null && timeReminderFormatted === null) {
-      setToggleValidator(true);
+      setReminderValidator(true);
       setTimeout(() => {
-        setToggleValidator(false);
+        setReminderValidator(false);
       }, 2000);
       return;
     }
@@ -229,9 +230,9 @@ export default function TodoCreationScreen({ navigation, route }) {
           alignItems: "center",
         }}
       >
-        <TextValidator value="Todo" currentTheme={currentTheme} />
-        <TextValidator value="Set a time for your reminder!" currentTheme={currentTheme} />
-        <ActionDone value="Todo" currentTheme={currentTheme} />
+        <TextValidator value="Todo" />
+        <ReminderValidator />
+        <ActionDone value="Todo" />
         <AddButton press={() => insertTodoQuery(input)} />
       </View>
     </SafeAreaView>

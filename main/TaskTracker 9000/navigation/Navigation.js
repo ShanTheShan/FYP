@@ -14,7 +14,6 @@ import ProjectTaskScreen from "../screens/TaskCreationScreen";
 import NotesScreen from "../screens/NotesScreen";
 import NoteCreationScreen from "../screens/NoteCreationScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-
 import useHeaderBackground from "../hooks/headerBackground";
 import useHeaderTitle from "../hooks/headerTitle";
 
@@ -143,7 +142,7 @@ function TaskStackScreen({ navigation }) {
   return (
     <TaskStack.Navigator>
       <TaskStack.Screen
-        name="Todos"
+        name="My Todos"
         component={TodoScreen}
         options={{
           headerTitleStyle: { color: headerTitle },
@@ -291,7 +290,7 @@ export default function CustomNavigator() {
           }}
         />
         <Tab.Screen
-          name="Task"
+          name="Todos"
           component={TaskStackScreen}
           options={{
             tabBarIcon: ({}) => (

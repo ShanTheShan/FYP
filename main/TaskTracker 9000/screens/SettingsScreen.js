@@ -1,8 +1,8 @@
-import { React, useState, useContext } from "react";
+import { React, useState, useContext, useEffect } from "react";
 import { Text, View, SafeAreaView, TouchableOpacity, Linking, Modal } from "react-native";
 import * as MailComposer from "expo-mail-composer";
 import WheelPicker from "react-native-wheely";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TableView, Cell, Section } from "react-native-tableview-simple";
 import { themeContext } from "../context/themeContext";
 import { timerContext } from "../context/timerContext";
@@ -19,18 +19,36 @@ export default function SettingsScreen() {
   const { currentTheme, setCurrentTheme } = useContext(themeContext);
   const { setWorkDuration, setRestDuration } = useContext(timerContext);
 
-  //create a project state modal
+  //all modals
   const [themeModal, toggleThemeModal] = useState(false);
   const [tutorialModal, toggleTutorialModal] = useState(false);
   const [timerModal, toggleTimerModal] = useState(false);
+  const [infoModal, toggleInfoModal] = useState(false);
 
   //theme state color
-  const [darkState, setDarkState] = useState(true);
+  const [darkState, setDarkState] = useState(false);
   const [lightState, setLightState] = useState(false);
 
   //wheely
   const [workMinutes, setWorkMinutes] = useState(0);
   const [restMinutes, setRestMinutes] = useState(0);
+
+  //check what theme we are on from cache, then set the theme state color
+  useEffect(() => {
+    const fetchThemeCache = async () => {
+      try {
+        const value = await AsyncStorage.getItem("light");
+        if (value === "true") {
+          setLightState(true);
+        } else {
+          setDarkState(true);
+        }
+      } catch (error) {
+        console.error("Error loading theme in Settings -> fetchThemeCache():", error);
+      }
+    };
+    fetchThemeCache();
+  }, []);
 
   //handle theme saving when "Done" is pressed in modal
   const setTheme = () => {
@@ -45,15 +63,17 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleThemeTouch = (theme) => {
+  const handleThemeTouch = async (theme) => {
     if (theme === "dark") {
       setLightState(false);
       setDarkState(!darkState);
+      await AsyncStorage.setItem("light", "false");
     }
 
     if (theme === "light") {
       setLightState(!lightState);
       setDarkState(false);
+      await AsyncStorage.setItem("light", "true");
     }
   };
 
@@ -77,8 +97,22 @@ export default function SettingsScreen() {
     <SafeAreaView
       style={currentTheme === "dark" ? settingStyles.safeAreaDark : settingStyles.safeAreaLight}
     >
-      <View style={settingStyles.navigationView}>
-        <Text style={settingStyles.PageTitle}>Settings</Text>
+      <View
+        style={
+          currentTheme === "dark"
+            ? settingStyles.navigationViewDark
+            : settingStyles.navigationViewLight
+        }
+      >
+        <Text
+          style={{
+            fontSize: 30,
+            color: currentTheme === "dark" ? "white" : "black",
+            paddingTop: "10%",
+          }}
+        >
+          Settings
+        </Text>
       </View>
       <View style={settingStyles.settingsContainer}>
         {themeModal ? (
@@ -137,9 +171,39 @@ export default function SettingsScreen() {
                     style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
                     onPress={() => setTheme()}
                   >
-                    <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
+                    <Text style={{ fontSize: 15, padding: 10, color: "white" }}>Done</Text>
                   </TouchableOpacity>
                 </View>
+              </View>
+            </View>
+          </Modal>
+        ) : null}
+        {infoModal ? (
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={infoModal}
+            statusBarTranslucent={true}
+          >
+            <View style={settingStyles.themeModalContainer}>
+              <View style={settingStyles.themeModalView}>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "400",
+                    paddingHorizontal: 10,
+                  }}
+                >
+                  It is recommended to set battery optimization to unrestricted in the Notifications
+                  Settings of this app. This ensures you receive all your reminders on time and
+                  without delay.
+                </Text>
+                <TouchableOpacity
+                  style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
+                  onPress={() => toggleInfoModal(false)}
+                >
+                  <Text style={{ fontSize: 15, padding: 10, color: "white" }}>Close</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>
@@ -199,7 +263,7 @@ export default function SettingsScreen() {
                   style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
                   onPress={() => handleTimerPrest()}
                 >
-                  <Text style={{ fontSize: 15, padding: 10 }}>Done</Text>
+                  <Text style={{ fontSize: 15, padding: 10, color: "white" }}>Done</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -208,11 +272,30 @@ export default function SettingsScreen() {
         {tutorialModal ? (
           <TutorialModal modalVisible={tutorialModal} setModalVisible={toggleTutorialModal} />
         ) : null}
-        <TableView appearance={currentTheme === "dark" ? "dark" : "light"}>
+        <TableView
+          appearance={"customKey"}
+          customAppearances={{
+            customKey: {
+              colors: {
+                background: currentTheme === "dark" ? "black" : "white",
+                separatorColor: currentTheme === "dark" ? "white" : "black",
+                body: currentTheme === "dark" ? "white" : "black",
+                secondary: currentTheme === "dark" ? "white" : "black",
+              },
+            },
+          }}
+        >
           <Section footer="TaskTracker 9000 v1.0.0">
             <Cell
               title="Notifications"
               onPress={handleTurnNotificationsOn}
+              titleTextStyle={{ paddingVertical: 10 }}
+            />
+            <Cell
+              title="Reminder Info"
+              onPress={() => {
+                toggleInfoModal(true);
+              }}
               titleTextStyle={{ paddingVertical: 10 }}
             />
             <Cell

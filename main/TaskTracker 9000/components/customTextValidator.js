@@ -28,6 +28,30 @@ export const TextValidator = ({ value }) => {
     </View>
   );
 };
+
+export const ReminderValidator = () => {
+  const { toggleReminderValidator } = useContext(animationContext);
+  const scale = useSharedValue(0);
+
+  useEffect(() => {
+    scale.value = withSpring(toggleReminderValidator ? 1 : 0);
+  }, [toggleReminderValidator]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  return (
+    <View style={styles.textView}>
+      <Animated.View style={[styles.animatedView, animatedStyle]}>
+        <Text style={{ color: "white", padding: 5 }}>Reminder must have a date AND time!</Text>
+      </Animated.View>
+    </View>
+  );
+};
+
 export const ActionDone = ({ value }) => {
   const { toggleActionDone } = useContext(animationContext);
   const scale = useSharedValue(0);
