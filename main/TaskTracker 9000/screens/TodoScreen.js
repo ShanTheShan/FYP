@@ -1,13 +1,5 @@
 import { React, useState, useEffect, useContext } from "react";
-import {
-  Text,
-  View,
-  SafeAreaView,
-  ScrollView,
-  Modal,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
 import { TableView, Section } from "react-native-tableview-simple";
 import { Calendar } from "react-native-calendars";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -36,10 +28,6 @@ export default function TodoScreen({ navigation }) {
   const today = moment().format("YYYY-MM-DD");
   const [dateSelected, setDateSelected] = useState(today);
   const [markedDates, setMarkedDates] = useState({});
-
-  //create modal state
-  const [todoModal, toggleTodoModal] = useState(false);
-  const [input, setInput] = useState("");
 
   //delete modal state
   const [deleteModal, toggleDeleteModal] = useState(false);
@@ -89,26 +77,6 @@ export default function TodoScreen({ navigation }) {
   const handleDayPress = async (day) => {
     setDateSelected(day.dateString);
     await getAll(day.dateString);
-  };
-
-  const createNewTodo = async (value) => {
-    //check if text input empty
-    if (!input) {
-      return;
-    }
-
-    try {
-      await db.runAsync("INSERT INTO Todos (date,todo,done) VALUES (?,?,?)", [
-        dateSelected,
-        value,
-        "no",
-      ]);
-      await getAll(dateSelected);
-      setInput("");
-      getAllDates();
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const deleteTodo = async (value) => {
@@ -184,62 +152,6 @@ export default function TodoScreen({ navigation }) {
           />
         </View>
       ) : null}
-
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={todoModal}
-        statusBarTranslucent={true}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-          }}
-        >
-          <View
-            style={
-              currentTheme === "dark"
-                ? todoScreenStyles.modalDarkView
-                : todoScreenStyles.modalLightView
-            }
-          >
-            <TextInput
-              style={
-                currentTheme === "dark"
-                  ? todoScreenStyles.textInputDark
-                  : todoScreenStyles.textInputLight
-              }
-              placeholder="Enter todo..."
-              onChangeText={(newText) => setInput(newText)}
-              placeholderTextColor={currentTheme === "dark" ? "white" : "black"}
-              defaultValue={input}
-            />
-            <TouchableOpacity
-              style={todoScreenStyles.buttonEnter}
-              onPress={() => {
-                toggleTodoModal(false);
-                createNewTodo(input);
-                setInput("");
-              }}
-            >
-              <Text style={{ color: "white" }}>Create Todo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={todoScreenStyles.buttonClose}
-              onPress={() => {
-                toggleTodoModal(false);
-                setInput("");
-              }}
-            >
-              <Text style={{ color: "white" }}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
       {todos.length == 0 ? (
         <MyPlaceHolder offsetTop={"20%"} value={placeholderText} currentTheme={currentTheme} />
       ) : (
@@ -286,7 +198,7 @@ export default function TodoScreen({ navigation }) {
                   deleteFn={deleteTodo}
                   toDelete={toDelete}
                   currentTheme={currentTheme}
-                  text="note"
+                  text="todo"
                 />
               ) : null}
             </Section>
@@ -296,7 +208,6 @@ export default function TodoScreen({ navigation }) {
 
       <AddButton
         press={() => {
-          //toggleTodoModal(true);
           navigation.navigate("Create Todo", { dateSelected: dateSelected });
         }}
       />

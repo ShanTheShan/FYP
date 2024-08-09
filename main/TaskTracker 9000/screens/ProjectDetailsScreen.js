@@ -13,7 +13,12 @@ import { themeContext } from "../context/themeContext";
 import { projectDetailStyles } from "./styles/ProjectDetailStyles";
 import { FloatingActionButton, ProjectDetailsAdd } from "../components/customButtons";
 import { AccordionItem, Item, Parent, AccordionTouchable } from "../components/customAccordion";
-import { AddCellModal, EditCellModal, DeleteCellModal } from "../components/customModals";
+import {
+  AddCellModal,
+  EditCellModal,
+  DeleteCellModal,
+  ShowImageCellModal,
+} from "../components/customModals";
 import { DetailsCell } from "../components/customCells";
 
 export default function ProjectDetails({ navigation, route }) {
@@ -43,6 +48,11 @@ export default function ProjectDetails({ navigation, route }) {
   const [editCommentModalVisible, setEditCommentModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
+
+  //image show modal
+  //image preview
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [imageToShow, setImageToShow] = useState();
 
   //for reanimated accordion
   const [firstAccordionOpen, setFirstAccordionOpen] = useState(false);
@@ -171,6 +181,11 @@ export default function ProjectDetails({ navigation, route }) {
     } catch (error) {
       console.log("handleSubTouch() error:", error);
     }
+  };
+
+  const showImage = (value) => {
+    setImageToShow(value);
+    setImageModalVisible(true);
   };
 
   const deleteTask = async (task) => {
@@ -373,6 +388,7 @@ export default function ProjectDetails({ navigation, route }) {
                         textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                         completed={false}
                         handleSubTouch={handleSubTouch}
+                        showImage={showImage}
                         customPress={() => {
                           handleTaskTouch(item);
                         }}
@@ -425,6 +441,7 @@ export default function ProjectDetails({ navigation, route }) {
                         customImage={item.image}
                         textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                         backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
+                        showImage={showImage}
                         completed={true}
                       />
                     ))}
@@ -511,6 +528,12 @@ export default function ProjectDetails({ navigation, route }) {
           text={"project comment"}
         />
       ) : null}
+      <ShowImageCellModal
+        modalVisible={imageModalVisible}
+        setModalVisible={setImageModalVisible}
+        image={imageToShow}
+        currentTheme={currentTheme}
+      />
       <ProjectDetailsAdd isExpanded={isExpanded} handlePress={handlePress} />
       <FloatingActionButton
         customPress={() => setCreateCommentModalVisible(!createCommentModalVisible)}

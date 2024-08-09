@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { React } from "react";
-import { StyleSheet, Text, View, Modal, TouchableOpacity, TextInput } from "react-native";
+import { StyleSheet, Text, View, Modal, TouchableOpacity, TextInput, Image } from "react-native";
 
 const EditCellModal = ({
   modalVisible,
@@ -165,6 +165,45 @@ const DeleteCellModal = ({
   );
 };
 
+const ShowImageCellModal = ({ modalVisible, setModalVisible, currentTheme, image }) => {
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={modalVisible}
+      statusBarTranslucent={true}
+    >
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+        }}
+      >
+        <View
+          style={
+            currentTheme === "dark"
+              ? ShowImageCellModalStyles.imageModalDarkView
+              : ShowImageCellModalStyles.imageModalLightView
+          }
+        >
+          <Image source={image} style={ShowImageCellModalStyles.image} />
+
+          <TouchableOpacity
+            style={ShowImageCellModalStyles.buttonClose}
+            onPress={() => {
+              setModalVisible(false);
+            }}
+          >
+            <Text style={{ color: "white" }}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 const styles = StyleSheet.create({
   deleteModalDarkView: {
     backgroundColor: "#1F1F1F",
@@ -251,4 +290,31 @@ const DeleteModalStyles = StyleSheet.create({
   },
 });
 
-export { EditCellModal, AddCellModal, DeleteCellModal };
+const ShowImageCellModalStyles = StyleSheet.create({
+  imageModalDarkView: {
+    backgroundColor: "#1F1F1F",
+    borderRadius: 20,
+    alignItems: "center",
+    elevation: 10,
+  },
+  imageModalLightView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    alignItems: "center",
+    elevation: 10,
+  },
+  image: {
+    margin: "5%",
+    width: 300,
+    height: 300,
+    borderRadius: 5,
+  },
+  buttonClose: {
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
+    backgroundColor: "darkred",
+  },
+});
+
+export { EditCellModal, AddCellModal, DeleteCellModal, ShowImageCellModal };

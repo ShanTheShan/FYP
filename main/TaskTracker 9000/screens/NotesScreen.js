@@ -8,7 +8,7 @@ import { noteScreenStyles } from "./styles/NotesScreenStyle";
 
 import { AddButton } from "../components/customButtons";
 import { MyPlaceHolder } from "../components/customPlaceHolder";
-import { EditCellModal, DeleteCellModal } from "../components/customModals";
+import { EditCellModal, DeleteCellModal, ShowImageCellModal } from "../components/customModals";
 
 import { db } from "../constants/database";
 
@@ -26,6 +26,10 @@ export default function NotesScreen({ navigation }) {
   //delete modal
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [toDelete, setToDelete] = useState(null);
+
+  //image preview
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [imageToShow, setImageToShow] = useState();
 
   const [userNotes, setUserNotes] = useState([]);
 
@@ -72,6 +76,11 @@ export default function NotesScreen({ navigation }) {
     }
   }, [isFocused]);
 
+  const showImage = (value) => {
+    setImageToShow(value);
+    setImageModalVisible(true);
+  };
+
   //custom cell for project board page
   const NoteCell = (props) => {
     //for double tap handling
@@ -109,7 +118,9 @@ export default function NotesScreen({ navigation }) {
                 </Text>
                 {taskImage != null || undefined ? (
                   <View>
-                    <Image source={{ uri: taskImage }} style={noteScreenStyles.image} />
+                    <TouchableOpacity onPress={() => showImage({ uri: taskImage })}>
+                      <Image source={{ uri: taskImage }} style={noteScreenStyles.image} />
+                    </TouchableOpacity>
                   </View>
                 ) : null}
               </View>
@@ -177,6 +188,14 @@ export default function NotesScreen({ navigation }) {
                   text={input}
                   textID={noteID}
                   updateText={updateNote}
+                  currentTheme={currentTheme}
+                />
+              ) : null}
+              {imageModalVisible ? (
+                <ShowImageCellModal
+                  modalVisible={imageModalVisible}
+                  setModalVisible={setImageModalVisible}
+                  image={imageToShow}
                   currentTheme={currentTheme}
                 />
               ) : null}
