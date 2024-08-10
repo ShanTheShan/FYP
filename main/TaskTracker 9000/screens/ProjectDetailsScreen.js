@@ -2,7 +2,7 @@ import { React, useState, useEffect, useContext } from "react";
 import { Text, View, SafeAreaView } from "react-native";
 import { TableView, Cell, Section } from "react-native-tableview-simple";
 import * as Progress from "react-native-progress";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { useSharedValue } from "react-native-reanimated";
 import { Gesture, GestureDetector, TouchableOpacity } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
@@ -31,10 +31,10 @@ export default function ProjectDetails({ navigation, route }) {
   const { id } = route.params;
 
   const [projectName, setProjectName] = useState([]);
-  //array state to store project tasks
   const [projectDetails, setProjectDetails] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [comments, setProjectComments] = useState([]);
+  const [taskToDelete, setTaskToDelete] = useState();
 
   //for progress bar logic
   const [progressValue, setProgressValue] = useState(0);
@@ -46,8 +46,11 @@ export default function ProjectDetails({ navigation, route }) {
   const [commentID, setCommentID] = useState(null);
   const [createCommentModalVisible, setCreateCommentModalVisible] = useState(false);
   const [editCommentModalVisible, setEditCommentModalVisible] = useState(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
+
+  //states related to delete modals
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteTaskModalVisible, setDeleteTaskModalVisible] = useState(false);
 
   //image show modal
   //image preview
@@ -164,11 +167,16 @@ export default function ProjectDetails({ navigation, route }) {
   const handleTaskTouch = (item) => {
     try {
       setCompletedTasks((oldArray) => [...oldArray, item]);
-      deleteTask(item.task_name);
+      updateTask(item.task_name);
       updateProgressBar();
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleDeleteTask = (item) => {
+    setTaskToDelete(item);
+    setDeleteTaskModalVisible(true);
   };
 
   const handleSubTouch = async (item) => {
@@ -188,7 +196,7 @@ export default function ProjectDetails({ navigation, route }) {
     setImageModalVisible(true);
   };
 
-  const deleteTask = async (task) => {
+  const updateTask = async (task) => {
     try {
       //await db.runAsync("DELETE FROM ProjectDetails WHERE projectId = ? AND tasks = ?", [id, task]);
       await db.runAsync(
@@ -200,6 +208,21 @@ export default function ProjectDetails({ navigation, route }) {
       setProjectDetails(stateCopy);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const deleteTask = async (task) => {
+    console.log(task);
+
+    try {
+      await db.runAsync("DELETE FROM projectDetails WHERE project_id = ? AND task_id = ?", [
+        id,
+        task,
+      ]);
+      getAllTasks();
+      setDeleteTaskModalVisible(false);
+    } catch (error) {
+      console.log("deleteTask() error");
     }
   };
 
@@ -249,8 +272,8 @@ export default function ProjectDetails({ navigation, route }) {
       await db.runAsync("DELETE FROM ProjectComments WHERE comment =?", [value]);
 
       setCommentToDelete(null);
-      setDeleteModalVisible(false);
       getAllTasks();
+      setDeleteModalVisible(false);
     } catch (error) {
       console.log("deleteComment() error: ", error);
     }
@@ -388,6 +411,7 @@ export default function ProjectDetails({ navigation, route }) {
                         textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                         completed={false}
                         handleSubTouch={handleSubTouch}
+                        handleRemoveTask={() => handleDeleteTask(item.task_id)}
                         showImage={showImage}
                         customPress={() => {
                           handleTaskTouch(item);
@@ -442,6 +466,7 @@ export default function ProjectDetails({ navigation, route }) {
                         textColor={currentTheme === "dark" ? "#FFFFFF" : "#000000"}
                         backgroundColor={currentTheme === "dark" ? "#141414" : "#F6F6F6"}
                         showImage={showImage}
+                        handleRemoveTask={() => handleDeleteTask(item.task_id)}
                         completed={true}
                       />
                     ))}
@@ -526,6 +551,16 @@ export default function ProjectDetails({ navigation, route }) {
           toDelete={commentToDelete}
           currentTheme={currentTheme}
           text={"project comment"}
+        />
+      ) : null}
+      {deleteTaskModalVisible ? (
+        <DeleteCellModal
+          modalVisible={deleteTaskModalVisible}
+          setModalVisible={setDeleteTaskModalVisible}
+          deleteFn={deleteTask}
+          toDelete={taskToDelete}
+          currentTheme={currentTheme}
+          text={"project task"}
         />
       ) : null}
       <ShowImageCellModal

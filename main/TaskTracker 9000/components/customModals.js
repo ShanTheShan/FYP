@@ -139,7 +139,12 @@ const DeleteCellModal = ({
               : DeleteModalStyles.deleteModalLightView
           }
         >
-          <Text style={currentTheme === "dark" ? { color: "white" } : { color: "black" }}>
+          <Text
+            style={[
+              currentTheme === "dark" ? { color: "white" } : { color: "black" },
+              { textAlign: "center" },
+            ]}
+          >
             Do you want to delete this {text}?
           </Text>
 

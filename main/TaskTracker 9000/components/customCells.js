@@ -35,73 +35,74 @@ const DetailsCell = (props) => {
       titleTextColor={props.textColor}
       {...props}
       cellContentView={
-        <View style={{ paddingLeft: 5, paddingVertical: 5 }}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            {props.completed ? null : (
-              <TouchableOpacity onPress={props.customPress}>
-                <Circle theme={props.theme} />
-              </TouchableOpacity>
-            )}
-
-            <Text
-              style={[
-                { fontSize: 20, paddingBottom: 5, paddingHorizontal: 10 },
-                { color: props.textColor },
-              ]}
-            >
-              {props.tasks}
-            </Text>
-            {props.reminder != null ? (
-              <Entypo name="bell" size={12} color={props.theme === "dark" ? "white" : "black"} />
-            ) : null}
-          </View>
-
-          <View style={{ paddingLeft: 25 }}>
-            {props.deadline != "null | null" ? (
-              <Text style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
-                {reformedDeadlineData}
-              </Text>
-            ) : null}
-            {reformedSubTaskData.length != 0 ? (
-              <View>
-                {reformedSubTaskData.map((item, i) => (
-                  <TouchableOpacity
-                    key={i}
-                    onPress={() => props.handleSubTouch(item)}
-                    disabled={props.completed}
-                  >
-                    <Text
-                      key={i}
-                      style={
-                        item.sub_completed === "yes"
-                          ? [
-                              {
-                                fontSize: 15,
-                                paddingLeft: 10,
-                                lineHeight: 20,
-                                textDecorationLine: "line-through",
-                                color: props.textColor,
-                              },
-                            ]
-                          : { fontSize: 15, paddingLeft: 10, color: props.textColor }
-                      }
-                    >
-                      {item.subs}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            ) : null}
-
-            {taskImage ? (
-              <View>
-                <TouchableOpacity onPress={() => props.showImage({ uri: taskImage })}>
-                  <Image source={{ uri: taskImage }} style={projectDetailStyles.image} />
+        <TouchableOpacity onLongPress={props.handleRemoveTask}>
+          <View style={{ paddingLeft: 5, paddingVertical: 5 }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {props.completed ? null : (
+                <TouchableOpacity onPress={props.customPress}>
+                  <Circle theme={props.theme} />
                 </TouchableOpacity>
-              </View>
-            ) : null}
+              )}
+
+              <Text
+                style={[
+                  { fontSize: 20, paddingBottom: 5, paddingHorizontal: 10 },
+                  { color: props.textColor },
+                ]}
+              >
+                {props.tasks}
+              </Text>
+              {props.reminder != null ? (
+                <Entypo name="bell" size={12} color={props.theme === "dark" ? "white" : "black"} />
+              ) : null}
+            </View>
+            <View style={{ paddingLeft: 25 }}>
+              {props.deadline != "null | null" ? (
+                <Text style={[{ fontSize: 15, paddingLeft: 10 }, { color: props.textColor }]}>
+                  {reformedDeadlineData}
+                </Text>
+              ) : null}
+              {reformedSubTaskData.length != 0 ? (
+                <View>
+                  {reformedSubTaskData.map((item, i) => (
+                    <TouchableOpacity
+                      key={i}
+                      onPress={() => props.handleSubTouch(item)}
+                      disabled={props.completed}
+                    >
+                      <Text
+                        key={i}
+                        style={
+                          item.sub_completed === "yes"
+                            ? [
+                                {
+                                  fontSize: 15,
+                                  paddingLeft: 10,
+                                  lineHeight: 20,
+                                  textDecorationLine: "line-through",
+                                  color: props.textColor,
+                                },
+                              ]
+                            : { fontSize: 15, paddingLeft: 10, color: props.textColor }
+                        }
+                      >
+                        {item.subs}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : null}
+
+              {taskImage ? (
+                <View>
+                  <TouchableOpacity onPress={() => props.showImage({ uri: taskImage })}>
+                    <Image source={{ uri: taskImage }} style={projectDetailStyles.image} />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       }
     />
   );
