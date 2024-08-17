@@ -1,0 +1,287 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddButton customButton test should match snapshot 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "darkgreen",
+      "borderRadius": 10,
+      "bottom": 100,
+      "height": 50,
+      "justifyContent": "center",
+      "opacity": 1,
+      "position": "absolute",
+      "right": 20,
+      "width": 50,
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 30,
+      }
+    }
+  >
+    +
+  </Text>
+</View>
+`;
+
+exports[`FloatingActionButton customButton test should match snapshot 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "darkgreen",
+      "borderRadius": 10,
+      "bottom": 100,
+      "display": "flex",
+      "elevation": 10,
+      "flexDirection": "row",
+      "height": 45,
+      "justifyContent": "center",
+      "opacity": 1,
+      "position": "absolute",
+      "right": 20,
+      "transform": [
+        {
+          "translateY": -0,
+        },
+        {
+          "scale": 0,
+        },
+      ],
+      "zIndex": 0,
+    }
+  }
+>
+  <Text
+    collapsable={false}
+    jestAnimatedStyle={
+      {
+        "value": {},
+      }
+    }
+    style={
+      {
+        "color": "white",
+        "fontSize": 15,
+        "padding": 5,
+      }
+    }
+  >
+    +
+  </Text>
+</View>
+`;
+
+exports[`ProjectDetailsAdd customButton test should match snapshot 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  jestAnimatedStyle={
+    {
+      "value": {},
+    }
+  }
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "darkgreen",
+      "borderRadius": 10,
+      "bottom": 100,
+      "height": 50,
+      "justifyContent": "center",
+      "position": "absolute",
+      "right": 20,
+      "width": 50,
+      "zIndex": 1,
+    }
+  }
+>
+  <Text
+    collapsable={false}
+    jestAnimatedStyle={
+      {
+        "value": {
+          "transform": [
+            {
+              "translateX": 0,
+            },
+            {
+              "rotate": "0deg",
+            },
+          ],
+        },
+      }
+    }
+    style={
+      {
+        "color": "white",
+        "fontSize": 24,
+        "transform": [
+          {
+            "translateX": 0,
+          },
+          {
+            "rotate": "0deg",
+          },
+        ],
+      }
+    }
+  >
+    +
+  </Text>
+</View>
+`;
+
+exports[`SmallButton customButton test should match snapshot 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  focusable={true}
+  nativeBackgroundAndroid={
+    {
+      "attribute": "selectableItemBackground",
+      "rippleRadius": undefined,
+      "type": "ThemeAttrAndroid",
+    }
+  }
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "backgroundColor": "#2196F3",
+        "borderRadius": 2,
+        "elevation": 4,
+      },
+      {
+        "backgroundColor": "green",
+      },
+    ]
+  }
+  testID="smallbutton"
+>
+  <Text
+    style={
+      [
+        {
+          "color": "white",
+          "fontWeight": "500",
+          "margin": 8,
+          "textAlign": "center",
+        },
+      ]
+    }
+  >
+    DUMMY
+  </Text>
+</View>
+`;

@@ -68,4 +68,4 @@ const intiatelizeDatabase = () => {
 
 intiatelizeDatabase();
 
-export { db };
+export { db, intiatelizeDatabase };

@@ -12,7 +12,9 @@ import Animated, {
 const windowHeight = Dimensions.get("window").height;
 
 const SmallButton = ({ title, color, press }) => {
-  return <Button onPress={press} title={title} color={color} style={styles.small} />;
+  return (
+    <Button testID="smallbutton" onPress={press} title={title} color={color} style={styles.small} />
+  );
 };
 
 const AddButton = ({ press }) => {

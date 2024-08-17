@@ -3,6 +3,7 @@ import { View } from "react-native";
 export const Circle = (props) => {
   return (
     <View
+      testID="circle"
       style={{
         width: 25,
         height: 25,

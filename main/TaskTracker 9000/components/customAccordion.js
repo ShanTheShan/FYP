@@ -43,6 +43,7 @@ export function AccordionItem({ isExpanded, viewKey, children, style, duration =
 export function Item({ content, scrollHeight, currentTheme }) {
   return (
     <ScrollView
+      testID="item"
       style={[
         styles.scrollView,
         currentTheme === "dark" ? { backgroundColor: "#1C1C1C" } : { backgroundColor: "white" },
@@ -82,6 +83,7 @@ export function AccordionTouchable({ onPress, currentTheme, text }) {
     >
       <Animated.View style={[styles.animatedWrapper, animatedStyle]}>
         <Text
+          testID="touchable_text"
           style={
             currentTheme === "dark"
               ? { color: "white", fontSize: 15, paddingVertical: 3, paddingRight: 5 }

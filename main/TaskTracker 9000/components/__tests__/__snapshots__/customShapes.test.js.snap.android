@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Circle Component in customShapes test should match snapshot 1`] = `
+<View
+  style={
+    {
+      "borderColor": "white",
+      "borderRadius": 50,
+      "borderWidth": 2,
+      "height": 25,
+      "width": 25,
+    }
+  }
+  testID="circle"
+/>
+`;

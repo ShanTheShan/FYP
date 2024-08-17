@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccordionTouchable component in customAccordion should match snapshot 1`] = `
+<View
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "width": "100%",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    jestAnimatedStyle={
+      {
+        "value": {
+          "backgroundColor": "rgba(43, 43, 43, 1)",
+        },
+      }
+    }
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(43, 43, 43, 1)",
+        "flexDirection": "row",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "white",
+          "fontSize": 15,
+          "paddingRight": 5,
+          "paddingVertical": 3,
+        }
+      }
+      testID="touchable_text"
+    >
+      Dummy
+    </Text>
+  </View>
+</View>
+`;

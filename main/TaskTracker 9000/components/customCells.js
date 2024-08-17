@@ -96,7 +96,11 @@ const DetailsCell = (props) => {
               {taskImage ? (
                 <View>
                   <TouchableOpacity onPress={() => props.showImage({ uri: taskImage })}>
-                    <Image source={{ uri: taskImage }} style={projectDetailStyles.image} />
+                    <Image
+                      testID="cellImage"
+                      source={{ uri: taskImage }}
+                      style={projectDetailStyles.image}
+                    />
                   </TouchableOpacity>
                 </View>
               ) : null}

@@ -10,7 +10,9 @@ export const MyPlaceHolder = (props) => {
         { marginTop: x },
       ]}
     >
-      <Text style={{ color: "grey" }}>You currently have no {props.value}...</Text>
+      <Text testID="placeholder_text" style={{ color: "grey" }}>
+        You currently have no {props.value}...
+      </Text>
     </View>
   );
 };

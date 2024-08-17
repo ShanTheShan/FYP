@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CarouselItem Component test should match snapshot 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "alignSelf": "center",
+      "backgroundColor": "#282828",
+      "borderRadius": 10,
+      "height": "100%",
+      "justifyContent": "center",
+      "width": 300,
+    }
+  }
+>
+  <Image
+    source={1}
+    style={
+      {
+        "height": 300,
+        "resizeMode": "contain",
+        "width": "100%",
+      }
+    }
+    testID="carousel-image"
+  />
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 16,
+        "marginTop": 10,
+        "padding": 5,
+        "textAlign": "center",
+      }
+    }
+  >
+    This is homescreen tutorial dummy text.
+  </Text>
+</View>
+`;

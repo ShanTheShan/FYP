@@ -6,7 +6,7 @@ export const CarouselItem = (props) => {
 
   return (
     <View style={styles.container}>
-      <Image source={item.img} style={styles.image} />
+      <Image source={item.img} style={styles.image} testID="carousel-image" />
       <Text style={styles.text}>{item.title}</Text>
     </View>
   );
