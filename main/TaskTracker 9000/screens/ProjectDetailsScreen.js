@@ -73,10 +73,9 @@ export default function ProjectDetails({ navigation, route }) {
   //that each contain their respective sub tasks
   const reformat = (result) => {
     return result.reduce((acc, item) => {
-      // Check if the task already exists in the accumulator
+      //check if the task already exists in the accumulator
       let task = acc.find((t) => t.task_id === item.task_id);
 
-      // If the task doesn't exist, create a new task object
       if (!task) {
         task = {
           project_id: item.project_id,
@@ -91,7 +90,7 @@ export default function ProjectDetails({ navigation, route }) {
         acc.push(task);
       }
 
-      // Add the subtask to the task's sub_tasks array if it exists
+      //add the subtask to the task's sub_tasks array if it exists
       if (item.sub_task_id) {
         task.sub_tasks.push({
           sub_task_id: item.sub_task_id,
