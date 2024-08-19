@@ -42,7 +42,7 @@ export const settingStyles = StyleSheet.create({
   },
   timerModalView: {
     backgroundColor: "lightgrey",
-    height: "40%",
+    height: "45%",
     width: "70%",
     borderRadius: 15,
     alignItems: "center",

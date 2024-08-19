@@ -65,19 +65,22 @@ export default function SettingsScreen() {
 
   const handleThemeTouch = async (theme) => {
     if (theme === "dark") {
+      //if theme dark already highlighted and user taps it again, remain yellow
+      if (darkState == true) return;
       setLightState(false);
       setDarkState(!darkState);
       await AsyncStorage.setItem("light", "false");
     }
 
     if (theme === "light") {
+      if (lightState == true) return;
       setLightState(!lightState);
       setDarkState(false);
       await AsyncStorage.setItem("light", "true");
     }
   };
 
-  const handleTimerPrest = () => {
+  const handleTimerPreset = () => {
     toggleTimerModal(!timerModal);
     //convert string to integer seconds
     const workTime_toSeconds = times[workMinutes] * 60;
@@ -171,7 +174,16 @@ export default function SettingsScreen() {
                     style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
                     onPress={() => setTheme()}
                   >
-                    <Text style={{ fontSize: 15, padding: 10, color: "white" }}>Done</Text>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        paddingHorizontal: 15,
+                        paddingVertical: 10,
+                        color: "white",
+                      }}
+                    >
+                      Done
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -231,7 +243,7 @@ export default function SettingsScreen() {
                       marginRight: 5,
                     }}
                   >
-                    <Text style={{ fontSize: 15 }}>Work</Text>
+                    <Text style={{ fontSize: 16, fontWeight: "500" }}>Work</Text>
                     <WheelPicker
                       selectedIndex={workMinutes}
                       options={times}
@@ -248,7 +260,7 @@ export default function SettingsScreen() {
                       marginLeft: 5,
                     }}
                   >
-                    <Text style={{ fontSize: 15 }}>Rest</Text>
+                    <Text style={{ fontSize: 16, fontWeight: "500" }}>Rest</Text>
                     <WheelPicker
                       selectedIndex={restMinutes}
                       options={times}
@@ -261,9 +273,24 @@ export default function SettingsScreen() {
                 </View>
                 <TouchableOpacity
                   style={{ backgroundColor: "green", borderRadius: 10, margin: 10 }}
-                  onPress={() => handleTimerPrest()}
+                  onPress={() => handleTimerPreset()}
                 >
-                  <Text style={{ fontSize: 15, padding: 10, color: "white" }}>Done</Text>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      paddingHorizontal: 15,
+                      paddingVertical: 10,
+                      color: "white",
+                    }}
+                  >
+                    Done
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ backgroundColor: "red", borderRadius: 10, marginBottom: 10 }}
+                  onPress={() => toggleTimerModal(!timerModal)}
+                >
+                  <Text style={{ fontSize: 15, padding: 10, color: "white" }}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>

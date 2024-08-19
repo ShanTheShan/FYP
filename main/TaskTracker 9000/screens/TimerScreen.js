@@ -6,6 +6,8 @@ import {
   TouchableHighlight,
   SafeAreaView,
   TouchableOpacity,
+  Platform,
+  Vibration,
 } from "react-native";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useIsFocused } from "@react-navigation/native";
@@ -50,7 +52,6 @@ function TimerScreen() {
 
   //funtion to reformt time
   const children = ({ remainingTime }) => {
-    const hours = Math.floor(remainingTime / 3600);
     const minutes = Math.floor((remainingTime % 3600) / 60);
     const seconds = remainingTime % 60;
 
@@ -75,17 +76,24 @@ function TimerScreen() {
   function startResting() {
     //rest over, back to work
     if (activity == "resting") {
+      setState(false);
+      setDuration(workDuration);
+      resetState((prevKey) => prevKey + 1);
       setActivity("working");
       return;
     }
     //time to rest
     else {
+      Vibration.vibrate(PATTERN);
       //increment unique key count, to start timer again
       resetState((prevKey) => prevKey + 1);
       setDuration(restDuration);
       setActivity("resting");
     }
   }
+
+  //vibration pattern when its time to rest
+  const PATTERN = [1000, 1500, 1000, 1500];
 
   return (
     <SafeAreaView style={timerScreenStyles.container}>
@@ -157,7 +165,8 @@ function TimerScreen() {
             key={time}
             isPlaying={timerState}
             duration={duration}
-            colors={["blue"]}
+            //colors={["blue"]}
+            colors={activity === "resting" ? "green" : "blue"}
             onComplete={() => startResting()}
             size={250}
             strokeWidth={15}
