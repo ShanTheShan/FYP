@@ -153,7 +153,7 @@ export default function TodoScreen({ navigation }) {
         </View>
       ) : null}
       {todos.length == 0 ? (
-        <MyPlaceHolder offsetTop={"35%"} value={placeholderText} currentTheme={currentTheme} />
+        <MyPlaceHolder offsetTop={"20%"} value={placeholderText} currentTheme={currentTheme} />
       ) : (
         <ScrollView
           style={
