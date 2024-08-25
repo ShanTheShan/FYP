@@ -113,7 +113,12 @@ export default function NotesScreen({ navigation }) {
             {...props}
             cellContentView={
               <View>
-                <Text style={[{ fontSize: 20, paddingBottom: 5 }, { color: props.textColor }]}>
+                <Text
+                  style={[
+                    { fontSize: 20, paddingBottom: 5, flex: 1, flexWrap: "wrap" },
+                    { color: props.textColor },
+                  ]}
+                >
                   {props.note}
                 </Text>
                 {taskImage != null || undefined ? (

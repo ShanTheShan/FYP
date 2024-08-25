@@ -129,6 +129,8 @@ const TodoCell = (props) => (
           </TouchableOpacity>
           <Text
             style={{
+              flex: 1,
+              flexWrap: "wrap",
               fontSize: 20,
               paddingBottom: 5,
               paddingHorizontal: 10,
