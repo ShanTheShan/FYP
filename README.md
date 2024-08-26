@@ -21,3 +21,4 @@ If you wish to use Expo Go, follow step 1, then run the `start` npm script or ru
 Refer to Expo CLI docs for more info: https://docs.expo.dev/workflow/prebuild/
 
 ## App screenshots
+![Tutorial Image](https://github.com/[ShanTheShan]/[FYP]/blob/[builds]/tutorial_homescreen.jpg?raw=true)
