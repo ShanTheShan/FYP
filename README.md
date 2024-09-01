@@ -21,7 +21,6 @@ If you wish to use Expo Go, follow step 1, then run the `start` npm script or ru
 Refer to Expo CLI docs for more info: https://docs.expo.dev/workflow/prebuild/
 
 ## App screenshots
-<a href="url"><img src="https://github.com/ShanTheShan/FYP/blob/builds/main/TaskTracker%209000/assets/splash.png" align="left" height="450" width="250" ></a>
 <a href="url"><img src="https://github.com/ShanTheShan/FYP/blob/builds/main/TaskTracker%209000/assets/tutorial_projectDetails.jpg" align="left" height="450" width="250" ></a>
 <a href="url"><img src="https://github.com/ShanTheShan/FYP/blob/builds/main/TaskTracker%209000/assets/tutorial_projectTask.jpg" align="left" height="450" width="250" ></a>
 <a href="url"><img src="https://github.com/ShanTheShan/FYP/blob/builds/main/TaskTracker%209000/assets/tutorial_todo.jpg" align="left" height="450" width="250" ></a>
