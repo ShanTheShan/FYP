@@ -6,7 +6,7 @@ TaskTracker 9000 is a reliable way to log and track projects, todos and notes, f
 **For Android devices only.**
 
 ### <ins>Installation</ins> <br>
-To install and use the application on your physical Android device via APK, download it [here.]
+To install and use the application on your physical Android device via APK, download it [here.](https://drive.google.com/file/d/12Qerf0j8R8r2zSiWRSm3aHeckDIFFKsE/view?usp=sharing)
 
 To run the source code, follow the steps below:
 
